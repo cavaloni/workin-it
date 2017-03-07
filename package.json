@@ -5,13 +5,15 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "dev-build": "run-p start webpack:dev",
+    "webpack:dev": "webpack --watch --progress --colors",
     "prod": "run-p start build-prod",
     "heroku-postbuild": "npm run build-prod",
     "dev": "webpack-dev-server --inline --hot",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build-prod": "webpack -p --progress --colors --config webpack.prod.config.js",
+    "build-prod": "webpack -p --progress --colors --config webpack.config.js",
     "lint": "eslint --fix js/"
   },
   "jest": {

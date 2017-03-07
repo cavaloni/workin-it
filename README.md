@@ -6,6 +6,9 @@ My template for developing React apps.
 
 Clone locally and have fun!
 
+Use `npm run dev` for front-end only apps.
+Use `npm run dev-build` for full-stack development.
+
 ### Tech Included
 - Babel 6
 - Webpack 2.2
