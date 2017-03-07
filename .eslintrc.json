@@ -1,0 +1,42 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": "airbnb",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "jsx-a11y",
+        "import"
+    ],
+    
+    "rules": {
+        "no-unused-vars": ["error", { "varsIgnorePattern": "styles"}],
+        "react/jsx-uses-vars": "error",
+        "react/jsx-uses-react": "error",
+        "import/no-unresolved": [2, { "caseSensitive": false }],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    },
+    "settings": {
+      "import/ignore": [".css$","node_modules/*"]
+   }
+}
