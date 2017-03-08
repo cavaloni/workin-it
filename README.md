@@ -1,6 +1,6 @@
-# Chad's React Boilerplate
+# Full/Front End React Boilerplate
 
-My template for developing React apps.
+Template for developing React apps.
 
 ## Getting started
 
