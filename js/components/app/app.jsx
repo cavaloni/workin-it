@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import styles from './styles.css';
+import Menu from '../menu/menu';
+
+injectTapEventPlugin();
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-  }
+    constructor(props) {
+        super(props);
+    }
 
-  render() {
-    return (
-      <div>
-        <h1>Hello Chads World!</h1>
-      </div>);
-  }
+    render() {
+        return (
+            <MuiThemeProvider>
+                <div>
+                    <Menu /> {this.props.children}
+                </div>
+            </MuiThemeProvider>
+
+        );
+    }
 }
 
-// App.propTypes = {
-//   children: React.PropTypes.node.isRequired,
-// };
+// App.propTypes = {   children: React.PropTypes.node.isRequired, };

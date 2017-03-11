@@ -34,7 +34,9 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "react/jsx-indent": [1, 4]
     },
     "settings": {
       "import/ignore": [".css$","node_modules/*"]
