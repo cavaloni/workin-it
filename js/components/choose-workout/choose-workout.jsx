@@ -80,6 +80,7 @@ export default class ChooseWorkout extends React.Component {
         return (
             
                 <Dialog
+                  autoScrollBodyContent={true}
                   title="Select Workout"
                   actions={actions}
                   modal={false}
