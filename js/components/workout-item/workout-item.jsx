@@ -47,8 +47,6 @@ class WorkoutItem extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.sets === true) {
             this.setState({ showSets: false });
-        } else if (nextProps.sets === false) {
-            this.setState({ showSets: true });
         }
     }
 
@@ -64,7 +62,6 @@ class WorkoutItem extends Component {
     }
 
     setsButton(e) {
-        console.log('yep');
         if (this.state.sets !== 0) {
             this.setState({
                 showSets: !this.state.showSets,

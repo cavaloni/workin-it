@@ -10,6 +10,9 @@ import {
     CardText,
 } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import Snackbar from 'material-ui/Snackbar';
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
@@ -43,11 +46,13 @@ class WorkoutCard extends Component {
         this.openWorkoutChooser = this.openWorkoutChooser.bind(this);
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
+        this.saveData = this.saveData.bind(this);
         this.state = {
             itemList: [],
             chooseWorkout: false,
             listNotEmpty: false,
             sameSets: true,
+            snackbarOpen: false,
         };
         this.workoutItem = (<WorkoutItem />);
     }
@@ -64,8 +69,11 @@ class WorkoutCard extends Component {
     }
 
     sameSetsCheck(e, checked) {
-        console.log(checked);
         this.setState({ sameSets: checked });
+    }
+
+    saveData() {
+        this.setState({ snackbarOpen: true });
     }
 
     render() {
@@ -85,17 +93,37 @@ class WorkoutCard extends Component {
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
                       label="Same sets throughout"
+                      labelStyle={{right: '50px' }}
                       defaultChecked={true}
                       style={styles.checkbox}
                     /> {workoutItemsList}
-                    <RaisedButton
+                    <FloatingActionButton
                       style={{
-                          height: '30px',
+                          position: 'relative',
                           marginTop: 10,
+                          right: '75px',
+                          display: 'inline-block',
                       }}
-                      label="Add Workout"
+                      mini={true}
                       onClick={this.openWorkoutChooser}
-                      primary={true}
+                      
+                    > <ContentAdd /> 
+                    </ FloatingActionButton>
+                    <RaisedButton 
+                        disabled={!this.state.listNotEmpty}
+                        label="Save"
+                        onClick={this.saveData}
+                        style={{
+                            position: 'relative',
+                            bottom: '10px',
+                            left: 75,
+                        }}>
+                    </RaisedButton>
+                    <Snackbar
+                        open={this.state.snackbarOpen}
+                        message="Saved"
+                        autoHideDuration={4000}
+                        onRequestClose={this.handleRequestClose}
                     />
                 </Card>
             </MuiThemeProvider>

@@ -48,7 +48,7 @@ class SetListItem extends Component  {
     }
 
     render () {
-        const setNum = `Set ${this.props.set + 1}`;
+        const setNum = `Set ${this.props.set + 2}`;
         return ( 
         <div style={styles.container}>
             <div>

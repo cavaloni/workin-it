@@ -60,6 +60,8 @@ class Home extends Component {
         browserHistory.push('/2')
     }
 
+    //TODO: wrap paper in Link
+
     render() {
         return (
             <div>

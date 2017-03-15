@@ -42,18 +42,17 @@ export default class ChooseWorkout extends React.Component {
 
     handleClose() {
         this.setState({ open: false });
+        if (!this.state.selected) { return; }
         this.props.clicker(this.state.selected);
     }
 
     handleSelect(event, menuObj, index) {
-        console.log(event, menuObj);
         const newArry = fakeworks.map(() => { return false; });
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });
     }
 
     render() {
-        console.log(this.state);
         const actions = [<FlatButton
           label="Cancel" primary onTouchTap={this.handleClose}
         />, <FlatButton
