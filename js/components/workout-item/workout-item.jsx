@@ -34,19 +34,28 @@ class WorkoutItem extends Component {
         };
         console.log(this.styles);
         this.state = {
-            Reps: 0,
-            Weight: 0,
-            Sets: 0,
+            reps: 0,
+            weight: 0,
+            sets: 0,
             showSets: false,
+            triggerSave: props.triggerSave,
+            setsData: [],
         };
 
         this.onNumberChange = this.onNumberChange.bind(this);
         this.setsButton = this.setsButton.bind(this);
+        this.getSetsData = this.getSetsData.bind(this);
+        this.saveAll = this.saveAll.bind(this);
     }
+
+    // TODO: FlatButton to show sets keeps returning false (line 102)
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.sets === true) {
             this.setState({ showSets: false });
+        }
+        if (nextProps.triggerSave) {
+            this.saveAll();
         }
     }
 
@@ -62,11 +71,27 @@ class WorkoutItem extends Component {
     }
 
     setsButton(e) {
+        e.preventDefault();
         if (this.state.sets !== 0) {
-            this.setState({
-                showSets: !this.state.showSets,
-            });
+            this.setState({ showSets: !this.state.showSets });
         }
+    }
+
+    getSetsData(setData) {
+        const setsDataCopy = Array.from(this.state.setsData)
+        const setTypeKey = Object.keys(setData)[0]
+        setsDataCopy[setData.setNum] = Object.assign({}, setsDataCopy[setData.setNum], { [setTypeKey]: setData[setTypeKey] });
+        this.setState({ setsData: setsDataCopy });
+    }
+
+    saveAll() {
+        const firstSet = {
+            reps: this.state.reps,
+            weight: this.state.weight,
+        }
+        const setsDataCopy = Array.from(this.state.setsData);
+        setsDataCopy.unshift(firstSet);
+        this.props.saved(setsDataCopy, this.props.item);
     }
 
     render() {
@@ -76,8 +101,8 @@ class WorkoutItem extends Component {
         let noStyle;
         const setList = [];
         if (this.state.showSets) {
-            for (let i = 0; i < Number(this.state.Sets); i++) {
-                setList.push(<SetListItem set={i}  />);
+            for (let i = 1; i < Number(this.state.sets); i++) {
+                setList.push(<SetListItem set={i} getData={this.getSetsData} />);
             }
         }
         if (!this.props.sets) {
@@ -98,8 +123,8 @@ class WorkoutItem extends Component {
                         {this.props.item}
                     </FlatButton>
                     <NumberInput
-                      id="Reps"
-                      value={this.state.Reps}
+                      id="reps"
+                      value={this.state.reps}
                       onChange={this.onNumberChange}
                       style={this.styles.numberFields}
                       floatingLabelText="Reps"
@@ -107,8 +132,8 @@ class WorkoutItem extends Component {
                       max={100}  
                     />
                     <NumberInput
-                      id="Weight"
-                      value={this.state.Weight}
+                      id="weight"
+                      value={this.state.weight}
                       onChange={this.onNumberChange}
                       style={this.styles.numberFields}
                       floatingLabelText="Weight"
@@ -116,8 +141,8 @@ class WorkoutItem extends Component {
                       max={900}  
                     />
                     <NumberInput
-                      id="Sets"
-                      value={this.state.Sets}
+                      id="sets"
+                      value={this.state.sets}
                       onChange={this.onNumberChange}
                       style={this.styles.numberFields}
                       floatingLabelText="Sets"

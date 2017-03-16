@@ -6,176 +6,28 @@ import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Menu from 'material-ui/Menu';
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import RaisedButton from 'material-ui/RaisedButton';
+import mockData from '../mock-data.js';
 
-const mockData = {
-    10: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 180,
-                    reps: 4,
-                }, {
-                    weight: 180,
-                    reps: 5,
-                }, {
-                    weight: 180,
-                    reps: 6,
-                }],
-            },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 80,
-                    reps: 4,
-                }],
-            },
-        },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 280,
-                    reps: 1,
-                }, {
-                    weight: 280,
-                    reps: 2,
-                }],
-            },
-        },
-    },
-    11: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 185,
-                    reps: 4,
-                }, {
-                    weight: 185,
-                    reps: 5,
-                }, {
-                    weight: 185,
-                    reps: 6,
-                }],
-            },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 85,
-                    reps: 4,
-                }],
-            },
-        },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 280,
-                    reps: 1,
-                }, {
-                    weight: 280,
-                    reps: 2,
-                }],
-            },
-        },
-    },
-    12: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 190,
-                    reps: 4,
-                }, {
-                    weight: 190,
-                    reps: 5,
-                }, {
-                    weight: 190,
-                    reps: 6,
-                }],
-            },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 90,
-                    reps: 4,
-                }],
-            },
-        },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 290,
-                    reps: 1,
-                }, {
-                    weight: 290,
-                    reps: 2,
-                }],
-            },
-        },
-    },
-    13: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 200,
-                    reps: 5,
-                }, {
-                    weight: 200,
-                    reps: 4,
-                }, {
-                    weight: 200,
-                    reps: 4,
-                }],
-            },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 100,
-                    reps: 4,
-                }],
-            },
-        },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 310,
-                    reps: 1,
-                }, {
-                    weight: 300,
-                    reps: 2,
-                }],
-            },
-        },
-    },
-};
 
 class Progress extends Component {
     constructor(props) {
         super(props);
+        console.log(props);
+        let data;
+        if (props.friends !== undefined) {
+            data = props.data;
+        } else { data = mockData; }
         this.state = {
-            value: this.getDefaultValue(),
+            friendsProgress: false,
+            value: this.getDefaultValue(data),
             group: 'arms',
-            week: 10,
+            week: 13,
             popoverOpen: false,
             popoverEl: '',
+            firstMount: true,
+            data,
         };
+        console.log(this.state);
         this.getDefaultValue = this.getDefaultValue.bind(this);
         this.exerciseValueChange = this.exerciseValueChange.bind(this);
         this.groupValueChange = this.groupValueChange.bind(this);
@@ -183,26 +35,36 @@ class Progress extends Component {
         this.closePopover = this.closePopover.bind(this);
     }
 
+    componentWillMount() {
+        if (this.props.friends) {
+            this.setState({ friendsProgress: true} )
+        }   
+    }
+    
+    componentDidMount() {
+        this.setState({ firstMount: false })
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.popoverOpen !== this.state.popoverOpen) {
             return true;
         }
-        if (nextState.value === this.state.value) {
+        if (nextState.value === this.state.value || nextState.firstMount === this.state.firstMount) {
             return false;
         }
         return true;
     }
 
-    getDefaultValue() {
-        const exerciseKey = Object.keys(_.get(mockData, '10.arms'));
+    getDefaultValue(data) {
+        const exerciseKey = Object.keys(_.get(data, '10.arms'));
         console.log(exerciseKey);
         return exerciseKey[0];
     }
 
     exerciseValueChange(e) {
-        const dbName = _.findKey(mockData[this.state.week][this.state.group], { fullName: e.target.innerHTML });
+        const dbName = _.findKey(this.state.data[this.state.week][this.state.group], { fullName: e.target.innerHTML });
         e.preventDefault();
-        this.setState({ value: dbName });
+        this.setState({ value: dbName, popoverOpen: false });
     }
 
     groupValueChange(e, menuObj) {
@@ -222,14 +84,14 @@ class Progress extends Component {
     render() {
         const parsedAvgs = {};
         let exerciseIndex = 0;
-        _.flatten(Object.keys(mockData)
+        _.flatten(Object.keys(this.state.data)
             .map((weekSet) => {
-                Object.keys(mockData[weekSet])
+                Object.keys(this.state.data[weekSet])
                     .map((group) => {
-                        Object.keys(mockData[weekSet][group])
+                        Object.keys(this.state.data[weekSet][group])
                             .map((exercise) => {
-                                const thisData = mockData[weekSet][group][exercise].data;
-                                const fullName = mockData[weekSet][group][exercise].fullName;
+                                const thisData = this.state.data[weekSet][group][exercise].data;
+                                const fullName = this.state.data[weekSet][group][exercise].fullName;
                                 const sum = thisData
                                     .reduce((accData, curData) => ({
                                         weight: curData.weight + accData.weight,
@@ -247,6 +109,8 @@ class Progress extends Component {
                     });
             }),
         );
+
+        console.log(parsedAvgs);
 
         const week = this.state.week;
 
@@ -271,16 +135,24 @@ class Progress extends Component {
             <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
         </div>);
 
-        const exerciseMenuList = Object.keys(mockData[week])
+        const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {
-                                        const menuItems = Object.keys(_.get(mockData, `${week}.${curGroup}`))
-                                            .map(exercise => <MenuItem onTouchTap={this.exerciseValueChange} value={exercise} primaryText={mockData[week][curGroup][exercise].fullName} />);
+                                        const menuItems = Object.keys(_.get(this.state.data, `${week}.${curGroup}`))
+                                            .map(exercise => <MenuItem onTouchTap={this.exerciseValueChange} value={exercise} primaryText={this.state.data[week][curGroup][exercise].fullName} />);
                                         return _.set(accObj, `${curGroup}`, menuItems);
                                     }, {});
+
+        let charts;
+        if (this.state.firstMount) {
+            charts = allCharts;
+        } else { charts = filteredCharts };
 
         return (
             <div>
                 <RaisedButton
+                  style={{
+                      margin: '20px'
+                  }}
                   onTouchTap={this.openPopover}
                   label="Select Workout(s)"
                 />
@@ -330,7 +202,7 @@ class Progress extends Component {
                         />
                     </Menu>
                 </Popover >
-                {filteredCharts}
+                {charts}
             </div>
         );
     }

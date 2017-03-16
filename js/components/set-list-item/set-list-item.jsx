@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import Divider from 'material-ui/Divider';
 import NumberInput from 'material-ui-number-input';
-import FlatButton from 'material-ui/FlatButton';
 
 const styles = {
     container: {
@@ -20,41 +18,35 @@ const styles = {
         marginTop: 0,
         verticalAlign: 'bottom',
     },
-    input: {
-        marginTop: 0,
-    },
-    checkbox: {
-        marginBottom: 16,
-        width: '100%',
-    },
-    divide: {
-        marginBottom: 5,
-    }
 };
 
 class SetListItem extends Component  {
     constructor(props, context) {
         super(props, context);
-            console.log(props);
             this.state = {
-                Reps: 0,
-                Weight: 0,
+                reps: 0,
+                weight: 0,
             }
             this.onNumberChange = this.onNumberChange.bind(this);
     }
 
-    onNumberChange(e) {
-        this.setState({[e.target.floatingLabelText]: e.target.value});
+    onNumberChange(e, value) {
+        this.setState({[e.target.id]: value });
+        this.props.getData({ 
+            [e.target.id]: value,
+            setNum: this.props.set,
+        })
     }
 
     render () {
-        const setNum = `Set ${this.props.set + 2}`;
+        const setNum = `Set ${this.props.set + 1}`;
         return ( 
         <div style={styles.container}>
             <div>
                 <span style={styles.name}>{setNum}</span>
                 <NumberInput
-                  value={this.state.Reps}
+                  id="reps"
+                  value={this.state.reps}
                   onChange={this.onNumberChange}
                   style={styles.numberFields}
                   inputStyle={styles.input}
@@ -63,7 +55,8 @@ class SetListItem extends Component  {
                   max={100}
                 />
                 <NumberInput
-                  value={this.state.Weight}
+                  id="weight"
+                  value={this.state.weight}
                   onChange={this.onNumberChange}
                   style={styles.numberFields}
                   inputStyle={styles.input}

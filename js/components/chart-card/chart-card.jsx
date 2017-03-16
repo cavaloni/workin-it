@@ -18,9 +18,11 @@ const styles = {
 function processChartData(type, pData) {
     console.log(pData);
     const chartData = pData.map((dataSet) => {
-        const index = pData.indexOf(dataSet);
+        console.log(dataSet.week);
+        const week = moment().week(Number(dataSet.week)).format('MMM, Do');
+        console.log(week);
         return Object.keys(dataSet).filter(datum => datum === type)
-                .map(filteredDatum => [index, dataSet[filteredDatum]]);
+                .map(filteredDatum => [week, dataSet[filteredDatum]]);
     }).reduce((acc, cur) => acc.concat(cur), []);
     const rangeData = chartData.map(datum => datum[1]);
     const range = [Math.min.apply(null, rangeData), Math.max.apply(null, rangeData)];
@@ -59,7 +61,6 @@ class ExerciseChart extends Component {
                     range[0] = range[0] * -0.25 + range[0];
                     range[1] = range[1] * 0.25 + range[1];
                     chartData.unshift(['Week', 'Weight']);
-                    console.log(range);
                     break;
                 }
             case 'reps':

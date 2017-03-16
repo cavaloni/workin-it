@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
+import Rx from 'rxjs'
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {
@@ -47,13 +49,17 @@ class WorkoutCard extends Component {
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
         this.saveData = this.saveData.bind(this);
+        this.getExerciseData = this.getExerciseData.bind(this);
         this.state = {
             itemList: [],
             chooseWorkout: false,
             listNotEmpty: false,
             sameSets: true,
             snackbarOpen: false,
+            tiggerSave: false,
+            dataToSave: [],
         };
+        this.tempDataToSave = [];
         this.workoutItem = (<WorkoutItem />);
     }
 
@@ -63,6 +69,7 @@ class WorkoutCard extends Component {
     }
 
     addWorkouts(idx) {
+        console.log(idx);
         const newArry = Array.from(this.state.itemList);
         newArry.push(idx);
         this.setState({ itemList: newArry, chooseWorkout: false, listNotEmpty: true });
@@ -73,12 +80,33 @@ class WorkoutCard extends Component {
     }
 
     saveData() {
-        this.setState({ snackbarOpen: true });
+        this.setState({ snackbarOpen: true })
+        this.setState({ triggerSave: true }, () => { this.setState({ triggerSave: false }); });
+    }
+
+    getExerciseData(exerciseData, exercise) {
+        const dataToSaveCopy = Array.from(this.tempDataToSave);
+        dataToSaveCopy.push({
+            exerciseData,
+            exercise,
+            exerciseGroup: this.props.cardType.toLowerCase(),
+        });
+        this.tempDataToSave = dataToSaveCopy;
+        console.log('this.tempDatatoSave: ', this.tempDataToSave);
+        if (this.tempDataToSave.length === this.state.itemList.length) {
+            const dataToSave = _.flatten(dataToSaveCopy)
+            this.tempDataToSave = [];
+            console.log('it would dispatch: ', dataToSave);
+            this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
+        }
+        console.log('dataToSave: ', this.state.dataToSave);
     }
 
     render() {
+        console.log(this.state.itemList);
         const workoutItemsList = this.state.itemList
-            .map(itemIndex => <WorkoutItem key={itemIndex} item={fakeworks[itemIndex]} sets={this.state.sameSets} />);
+            .map(itemIndex => <WorkoutItem triggerSave={this.state.triggerSave} key={itemIndex} item={fakeworks[itemIndex]} sets={this.state.sameSets} saved={this.getExerciseData} />);
+        console.log(workoutItemsList);
         return (
             <MuiThemeProvider>
                 <Card style={this.style.card}>
@@ -93,7 +121,7 @@ class WorkoutCard extends Component {
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
                       label="Same sets throughout"
-                      labelStyle={{right: '50px' }}
+                      labelStyle={{right: '13%' }}
                       defaultChecked={true}
                       style={styles.checkbox}
                     /> {workoutItemsList}
@@ -101,7 +129,7 @@ class WorkoutCard extends Component {
                       style={{
                           position: 'relative',
                           marginTop: 10,
-                          right: '75px',
+                          right: '19%',
                           display: 'inline-block',
                       }}
                       mini={true}
@@ -116,7 +144,7 @@ class WorkoutCard extends Component {
                         style={{
                             position: 'relative',
                             bottom: '10px',
-                            left: 75,
+                            left: '19%',
                         }}>
                     </RaisedButton>
                     <Snackbar

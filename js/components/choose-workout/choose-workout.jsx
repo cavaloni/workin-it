@@ -41,13 +41,17 @@ export default class ChooseWorkout extends React.Component {
     }
 
     handleClose() {
+        console.log(this.state.selected);
         this.setState({ open: false });
-        if (!this.state.selected) { return; }
+        if (this.state.selected === undefined) { return; }
         this.props.clicker(this.state.selected);
+        const newArry = fakeworks.map(() => false); // reset checked state
+        this.setState({ worksList: newArry });
     }
 
     handleSelect(event, menuObj, index) {
-        const newArry = fakeworks.map(() => { return false; });
+        console.log(index);
+        const newArry = fakeworks.map(() => false);
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });
     }
@@ -56,9 +60,11 @@ export default class ChooseWorkout extends React.Component {
         const actions = [<FlatButton
           label="Cancel" primary onTouchTap={this.handleClose}
         />, <FlatButton
-          label="Submit" primary keyboardFocused onTouchTap={this.handleClose}
+          label="Add" primary keyboardFocused onTouchTap={this.handleClose}
         />,
         ];
+
+        console.log(this.state.selected);
 
         const menuItems = fakeworks.map((work) => {
             const i = fakeworks.indexOf(work);
@@ -73,8 +79,6 @@ export default class ChooseWorkout extends React.Component {
                 </MenuItem>
             );
         });
-
-        console.log(menuItems);
 
         return (
             
