@@ -1,15 +1,20 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DropDownMenu from 'material-ui/DropDownMenu';
 import { Menu as Menus } from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
+import { orange500, blue500 } from 'material-ui/styles/colors';
 
 const styles = {
     radioButton: {
         marginTop: 16,
+    },
+    floatingLabelStyle: {
+        color: orange500,
+    },
+    floatingLabelFocusStyle: {
+        color: blue500,
     },
 };
 
@@ -21,13 +26,14 @@ export default class ChooseWorkout extends React.Component {
         this.handleSelect = this.handleSelect.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.customWorkoutHandler = this.customWorkoutHandler.bind(this);
         this.state = {
             selected: undefined,
             open: this.props.opener,
-            worksList: fakeworks.map(() => {
-                return false;
-            })
+            worksList: fakeworks.map(() => false),
+            customWorkout: '',
         };
+        this.customWorkout = '';
     }
 
     componentWillReceiveProps(nextProps) {
@@ -36,13 +42,22 @@ export default class ChooseWorkout extends React.Component {
         }
     }
 
+    customWorkoutHandler(e) {
+        e.preventDefault();
+        this.customWorkout = e.target.value;
+    }
+
     handleOpen() {
         this.setState({ open: true });
     }
 
     handleClose() {
-        console.log(this.state.selected);
         this.setState({ open: false });
+        if (this.customWorkout !== '') {
+            this.props.clicker(this.customWorkout);
+            this.customWorkout = '';
+            return;
+        }
         if (this.state.selected === undefined) { return; }
         this.props.clicker(this.state.selected);
         const newArry = fakeworks.map(() => false); // reset checked state
@@ -50,7 +65,6 @@ export default class ChooseWorkout extends React.Component {
     }
 
     handleSelect(event, menuObj, index) {
-        console.log(index);
         const newArry = fakeworks.map(() => false);
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });
@@ -64,38 +78,51 @@ export default class ChooseWorkout extends React.Component {
         />,
         ];
 
-        console.log(this.state.selected);
-
-        const menuItems = fakeworks.map((work) => {
-            const i = fakeworks.indexOf(work);
+        const menuItems = fakeworks.map((exercise) => {
+            const i = fakeworks.indexOf(exercise);
             return (
                 <MenuItem
                   checked={this.state.worksList[i]}
                   key={i}
                   value={`value${i + 1}`}
-                  label={`${work} ${i + 1}`}
+                  label={`${exercise} ${i + 1}`}
                   style={styles.radioButton}
-                >{work}
+                >{exercise}
                 </MenuItem>
             );
         });
 
         return (
-            
-                <Dialog
-                  autoScrollBodyContent={true}
-                  title="Select Workout"
-                  actions={actions}
-                  modal={false}
-                  open={this.state.open}
-                  onRequestClose={this.handleClose}
-                >
-                    <Menus onItemTouchTap={this.handleSelect}>
-                        {menuItems}
-                    </Menus>
-                    <TextField id="text-field-default" defaultValue="Custom Workout" />
-                </Dialog>
-            
+
+            <Dialog
+              key={1}
+              autoScrollBodyContent
+              title="Select Workout"
+              actions={actions}
+              modal={false}
+              open={this.state.open}
+              onRequestClose={this.handleClose}
+            >
+                <Menus onItemTouchTap={this.handleSelect}>
+                    {menuItems}
+                </Menus>
+                <TextField
+                  key={2}
+                  onChange={this.customWorkoutHandler}
+                  id="text-field-default"
+                  floatingLabelText="Custom Workout"
+                  floatingLabelStyle={styles.floatingLabelStyle}
+                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+                />
+            </Dialog>
+
         );
     }
 }
+
+ChooseWorkout.propTypes = {
+    // opens this selector component
+    opener: React.PropTypes.bool.isRequired,
+    // callback to send clicked workout back to parent component
+    clicker: React.PropTypes.func.isRequired,
+};

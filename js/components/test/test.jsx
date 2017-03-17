@@ -1,73 +1,79 @@
-import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
+import Dialog from 'material-ui/Dialog';
+import { deepOrange500 } from 'material-ui/styles/colors';
+import FlatButton from 'material-ui/FlatButton';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Paper from 'material-ui/Paper';
-
-/**
- * Dialog with action buttons. The actions are passed in as an array of React objects,
- * in this example [FlatButtons](/#/components/flat-button).
- *
- * You can also close this dialog by clicking outside the dialog, or with the 'Esc' key.
- */
 
 const styles = {
-  container: {
-    textAlign: 'center',
-    paddingTop: 200,
-  },
+    container: {
+        textAlign: 'center',
+        paddingTop: 200,
+    },
 };
-export default class DialogExampleSimple extends React.Component {
+
+const muiTheme = getMuiTheme({
+    palette: {
+        accent1Color: deepOrange500,
+    },
+});
+
+class Main extends Component {
     constructor(props, context) {
         super(props, context);
+
+        this.handleRequestClose = this.handleRequestClose.bind(this);
+        this.handleTouchTap = this.handleTouchTap.bind(this);
+
         this.state = {
             open: false,
         };
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
     }
 
-    handleOpen() {
-        this.setState({ open: true });
+    handleRequestClose() {
+        this.setState({
+            open: false,
+        });
     }
 
-    handleClose() {
-        this.setState({ open: false });
+    handleTouchTap() {
+        this.setState({
+            open: true,
+        });
     }
 
     render() {
-        const actions = [<FlatButton
-          label="Cancel" primary
-          onTouchTap={
-                this.handleClose
-            }
-        />, <FlatButton
-          label="Submit" primary
-          keyboardFocused
-          onTouchTap={
-                this.handleClose
-            }
-        />,
-        ];
+        const standardActions = (
+            <FlatButton
+              label="Ok"
+              primary
+              onTouchTap={this.handleRequestClose}
+            />
+    );
 
         return (
-            
-            <MuiThemeProvider>
-            <div>
-                <RaisedButton label="Dialog" onTouchTap={this.handleOpen} />
-                <Dialog
-                  title="Dialog With Actions"
-                  actions={actions}
-                  modal={false}
-                  open={this.state.open}
-                  onRequestClose={this.handleClose}
-                >
-                    The actions in this window were passed in as an array of React objects.
-                </Dialog>
+            <MuiThemeProvider muiTheme={muiTheme}>
+                <div style={styles.container}>
+                    <Dialog
+                      open={this.state.open}
+                      title="Super Secret Password"
+                      actions={standardActions}
+                      onRequestClose={this.handleRequestClose}
+                    >
+            1-2-3-4-5
+          </Dialog>
+                    <h1>Material-UI</h1>
+                    <h2>example project</h2>
+                    <RaisedButton
+                      label="Super Secret Password"
+                      secondary
+                      onTouchTap={this.handleTouchTap}
+                    />
                 </div>
-                </MuiThemeProvider>
-
+            </MuiThemeProvider>
         );
     }
 }
+
+export default Main;

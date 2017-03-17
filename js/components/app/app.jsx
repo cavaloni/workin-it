@@ -3,7 +3,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import styles from './styles.css';
 import Menu from '../menu/menu';
-import Rx from 'rxjs';
 
 injectTapEventPlugin();
 
@@ -13,7 +12,7 @@ export default class App extends Component {
     }
 
     componentWillMount() {
-        google.charts.load('current', {packages: ['corechart']});
+        google.charts.load('current', { packages: ['corechart'] });
     }
 
 

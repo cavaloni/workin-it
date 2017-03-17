@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
 import _ from 'lodash';
 import Divider from 'material-ui/Divider';
 import NumberInput from 'material-ui-number-input';
 import FlatButton from 'material-ui/FlatButton';
 import SetListItem from '../set-list-item/set-list-item';
 
+
+const items = [];
+for (let i = 1; i < 16; i++) {
+    items.push(<MenuItem value={i} key={i} primaryText={`${i} Sets`} />);
+}
 
 class WorkoutItem extends Component {
     constructor(props, context) {
@@ -31,12 +38,19 @@ class WorkoutItem extends Component {
             divide: {
                 marginBottom: 5,
             },
+            select: {
+                width: '120px',
+                display: 'inline-block',
+                marginRight: 10,
+                verticalAlign: 'bottom',
+            },
         };
-        console.log(this.styles);
+
         this.state = {
             reps: 0,
             weight: 0,
             sets: 0,
+            setsVal: 1,
             showSets: false,
             triggerSave: props.triggerSave,
             setsData: [],
@@ -46,9 +60,8 @@ class WorkoutItem extends Component {
         this.setsButton = this.setsButton.bind(this);
         this.getSetsData = this.getSetsData.bind(this);
         this.saveAll = this.saveAll.bind(this);
+        this.setSelectField = this.setSelectField.bind(this);
     }
-
-    // TODO: FlatButton to show sets keeps returning false (line 102)
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.sets === true) {
@@ -70,6 +83,10 @@ class WorkoutItem extends Component {
         });
     }
 
+    setSelectField(e, idx, value) {
+        this.setState({ sets: value, setsVal: value });
+    }
+
     setsButton(e) {
         e.preventDefault();
         if (this.state.sets !== 0) {
@@ -78,8 +95,8 @@ class WorkoutItem extends Component {
     }
 
     getSetsData(setData) {
-        const setsDataCopy = Array.from(this.state.setsData)
-        const setTypeKey = Object.keys(setData)[0]
+        const setsDataCopy = Array.from(this.state.setsData);
+        const setTypeKey = Object.keys(setData)[0];
         setsDataCopy[setData.setNum] = Object.assign({}, setsDataCopy[setData.setNum], { [setTypeKey]: setData[setTypeKey] });
         this.setState({ setsData: setsDataCopy });
     }
@@ -88,7 +105,7 @@ class WorkoutItem extends Component {
         const firstSet = {
             reps: this.state.reps,
             weight: this.state.weight,
-        }
+        };
         const setsDataCopy = Array.from(this.state.setsData);
         setsDataCopy.unshift(firstSet);
         this.props.saved(setsDataCopy, this.props.item);
@@ -129,7 +146,7 @@ class WorkoutItem extends Component {
                       style={this.styles.numberFields}
                       floatingLabelText="Reps"
                       min={1}
-                      max={100}  
+                      max={100}
                     />
                     <NumberInput
                       id="weight"
@@ -138,23 +155,34 @@ class WorkoutItem extends Component {
                       style={this.styles.numberFields}
                       floatingLabelText="Weight"
                       min={5}
-                      max={900}  
+                      max={900}
                     />
-                    <NumberInput
-                      id="sets"
-                      value={this.state.sets}
-                      onChange={this.onNumberChange}
-                      style={this.styles.numberFields}
-                      floatingLabelText="Sets"
-                      min={5}
-                      max={90}  
-                    />
+                    <SelectField
+                      value={this.state.setsVal}
+                      onChange={this.setSelectField}
+                      maxHeight={200}
+                      style={this.styles.select}
+                      hintText="Sets"
+                    >
+                        {items}
+                    </SelectField>
                 </div>
                 {setList}
-                <Divider style={this.styles.divide}  />
+                <Divider style={this.styles.divide} />
             </div>
         );
     }
 }
+
+WorkoutItem.propTypes = {
+    // how many sets the user selects
+    sets: React.PropTypes.number.isRequired,
+    // the name of the exercise
+    item: React.PropTypes.string.isRequired,
+    // boolean to start the saving process in this component and its
+    // potential set-item children
+    triggerSave: React.PropTypes.bool.isRequired,
+};
+
 
 export default WorkoutItem;

@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
-import ExerciseChart from '../chart-card/chart-card';
-import MenuItem from 'material-ui/MenuItem';
-import _ from 'lodash';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Menu from 'material-ui/Menu';
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import RaisedButton from 'material-ui/RaisedButton';
-import mockData from '../mock-data.js';
+import MenuItem from 'material-ui/MenuItem';
+import _ from 'lodash';
+import mockData from '../mock-data';
+import ExerciseChart from '../chart-card/chart-card';
 
 
 class Progress extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
         let data;
         if (props.friends !== undefined) {
             data = props.data;
@@ -27,7 +26,6 @@ class Progress extends Component {
             firstMount: true,
             data,
         };
-        console.log(this.state);
         this.getDefaultValue = this.getDefaultValue.bind(this);
         this.exerciseValueChange = this.exerciseValueChange.bind(this);
         this.groupValueChange = this.groupValueChange.bind(this);
@@ -37,19 +35,16 @@ class Progress extends Component {
 
     componentWillMount() {
         if (this.props.friends) {
-            this.setState({ friendsProgress: true} )
-        }   
-    }
-    
-    componentDidMount() {
-        this.setState({ firstMount: false })
+            this.setState({ friendsProgress: true, firstMount: false });
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.popoverOpen !== this.state.popoverOpen) {
             return true;
         }
-        if (nextState.value === this.state.value || nextState.firstMount === this.state.firstMount) {
+        if (nextState.value === this.state.value ||
+            nextState.firstMount === this.state.firstMount) {
             return false;
         }
         return true;
@@ -62,7 +57,8 @@ class Progress extends Component {
     }
 
     exerciseValueChange(e) {
-        const dbName = _.findKey(this.state.data[this.state.week][this.state.group], { fullName: e.target.innerHTML });
+        const dbName = _.findKey(this.state.data[this.state.week][this.state.group],
+            { fullName: e.target.innerHTML });
         e.preventDefault();
         this.setState({ value: dbName, popoverOpen: false });
     }
@@ -110,8 +106,6 @@ class Progress extends Component {
             }),
         );
 
-        console.log(parsedAvgs);
-
         const week = this.state.week;
 
         const allCharts = _.flatten(Object.keys(parsedAvgs)
@@ -138,20 +132,25 @@ class Progress extends Component {
         const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {
                                         const menuItems = Object.keys(_.get(this.state.data, `${week}.${curGroup}`))
-                                            .map(exercise => <MenuItem onTouchTap={this.exerciseValueChange} value={exercise} primaryText={this.state.data[week][curGroup][exercise].fullName} />);
+                                            .map(exercise =>
+                                                <MenuItem
+                                                  onTouchTap={this.exerciseValueChange}
+                                                  value={exercise}
+                                                  primaryText={this.state.data[week][curGroup][exercise].fullName}
+                                                />);
                                         return _.set(accObj, `${curGroup}`, menuItems);
                                     }, {});
 
         let charts;
         if (this.state.firstMount) {
             charts = allCharts;
-        } else { charts = filteredCharts };
+        } else { charts = filteredCharts; }
 
         return (
             <div>
                 <RaisedButton
                   style={{
-                      margin: '20px'
+                      margin: '20px',
                   }}
                   onTouchTap={this.openPopover}
                   label="Select Workout(s)"
@@ -207,5 +206,15 @@ class Progress extends Component {
         );
     }
 }
+
+Progress.propTypes = {
+    // sets up component to work with friend's data
+    friends: React.PropTypes.bool.isRequired,
+    // users data in form of week, reps, sets, weight
+    data: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number,
+    ]).isRequired,
+};
 
 export default Progress;

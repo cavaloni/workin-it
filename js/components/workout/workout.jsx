@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import WorkoutCard from '../workout-card/workout-card';
-import Main from '../test/test';
 
 class Workout extends Component {
     render() {

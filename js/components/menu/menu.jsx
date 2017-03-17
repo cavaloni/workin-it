@@ -21,7 +21,7 @@ class Menu extends Component {
             .bind(this);
     }
 
-    menuOpen(e) {
+    menuOpen() {
         console.log(this.state);
         this.setState({
             open: !this.state.open,
@@ -44,7 +44,7 @@ class Menu extends Component {
     render() {
         return (
             <div>
-                <AppBar title="Workin It" onLeftIconButtonTouchTap={this.menuOpen}  />
+                <AppBar title="Workin It" onLeftIconButtonTouchTap={this.menuOpen} />
                 <Drawer
                   open={this.state.open}
                   docked={false}

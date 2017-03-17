@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Chart } from 'react-google-charts';
 import Paper from 'material-ui/Paper';
 import moment from 'moment';
 import ReactDom from 'react-dom';
@@ -16,11 +15,8 @@ const styles = {
 };
 
 function processChartData(type, pData) {
-    console.log(pData);
     const chartData = pData.map((dataSet) => {
-        console.log(dataSet.week);
         const week = moment().week(Number(dataSet.week)).format('MMM, Do');
-        console.log(week);
         return Object.keys(dataSet).filter(datum => datum === type)
                 .map(filteredDatum => [week, dataSet[filteredDatum]]);
     }).reduce((acc, cur) => acc.concat(cur), []);
@@ -58,8 +54,8 @@ class ExerciseChart extends Component {
                 {
                     title = `Weights in ${this.props.exercise} ${week}`;
                     ({ chartData, range } = processChartData('weight', this.props.data));
-                    range[0] = range[0] * -0.25 + range[0];
-                    range[1] = range[1] * 0.25 + range[1];
+                    range[0] = (range[0] * -0.25) + range[0];
+                    range[1] = (range[1] * 0.25) + range[1];
                     chartData.unshift(['Week', 'Weight']);
                     break;
                 }
@@ -67,14 +63,13 @@ class ExerciseChart extends Component {
                 {
                     title = `Reps in ${this.props.exercise} ${week}`;
                     ({ chartData, range } = processChartData('reps', this.props.data));
-                    range[0] = range[0] * -0.25 + range[0];
-                    range[1] = range[1] * 0.25 + range[1];
+                    range[0] = (range[0] * -0.25) + range[0];
+                    range[1] = (range[1] * 0.25) + range[1];
                     chartData.unshift(['Week', 'Reps']);
                     break;
                 }
         }
 
-        console.log(chartData);
         const options = {
             title,
             curveType: 'function',
@@ -112,4 +107,20 @@ class ExerciseChart extends Component {
         );
     }
 }
+
+ExerciseChart.propTypes = {
+    // how many sets the user selects
+    week: React.PropTypes.number.isRequired,
+    // the name of the exercise
+    type: React.PropTypes.string.isRequired,
+    // boolean to start the saving process in this component and its
+    // potential set-item children
+    data: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number,
+    ]).isRequired,
+    // name of the exercise
+    exercise: React.PropTypes.string.isRequired,
+};
+
 export default ExerciseChart;

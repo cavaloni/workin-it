@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import Rx from 'rxjs'
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    CardTitle,
-    CardText,
-} from 'material-ui/Card';
+import { Card, CardHeader } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
@@ -63,27 +55,6 @@ class WorkoutCard extends Component {
         this.workoutItem = (<WorkoutItem />);
     }
 
-    openWorkoutChooser(e) {
-        e.preventDefault();
-        this.setState({ chooseWorkout: true });
-    }
-
-    addWorkouts(idx) {
-        console.log(idx);
-        const newArry = Array.from(this.state.itemList);
-        newArry.push(idx);
-        this.setState({ itemList: newArry, chooseWorkout: false, listNotEmpty: true });
-    }
-
-    sameSetsCheck(e, checked) {
-        this.setState({ sameSets: checked });
-    }
-
-    saveData() {
-        this.setState({ snackbarOpen: true })
-        this.setState({ triggerSave: true }, () => { this.setState({ triggerSave: false }); });
-    }
-
     getExerciseData(exerciseData, exercise) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
         dataToSaveCopy.push({
@@ -92,21 +63,49 @@ class WorkoutCard extends Component {
             exerciseGroup: this.props.cardType.toLowerCase(),
         });
         this.tempDataToSave = dataToSaveCopy;
-        console.log('this.tempDatatoSave: ', this.tempDataToSave);
         if (this.tempDataToSave.length === this.state.itemList.length) {
-            const dataToSave = _.flatten(dataToSaveCopy)
+            const dataToSave = _.flatten(dataToSaveCopy);
             this.tempDataToSave = [];
             console.log('it would dispatch: ', dataToSave);
             this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
         }
-        console.log('dataToSave: ', this.state.dataToSave);
+    }
+
+    sameSetsCheck(e, checked) {
+        this.setState({ sameSets: checked });
+    }
+
+    addWorkouts(value) {
+        let idx;
+        if (typeof (value) === 'string') {
+            fakeworks.push(value);
+            idx = fakeworks.indexOf(value);
+        } else { idx = value; }
+        const newArry = Array.from(this.state.itemList);
+        newArry.push(idx);
+        this.setState({ itemList: newArry, chooseWorkout: false, listNotEmpty: true });
+    }
+
+    saveData() {
+        this.setState({ snackbarOpen: true });
+        this.setState({ triggerSave: true }, () => { this.setState({ triggerSave: false }); });
+    }
+
+    openWorkoutChooser(e) {
+        e.preventDefault();
+        this.setState({ chooseWorkout: true });
     }
 
     render() {
-        console.log(this.state.itemList);
         const workoutItemsList = this.state.itemList
-            .map(itemIndex => <WorkoutItem triggerSave={this.state.triggerSave} key={itemIndex} item={fakeworks[itemIndex]} sets={this.state.sameSets} saved={this.getExerciseData} />);
-        console.log(workoutItemsList);
+            .map(itemIndex =>
+                <WorkoutItem
+                  triggerSave={this.state.triggerSave}
+                  key={itemIndex}
+                  item={fakeworks[itemIndex]}
+                  sets={this.state.sameSets}
+                  saved={this.getExerciseData}
+                />);
         return (
             <MuiThemeProvider>
                 <Card style={this.style.card}>
@@ -121,8 +120,8 @@ class WorkoutCard extends Component {
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
                       label="Same sets throughout"
-                      labelStyle={{right: '13%' }}
-                      defaultChecked={true}
+                      labelStyle={{ right: '13%' }}
+                      defaultChecked
                       style={styles.checkbox}
                     /> {workoutItemsList}
                     <FloatingActionButton
@@ -132,31 +131,36 @@ class WorkoutCard extends Component {
                           right: '19%',
                           display: 'inline-block',
                       }}
-                      mini={true}
+                      mini
                       onClick={this.openWorkoutChooser}
-                      
-                    > <ContentAdd /> 
-                    </ FloatingActionButton>
-                    <RaisedButton 
-                        disabled={!this.state.listNotEmpty}
-                        label="Save"
-                        onClick={this.saveData}
-                        style={{
-                            position: 'relative',
-                            bottom: '10px',
-                            left: '19%',
-                        }}>
-                    </RaisedButton>
+
+                    > <ContentAdd />
+                    </FloatingActionButton>
+                    <RaisedButton
+                      disabled={!this.state.listNotEmpty}
+                      label="Save"
+                      onClick={this.saveData}
+                      style={{
+                          position: 'relative',
+                          bottom: '10px',
+                          left: '19%',
+                      }}
+                    />
                     <Snackbar
-                        open={this.state.snackbarOpen}
-                        message="Saved"
-                        autoHideDuration={4000}
-                        onRequestClose={this.handleRequestClose}
+                      open={this.state.snackbarOpen}
+                      message="Saved"
+                      autoHideDuration={4000}
+                      onRequestClose={this.handleRequestClose}
                     />
                 </Card>
             </MuiThemeProvider>
         );
     }
 }
+
+WorkoutCard.propTypes = {
+    // determines the exercise group card type(arms, chest, etc)
+    cardType: React.PropTypes.string.isRequired,
+};
 
 export default WorkoutCard;

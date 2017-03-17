@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Radium from 'radium';
 import { browserHistory } from 'react-router';
@@ -52,26 +52,46 @@ class Home extends Component {
     }
 
     workoutRoute(e) {
-        console.log(e.currentTarget);
-        browserHistory.push('/1')
+        e.preventDefault();
+        browserHistory.push('/1');
     }
 
-    progressRoute() {
-        browserHistory.push('/2')
+    progressRoute(e) {
+        e.preventDefault();
+        browserHistory.push('/2');
     }
-
-    //TODO: wrap paper in Link
 
     render() {
         return (
             <div>
-                <Paper style={style.workouts} key="1" zDepth={3} circle={true} onClick={this.workoutRoute}>
+                <Paper
+                  style={style.workouts}
+                  key="1"
+                  zDepth={3}
+                  circle
+                  onClick={this.workoutRoute}
+                >
                     <span style={style.span}>Workouts</span>
-                    <img style={style.image} key="1" src="../../../assets/barbell.png" />
+                    <img
+                      alt="barbell"
+                      style={style.image}
+                      key="1"
+                      src="../../../assets/barbell.png"
+                    />
                 </Paper>
-                <Paper style={style.progress} key="2" zDepth={3} circle={true} onClick={this.progressRoute}>
+                <Paper
+                  style={style.progress}
+                  key="2" zDepth={3}
+                  circle
+                  onClick={this.progressRoute}
+                >
                     <span style={style.span}>Progress</span>
-                    <img style={style.image} key="1" src="../../../assets/barbell.png" />
+                    <img
+                      alt="barbell"
+                      style={style.image}
+                      key="1"
+                      src="../../../assets/barbell.png"
+                    />
                 </Paper>
             </div>
         );
