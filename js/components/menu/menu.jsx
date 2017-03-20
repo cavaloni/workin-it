@@ -37,7 +37,7 @@ class Menu extends Component {
         if (index === 0) {
             route = '';
         } else (route = index);
-        browserHistory.push(`/${route}`);
+        browserHistory.push(`/app/${route}`);
         this.setState({ open: false });
     }
 

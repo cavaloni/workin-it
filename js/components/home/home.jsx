@@ -53,12 +53,12 @@ class Home extends Component {
 
     workoutRoute(e) {
         e.preventDefault();
-        browserHistory.push('/1');
+        browserHistory.push('/app/1');
     }
 
     progressRoute(e) {
         e.preventDefault();
-        browserHistory.push('/2');
+        browserHistory.push('/app/2');
     }
 
     render() {

@@ -1,11 +1,9 @@
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
-import { reducer as burgerMenu } from 'redux-burger-menu';
 import * as reducers from './reducers/index';
 
 const importedReducers = {
     reducers,
-    burgerMenu,
 };
 
 const allReducers = combineReducers(importedReducers);

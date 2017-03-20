@@ -11,17 +11,20 @@ import Workout from './components/workout/workout';
 import Home from './components/home/home';
 import Progress from './components/progress/progress';
 import Friends from './components/friends/friends';
+import Login from './components/login/login';
 
 require('babel-polyfill');
 
 document.addEventListener('DOMContentLoaded', () => ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
-            <Route path="/" component={App}>
-                <IndexRoute path="/" component={Home} />
-                <Route path="/1" component={Workout} />
-                <Route path="/2" component={Progress} />
-                <Route path="/3" component={Friends} />
+            <Route path="/" component={Login} />
+            <Route path="/app" component={App}>
+                <IndexRoute path="/app" component={Home} />
+                <Route path="/app/1" component={Workout} />
+                <Route path="/app/2" props={{ friends: false }}component={Progress} />
+                <Route path="/app/3" component={Friends} />
             </Route>
+            
         </Router>
     </Provider>, document.getElementById('app')));

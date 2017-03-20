@@ -12,31 +12,16 @@ import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
 import Progress from '../progress/progress';
 import mockData from '../mock-data';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import AutoComplete from 'material-ui/AutoComplete';
+import Snackbar from 'material-ui/Snackbar';
+import { Observable } from 'rxjs/Rx';
+import RaisedButton from 'material-ui/RaisedButton';
+import ReactDOM from 'react-dom';
 
 
 const SelectableList = makeSelectable(List);
-
-const iconButtonElement = (
-    <IconButton
-      touch
-      tooltip="more"
-      tooltipPosition="bottom-left"
-    >
-        <MoreVertIcon color={grey400} />
-    </IconButton>
-);
-
-const rightIconMenuPending = (
-    <IconMenu iconButtonElement={iconButtonElement}>
-        <MenuItem>Cancel Request</MenuItem>
-    </IconMenu>
-);
-
-const rightIconMenu = (
-    <IconMenu iconButtonElement={iconButtonElement}>
-        <MenuItem>Cancel Request</MenuItem>
-    </IconMenu>
-);
 
 const fakePeople = [
     {
@@ -61,6 +46,8 @@ const fakePeople = [
     },
 ];
 
+const newNames = ['Bart', 'Crapply', 'nomad', 'biddle woop woop', 'shizface'];
+
 const style = {
     paper: {
         width: '45%',
@@ -77,15 +64,62 @@ class Friends extends Component {
         super(props);
         this.state = {
             selectedFriend: undefined,
+            deleteVerifyOpen: false,
+            friendToDeleteIndex: undefined,
+            snackBarOpen: false,
         };
         this.handleFriendSelect = this.handleFriendSelect.bind(this);
+        this.deleteFriendModal = this.deleteFriendModal.bind(this);
+        this.handleModalClose = this.handleModalClose.bind(this);
+        this.deleteFriend = this.deleteFriend.bind(this);
     }
 
     handleFriendSelect(event) {
         this.setState({ selectedFriend: event.target.innerHTML });
     }
 
+    handleModalClose() {
+        this.setState({ deleteVerifyOpen: false });
+    }
+
+    deleteFriendModal(e, i) {
+        console.log(i);
+        this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id });
+    }
+
+    deleteFriend() {
+        console.log('it will delete: ', this.state.friendToDeleteIndex);
+        this.setState({ deleteVerifyOpen: false, snackBarOpen: true });
+        Observable.interval(3000)
+            .subscribe(() => this.setState({ snackBarOpen: false }));
+        // this.props.dispatch(actions.deletefriend())
+    }
+
     render() {
+        const iconButtonElement = (
+            <IconButton
+              touch
+              tooltip="more"
+              tooltipPosition="bottom-left"
+              onClick={e => e.stopPropagation()}
+            >
+                <MoreVertIcon color={grey400} />
+            </IconButton>
+);
+
+        const actions = [
+            <FlatButton
+              label="Cancel"
+              primary
+              onTouchTap={this.handleModalClose}
+            />,
+            <FlatButton
+              label="Delete"
+              primary
+              onTouchTap={this.deleteFriend}
+            />,
+        ];
+
         let progress;
         if (this.state.selectedFriend) {
             progress = (
@@ -96,14 +130,19 @@ class Friends extends Component {
                 />);
         } else { progress = <div />; }
 
-        const friendsList = fakePeople.map(friend =>
-            <ListItem
+        const friendsList = fakePeople.map((friend) => {
+            const num = fakePeople.indexOf(friend);
+            return (<ListItem
               value={friend.name}
               primaryText={friend.name}
               leftAvatar={<Avatar src={friend.avatar} />}
               onClick={this.handleFriendSelect}
-              rightIconButton={rightIconMenu}
+              rightIconButton={
+                  <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
+                      <MenuItem id={num} >Delete Friend</MenuItem>
+                  </IconMenu>}
             />);
+        });
         const newFriendsList = fakePeople.map(friend =>
             <ListItem
               value={friend.name}
@@ -112,16 +151,39 @@ class Friends extends Component {
               rightIcon={<FiberNew />}
               onClick={this.handleFriendSelect}
             />);
-        const pendingFriendInvites = fakePeople.map(friend =>
-            <ListItem
+        const pendingFriendInvites = fakePeople.map((friend) => {
+            const num = fakePeople.indexOf(friend);
+            return (<ListItem
               value={friend.name}
               primaryText={friend.name}
               leftAvatar={<Avatar src={friend.avatar} />}
-              rightIconButton={rightIconMenuPending}
+              rightIconButton={
+                  <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
+                      <MenuItem id={num} onTouchTap={this.deleteFriendModal}>Cancel Friend Request</MenuItem>
+                  </IconMenu>
+              }
             />);
+        });
         return (
             <div>
+                <Dialog
+                  title="Dialog With Actions"
+                  actions={actions}
+                  modal
+                  open={this.state.deleteVerifyOpen}
+                >
+          Only actions can close this dialog.
+                    </Dialog>
                 <h3>View Freinds Progress</h3>
+                <Paper style={{ marginBottom: 30 }}>
+                    <AutoComplete
+                      floatingLabelText="Send New Friend Request"
+                      filter={AutoComplete.fuzzyFilter}
+                      dataSource={newNames}
+                      fullWidth
+                      maxSearchResults={5}
+                    />
+                </Paper>
                 <Paper style={style.paper}>
                     <SelectableList
                       value={this.state.selectedFriend}
@@ -143,6 +205,12 @@ class Friends extends Component {
                     </SelectableList>
                 </Paper>
                 {progress}
+                <Snackbar
+                  open={this.state.snackBarOpen}
+                  message="Deleted"
+                  autoHideDuration={4000}
+                  onRequestClose={this.handleRequestClose}
+                />
             </div>
         );
     }

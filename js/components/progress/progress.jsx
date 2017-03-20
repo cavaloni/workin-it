@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
+import Divider from 'material-ui/Divider';
 import Menu from 'material-ui/Menu';
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -17,13 +18,14 @@ class Progress extends Component {
             data = props.data;
         } else { data = mockData; }
         this.state = {
-            friendsProgress: false,
+            friendsProgress: this.props.friends,
             value: this.getDefaultValue(data),
-            group: 'arms',
+            group: 'all',
             week: 13,
             popoverOpen: false,
             popoverEl: '',
             firstMount: true,
+            groupRender: false,
             data,
         };
         this.getDefaultValue = this.getDefaultValue.bind(this);
@@ -31,12 +33,12 @@ class Progress extends Component {
         this.groupValueChange = this.groupValueChange.bind(this);
         this.openPopover = this.openPopover.bind(this);
         this.closePopover = this.closePopover.bind(this);
+        this.groupSelect = this.groupSelect.bind(this);
+        // this.filterCharts = this.filterCharts.bind(this.render);
     }
 
-    componentWillMount() {
-        if (this.props.friends) {
-            this.setState({ friendsProgress: true, firstMount: false });
-        }
+    componentDidMount() {
+        this.setState({ firstMount: false });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -45,6 +47,10 @@ class Progress extends Component {
         }
         if (nextState.value === this.state.value ||
             nextState.firstMount === this.state.firstMount) {
+            return false;
+        }
+        if (nextState.group !== this.state.group && nextState.groupRender === false
+            && nextState.popoverOpen === this.state.popoverOpen) {
             return false;
         }
         return true;
@@ -56,16 +62,21 @@ class Progress extends Component {
         return exerciseKey[0];
     }
 
+    groupSelect(e) {
+        e.preventDefault();
+        this.setState({ group: e.target.innerHTML.toLowerCase(), popoverOpen: false, groupRender: true });
+    }
+
     exerciseValueChange(e) {
+        e.preventDefault();
         const dbName = _.findKey(this.state.data[this.state.week][this.state.group],
             { fullName: e.target.innerHTML });
-        e.preventDefault();
-        this.setState({ value: dbName, popoverOpen: false });
+        this.setState({ value: dbName, popoverOpen: false, groupRender: false });
     }
 
     groupValueChange(e, menuObj) {
         e.preventDefault();
-        this.setState({ group: menuObj.props.value });
+        this.setState({ group: menuObj.props.value, groupRender: false });
     }
 
     openPopover(e) {
@@ -76,6 +87,23 @@ class Progress extends Component {
     closePopover() {
         this.setState({ popoverOpen: false });
     }
+
+    // filterCharts(group, selectedExercise) {
+    //     if (!selectedExercise) {
+    //         return (
+    //             Object.keys(this.state.data[this.state.week][group])
+    //                 .map(exercise =>
+    //                     <div>
+    //                         <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][exercise]} />
+    //                         <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][exercise]} />
+    //                     </div>)
+    //         );
+    //     }
+    //     return (<div>
+    //         <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][selectedExercise]} />
+    //         <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
+    //     </div>);
+    // }
 
     render() {
         const parsedAvgs = {};
@@ -122,12 +150,35 @@ class Progress extends Component {
 
         const group = this.state.group;
         const selectedExercise = this.state.value;
-        const name = parsedAvgs[group][selectedExercise].fullName;
 
-        const filteredCharts = (<div>
-            <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][selectedExercise]} />
-            <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
-        </div>);
+        let filteredCharts;
+
+        if (this.state.group === 'all') {
+            filteredCharts = undefined;
+        } else if (this.state.groupRender) {
+            filteredCharts = Object.keys(this.state.data[week][group])
+                    .map((exercise) => {
+                        const name = parsedAvgs[group][exercise].fullName;
+                        return (
+                            <div>
+                                <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][exercise]} />
+                                <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][exercise]} />
+                            </div>);
+                    });
+        } else {
+            console.log(group);
+            console.log(selectedExercise);
+            const name = parsedAvgs[group][selectedExercise].fullName;
+            filteredCharts = (<div>
+                <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][selectedExercise]} />
+                <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
+            </div>);
+        }
+
+        // const filteredCharts = (<div>
+        //     <ExerciseChart exercise={name} week={week} name={`${name} Weights`} type="weights" data={parsedAvgs[group][selectedExercise]} />
+        //     <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
+        // </div>);
 
         const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {
@@ -141,8 +192,23 @@ class Progress extends Component {
                                         return _.set(accObj, `${curGroup}`, menuItems);
                                     }, {});
 
+        exerciseMenuList.group = Object.keys(this.state.data[week])
+                                .map(exerciseGroup =>
+                                    <MenuItem
+                                      onTouchTap={this.groupSelect}
+                                      value={exerciseGroup}
+                                      primaryText={_.capitalize(exerciseGroup)}
+                                    />,
+                                );
+        exerciseMenuList.group.push(
+            <MenuItem
+              onTouchTap={this.groupSelect}
+              value="All"
+              primaryText="All"
+            />);
+
         let charts;
-        if (this.state.firstMount) {
+        if (this.state.group === 'all') {
             charts = allCharts;
         } else { charts = filteredCharts; }
 
@@ -164,6 +230,12 @@ class Progress extends Component {
                   animation={PopoverAnimationVertical}
                 >
                     <Menu value={this.state.value} onItemTouchTap={this.groupValueChange} >
+                        <MenuItem
+                          value={'groups'} primaryText="Groups"
+                          menuItems={exerciseMenuList.group}
+                          rightIcon={<ArrowDropRight />}
+                        />
+                        <Divider />
                         <MenuItem
                           value={'arms'} primaryText="Arms"
                           menuItems={exerciseMenuList.arms}
