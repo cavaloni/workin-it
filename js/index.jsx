@@ -12,19 +12,22 @@ import Home from './components/home/home';
 import Progress from './components/progress/progress';
 import Friends from './components/friends/friends';
 import Login from './components/login/login';
+import Auth from './components/auth/auth';
 
 require('babel-polyfill');
+
+// TODO: implment onEnter to protect all endpoints
 
 document.addEventListener('DOMContentLoaded', () => ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path="/" component={Login} />
+            <Route path="/auth/:initToken" component={Auth} />
             <Route path="/app" component={App}>
-                <IndexRoute path="/app" component={Home} />
+                <IndexRoute path="/app" component={Home} />                
                 <Route path="/app/1" component={Workout} />
                 <Route path="/app/2" props={{ friends: false }}component={Progress} />
                 <Route path="/app/3" component={Friends} />
             </Route>
-            
         </Router>
     </Provider>, document.getElementById('app')));

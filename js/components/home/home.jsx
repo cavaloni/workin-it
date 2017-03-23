@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Radium from 'radium';
 import { browserHistory } from 'react-router';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/index';
 
 const style = {
     workouts: {
@@ -47,9 +50,20 @@ const style = {
 class Home extends Component {
     constructor(props, context) {
         super(props, context);
+        console.log(props);
+        console.log(props.params);
+        console.log(props.params.jwToken);
         this.workoutRoute = this.workoutRoute.bind(this);
         this.progressRoute = this.progressRoute.bind(this);
     }
+
+    
+    componentWillMount() {
+        if (this.props.params.jwToken) {
+            this.props.dispatch(actions.setUserToken());
+        }
+    }
+    
 
     workoutRoute(e) {
         e.preventDefault();
@@ -98,4 +112,9 @@ class Home extends Component {
     }
 }
 
-export default Radium(Home);
+const enhance = compose(
+  connect(),
+  Radium(),
+);
+
+export default enhance(Home);

@@ -3,16 +3,20 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import styles from './styles.css';
 import Menu from '../menu/menu';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/index';
 
 injectTapEventPlugin();
 
-export default class App extends Component {
+class App extends Component {
     constructor(props) {
         super(props);
     }
 
     componentWillMount() {
+        console.log(actions);
         google.charts.load('current', { packages: ['corechart'] });
+        // this.props.dispatch(actions.sendToken(localStorage.getItem('id_token')));
     }
 
 
@@ -29,3 +33,6 @@ export default class App extends Component {
 }
 
 // App.propTypes = {   children: React.PropTypes.node.isRequired, };
+
+
+export default connect()(App);
