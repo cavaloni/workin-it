@@ -8,14 +8,14 @@ const importedReducers = {
 
 const allReducers = combineReducers(importedReducers);
 
-let win;
+// let win;
 
-if (window === undefined) {
-    win = {};
-} else { win = window; }
+// if (window === undefined) {
+//     win = {};
+// } else { win = window; }
 
 
 
-const composeEnhancers = win.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const enhancers = composeEnhancers(applyMiddleware(thunk));
-export default createStore(allReducers, enhancers);
+export default createStore(reducers.appReducer, enhancers);

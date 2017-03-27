@@ -10,11 +10,20 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const eJwt = require('express-jwt');
 const shortid = require('shortid');
+const { router: exerciseDataRouter } = require('./exercise_router/ex_router');
+const { router: userRouter } = require('./user_router/user_router');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+var JsonCircular = require('json-circular');
+var codein = require("node-codein");
+
+
+// TODO: So the user is not being attached to req 
 
 const blacklist = { // this object is to keep the inital temporary tokens
-    tokens: [0],    // blacklisted, since they are sent in the url
-    getRevokedToken(tokenId, cb) { // the newToken below, is sent in a more secure way 
-        this.tokens.forEach((curToken) => { // and so is not limited to the session
+    tokens: [0],    // blacklisted, since they are sent in the url.
+    getRevokedToken(tokenId, cb) { // The newToken below, is sent in a more secure way
+        this.tokens.forEach((curToken) => { // and so is not limited to the session.
             if (curToken === tokenId) {
                 return cb(null, true);
             }
@@ -46,16 +55,12 @@ app.use(express.static(`${process.env.PWD}/build`));
 passport.use(new Strategy({
     clientID: '266134167169182',
     clientSecret: '636f0c825d31af79085033dc03a58a43',
-    callbackURL: 'http://localhost:8081/login/facebook/return',
+    callbackURL: 'http://localhost:8081/user/init_profile',
+    profileFields: ['picture', 'first_name', 'last_name'],
 },
   (accessToken, refreshToken, profile, cb) => {
-    // In this example, the user's Facebook profile is supplied as the user
-    // record.  In a production-quality application, the Facebook profile should
-    // be associated with a user record in the application's database, which
-    // allows for account linking and authentication with other identity
-    // providers.
       profile.token = jwt.sign(profile, 'funky smell', {
-          expiresIn: 10080,
+          expiresIn: 10,
           jwtid: shortid.generate(),
       });
       cb(null, profile);
@@ -69,13 +74,13 @@ passport.deserializeUser((obj, cb) => {
     cb(null, obj);
 });
 
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        console.log('***********AUTHORIZED');
-        return next();
-    }
-    console.log('~~~~not authenticated~~~~~');
-};
+// const isAuthenticated = (req, res, next) => {
+//     if (req.isAuthenticated()) {
+//         console.log('***********AUTHORIZED');
+//         return next();
+//     }
+//     console.log('~~~~not authenticated~~~~~');
+// };
 
 // app.use(morgan('combined'));
 app.use(cookieParser());
@@ -86,6 +91,9 @@ app.use(cors());
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/exercise_data', exerciseDataRouter);
+app.use('/user', userRouter);
 
 app.get('/', (request, response) => {
     response.sendFile(`${process.env.PWD}/build/index.html`);
@@ -102,46 +110,33 @@ app.get('/new_token',
     }),
     (req, res) => {
         const newToken = jwt.sign(
-            { foo: 'bar' },
+            { user: req.user.id },
             'super stank',
             { expiresIn: '7 days' });
         res.json({ newToken });
     });
 
 app.get('/login/facebook',
-   passport.authenticate('facebook'),
+   passport.authenticate('facebook', { scope: 'public_profile' }),
 );
 
 app.get('/init_token', (req, res) => {
     res.redirect(`/auth/${req.user.token}`);
 });
 
-app.get('/failed_auth', (req, res) => {
-    res.json({ failed: 'failed' });
-});
-
 app.get('/verify_auth',
     eJwt({ secret: 'super stank',
         getToken: function fromQuery(req) { return req.headers.token; },
+        requestProperty: 'auth',
     }),
     (req, res) => {
-        res.sendStatus(201);
-});
-
-app.get('/login/facebook/return',
-  passport.authenticate('facebook', { failureRedirect: '/failed_auth' }),
-                                      (req, res) => {
-                                          res.redirect('/init_token');
-                                      });
-
-app.get('*',
-    // eJwt({ secret: 'super stank' }),
-    (request, response) => {
-        console.log('line 103');
-        response.sendFile(`${process.env.PWD}/build/index.html`);
+        res.send(201);
     });
 
-// TODO: implment express-jwt to protect all endpoints
+app.get('*',
+    (request, response) => {
+        response.sendFile(`${process.env.PWD}/build/index.html`);
+    });
 
 let server;
 

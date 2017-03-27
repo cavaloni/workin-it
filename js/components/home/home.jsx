@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Radium from 'radium';
+import Avatar from 'material-ui/Avatar';
+import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
 import { browserHistory } from 'react-router';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/index';
+
 
 const style = {
     workouts: {
@@ -50,20 +54,19 @@ const style = {
 class Home extends Component {
     constructor(props, context) {
         super(props, context);
-        console.log(props);
-        console.log(props.params);
-        console.log(props.params.jwToken);
         this.workoutRoute = this.workoutRoute.bind(this);
         this.progressRoute = this.progressRoute.bind(this);
     }
 
-    
+
     componentWillMount() {
         if (this.props.params.jwToken) {
             this.props.dispatch(actions.setUserToken());
         }
+        console.log('this happened at home');
+        this.props.dispatch(actions.setUserProfile());
     }
-    
+
 
     workoutRoute(e) {
         e.preventDefault();
@@ -78,6 +81,16 @@ class Home extends Component {
     render() {
         return (
             <div>
+                <List>
+                    <ListItem
+                      disabled
+                      leftAvatar={
+                          <Avatar src={this.props.profileData.profileImage} />
+                        }
+                    >
+                    Hello {this.props.profileData.user}!
+                    </ListItem>
+                </List>
                 <Paper
                   style={style.workouts}
                   key="1"
@@ -112,8 +125,10 @@ class Home extends Component {
     }
 }
 
+const mapStateToProps = (state, props) => ({ profileData: state.userData });
+
 const enhance = compose(
-  connect(),
+  connect(mapStateToProps),
   Radium(),
 );
 

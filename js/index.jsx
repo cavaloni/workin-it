@@ -1,5 +1,6 @@
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 import { Provider } from 'react-redux';
+import Rx from 'rxjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
@@ -18,13 +19,31 @@ require('babel-polyfill');
 
 // TODO: implment onEnter to protect all endpoints
 
+function requireAuth(nextState, replace) {
+    const token = localStorage.getItem('wi_id_token');
+    Rx.Observable.ajax({
+        headers: {
+            token,
+        },
+        url: 'verify_auth',
+    })
+        .subscribe((response) => {
+            console.log(response);
+            if (response.status !== 201) {
+                replace({
+                    pathname: '/',
+                });
+            }
+        });
+}
+
 document.addEventListener('DOMContentLoaded', () => ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path="/" component={Login} />
             <Route path="/auth/:initToken" component={Auth} />
-            <Route path="/app" component={App}>
-                <IndexRoute path="/app" component={Home} />                
+            <Route path="/app" component={App} onEnter={requireAuth} >
+                <IndexRoute path="/app" component={Home} />
                 <Route path="/app/1" component={Workout} />
                 <Route path="/app/2" props={{ friends: false }}component={Progress} />
                 <Route path="/app/3" component={Friends} />

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/index';
 import { browserHistory } from 'react-router';
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
+
+const O = Observable;
 
 class Login extends Component {
     constructor(props) {
@@ -12,19 +14,27 @@ class Login extends Component {
     }
 
     componentWillMount() {
-        const token = localStorage.getItem('wi_id_token');
-        console.log(token);
-        Rx.Observable.ajax({
+        const getToken = O.of(localStorage.getItem('wi_id_token'));
+        const verifyAuth = tk => O.ajax({
             headers: {
-                token,
+                token: tk,
             },
             url: 'verify_auth',
-        })
-        .subscribe((response) => {
-            if (response.status === 201) {
-                browserHistory.push('/app');
-            }
         });
+
+        getToken
+            .map((tkn) => {
+                return verifyAuth(tkn);
+            })
+            .concatAll()
+            .subscribe((response) => {
+                if (response.status === 201) {
+                    browserHistory.push('/app');
+                }
+            },
+        ((err) => {
+            console.log(err);
+        }));
     }
 
     justGetIn() {

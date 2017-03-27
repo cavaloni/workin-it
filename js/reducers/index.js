@@ -4,10 +4,9 @@ const initialState = {
 
 export const appReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'FETCH_SUCCESS': {
-            console.log(action.results);
+        case 'PROFILE_FETCH_SUCCESS': {
             return {
-                userData: action.results,
+                userData: action.profile,
             };
         }
         default:

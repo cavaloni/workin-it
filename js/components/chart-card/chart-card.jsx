@@ -16,7 +16,7 @@ const styles = {
 
 function processChartData(type, pData) {
     const chartData = pData.map((dataSet) => {
-        const week = moment().week(Number(dataSet.week)).format('MMM, Do');
+        const week = moment().week(Number(dataSet.week)).format('MM/DD');
         return Object.keys(dataSet).filter(datum => datum === type)
                 .map(filteredDatum => [week, dataSet[filteredDatum]]);
     }).reduce((acc, cur) => acc.concat(cur), []);
