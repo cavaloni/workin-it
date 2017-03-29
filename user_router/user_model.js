@@ -10,9 +10,10 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.methods.apiRepr = function apiRepr() {
     return {
-        id: this.fbId,
+        fbId: this.fbId,
         user: this.user,
         profileImage: this.profileImage,
+        friends: this.friends,
     };
 };
 

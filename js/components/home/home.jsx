@@ -9,6 +9,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/index';
 
+import barbellImg from '../../../assets/barbell.png';
+
 
 const style = {
     workouts: {
@@ -63,7 +65,6 @@ class Home extends Component {
         if (this.props.params.jwToken) {
             this.props.dispatch(actions.setUserToken());
         }
-        console.log('this happened at home');
         this.props.dispatch(actions.setUserProfile());
     }
 
@@ -103,7 +104,7 @@ class Home extends Component {
                       alt="barbell"
                       style={style.image}
                       key="1"
-                      src="../../../assets/barbell.png"
+                      src={barbellImg}
                     />
                 </Paper>
                 <Paper
@@ -117,7 +118,7 @@ class Home extends Component {
                       alt="barbell"
                       style={style.image}
                       key="1"
-                      src="../../../assets/barbell.png"
+                      src={barbellImg}
                     />
                 </Paper>
             </div>

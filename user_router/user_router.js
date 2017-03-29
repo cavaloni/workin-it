@@ -11,6 +11,21 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
+router.use(
+    eJwt({ secret: 'super stank',
+        getToken: function fromQuery(req) { return req.headers.token; },
+        requestProperty: 'auth',
+    }));
+
+router.get('/', (req, res) => {
+    User
+        .find({})
+        .exec()
+        .then((users) => {
+            const allUsers = users.map(user => ({ user: user.user, fbId: user.fbId }));
+            res.status(201).json({ allUsers });
+        });
+});
 
 router.get('/init_profile',
     passport.authenticate('facebook', {
@@ -33,15 +48,14 @@ router.get('/init_profile',
                             fbId: req.user.id,
                         })
                     .then()
-                    .catch(err => {
+                    .catch((err) => {
                         console.log(err);
-                        res.status(500).json({ err })
+                        res.status(500).json({ err });
                     });
                 }
             })
-            .catch(err => {
-                console.log('1111111111111111111111111111111111111')
-                console.log(err)
+            .catch((err) => {
+                console.log(err);
             });
         res.redirect('/init_token');
     });
@@ -52,18 +66,90 @@ router.get('/failed_auth', (req, res) => {
 
 router.get('/profile', (req, res) => {
     const userId = jwt.verify(req.headers.token, 'super stank').user;
-    console.log(userId);
     User
         .find(userId)
         .exec()
         .then((profile) => {
-            console.log('this is what come back', profile);
             res.status(201).json(profile[0].apiRepr());
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
-            res.send(501, { err })
+            res.send(501, { err });
         });
+});
+
+router.put('/add_friend', (req, res) => {
+    const user = req.body.user;
+    const friend = req.body.friend;
+
+    let friendProfile;
+    const friendProfileUpdate = O.fromPromise(
+        User
+            .findOneAndUpdate({ fbId: friend.fbId },
+            { $push: {
+                friends: {
+                    name: user.name,
+                    fbId: user.fbId,
+                    status: 'pending',
+                    sentByUser: false,
+                },
+            } })
+            .exec()
+            .then((profile) => {
+                console.log(profile);
+                friendProfile = profile;
+            }),
+    );
+    const userProfileUpdate = fProfile => O.fromPromise(
+        User
+            .findOneAndUpdate({ fbId: user.fbId },
+            { $push: {
+                friends: {
+                    name: fProfile.user,
+                    fbId: fProfile.fbId,
+                    status: 'pending',
+                    sentByUser: true,
+                },
+            } },
+            { new: true })
+            .exec()
+            .then(profile => profile),
+        );
+
+    friendProfileUpdate
+        .map(() => userProfileUpdate(friendProfile))
+            .concatAll()
+            .subscribe((profile) => {
+                res.status(201).json(profile);
+            },
+            ((err) => {
+                console.log(err);
+            }));
+});
+
+router.put('/delete_friend', (req, res) => {
+    const userId = req.body.user.id;
+    const friendId = req.body.friend.id;
+
+    User
+        .findOneAndUpdate({ fbId: userId },
+        { $pull: { friends: { friendId } } })
+        .exec()
+        .then((profile) => {
+            console.log(profile);
+            res.status(201).json(profile[0].apiRepr());
+        })
+        .catch(err => res.status(501).json({ err }));
+
+    User
+        .findOneAndUpdate({ fbId: friendId },
+        { $pull: { friends: { userId } } })
+        .exec()
+        .then((profile) => {
+            console.log(profile);
+            res.status(201).json(profile[0].apiRepr());
+        })
+        .catch(err => res.status(501).json({ err }));
 });
 
 module.exports = { router };

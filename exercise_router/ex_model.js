@@ -2,16 +2,16 @@ const mongoose = require('mongoose');
 
 
 const exerciseDataSchema = mongoose.Schema({
-    user: { type: String, required: true },
-    exerciseData: {},
+    userId: { type: String, required: true },
+    exerciseData: { type: Object, required: true },
 });
 
 exerciseDataSchema.methods.apiRepr = () => ({
     id: this.id,
-    user: this.projectName,
+    userId: this.projectName,
     exerciseData: this.exerciseData,
 });
 
-const ExerciseData = mongoose.model('exercise_data', exerciseDataSchema);
+const ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 
 module.exports = ExerciseData;

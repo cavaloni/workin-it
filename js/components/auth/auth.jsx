@@ -10,13 +10,12 @@ class Auth extends Component {
     }
 
     componentWillMount() {
-        console.log(document.cookie);
         Rx.Observable.ajax(`/new_token?initToken=${this.props.params.initToken}`)
         .subscribe((response) => {
             localStorage.setItem('wi_id_token', response.response.newToken);
+            this.props.dispatch(actions.setUserToken(response.response.newToken));
             browserHistory.push('/app');
         });
-        // this.props.dispatch(actions.getNewToken());
     }
 
     render() {

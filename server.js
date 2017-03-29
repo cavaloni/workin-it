@@ -18,8 +18,6 @@ var JsonCircular = require('json-circular');
 var codein = require("node-codein");
 
 
-// TODO: So the user is not being attached to req 
-
 const blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0],    // blacklisted, since they are sent in the url.
     getRevokedToken(tokenId, cb) { // The newToken below, is sent in a more secure way

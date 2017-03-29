@@ -73,7 +73,7 @@
 "use strict";
 
 
-exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongodb://localhost/transcriptions';
+exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongodb://localhost/workout';
 exports.PORT = process.env.PORT || 8081;
 
 /***/ }),
@@ -197,8 +197,6 @@ var JwtStrategy = __webpack_require__(33).Strategy;
 var ExtractJwt = __webpack_require__(33).ExtractJwt;
 var JsonCircular = __webpack_require__(41);
 var codein = __webpack_require__(43);
-
-// TODO: So the user is not being attached to req 
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -774,10 +772,13 @@ var _mockData = __webpack_require__(30);
 
 var _mockData2 = _interopRequireDefault(_mockData);
 
+var _rxjs = __webpack_require__(50);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var O = _rxjs.Observable;
 var jsonParser = __webpack_require__(3).json();
 var express = __webpack_require__(6);
 var eJwt = __webpack_require__(16);
@@ -785,27 +786,31 @@ var eJwt = __webpack_require__(16);
 var router = express.Router();
 
 router.use(jsonParser);
-router.use(eJwt({ secret: 'super stank',
-    getToken: function fromQuery(req) {
-        return req.headers.token;
-    }
-}));
+// router.use(eJwt({ secret: 'super stank',
+//     getToken: function fromQuery(req) { return req.headers.token; },
+// }));
+
 
 router.post('/', function (req, res) {
     var requiredFields = ['user', 'exerciseData'];
     requiredFields.forEach(function (field) {
         if (!(field in req.body)) {
+            console.log(field);
+            console.log(req.body);
             res.status(400).json({
                 error: 'Missing "' + field + '" in request body'
             });
         }
     });
 
+    console.log(req.body);
+
     _ex_model2.default.create({
-        user: req.body.user,
-        ExerciseData: req.body.exerciseData
+        userId: req.body.user,
+        exerciseData: JSON.parse(req.body.exerciseData)
     }).then(function (data) {
-        return res.status(201).json(data.apiRepr());
+        console.log(data);
+        res.status(201).json(data);
     }).catch(function (err) {
         res.status(500).json({
             error: 'something went wrong',
@@ -834,7 +839,9 @@ router.put('/', function (req, res) {
 
     var newData = _extends({}, prevData[0], _defineProperty({}, Object.keys(req.body.exerciseData)[0], req.body.exerciseData));
 
-    _ex_model2.default.findByIdAndUpdate(req.params.id, { $set: newData }) // TODO: need to figure out what the id is going to be
+    _ex_model2.default.findByIdAndUpdate(req.params.id, {
+        $set: newData
+    }) // TODO: need to figure out what the id is going to be
     .then(function (data) {
         return res.status(201).json(data.apiRepr());
     }).catch(function (err) {
@@ -845,42 +852,54 @@ router.put('/', function (req, res) {
     });
 });
 
-router.get('/', function (req, res) {
+router.post('/get_data', function (req, res) {
+    console.log(req.body);
     var allUserData = void 0;
     _ex_model2.default.findOne({
-        user: req.body.user
+        userId: req.body.user
     }).then(function (data) {
-        allUserData = data.apiRepr();
+        console.log(data);
+        allUserData = data;
+        if (!allUserData) {
+            res.status(201).json({
+                data: 'no data'
+            });
+        } else {
+            var yearQuery = void 0;
+            var weekQuery = void 0;
+            var _allUserData = allUserData,
+                exerciseData = _allUserData.exerciseData;
+
+
+            if (!req.body.year) {
+                yearQuery = (0, _moment2.default)().year().toString();
+            } else {
+                yearQuery = req.body.year;
+            }
+
+            if (!req.body.week) {
+                weekQuery = (0, _moment2.default)().week().toString();
+            } else {
+                weekQuery = req.body.week;
+            }
+
+            var userRangeData = Object.keys(exerciseData).filter(function (years) {
+                return years === yearQuery;
+            }).map(function (year) {
+                return Object.keys(exerciseData[year]);
+            })[0].filter(function (weeks) {
+                var weekRangeMax = weekQuery + 1;
+                var weekRangeMin = weekQuery - 4;
+                return _lodash2.default.inRange(weeks, weekRangeMin, weekRangeMax);
+            }).reduce(function (weekSet, week) {
+                return _extends({}, weekSet, _defineProperty({}, week, exerciseData[2017][week]));
+            }, {});
+
+            res.status(201).json({
+                data: userRangeData
+            });
+        }
     });
-
-    var yearQuery = void 0;
-    var weekQuery = void 0;
-
-    if (!req.body.yearQuery) {
-        yearQuery = (0, _moment2.default)().year();
-    } else {
-        yearQuery = req.body.year;
-    }
-
-    if (!req.body.weekQuery) {
-        weekQuery = _moment2.default.week();
-    } else {
-        weekQuery = req.body.week;
-    }
-
-    var userRangeData = Object.keys(allUserData).filter(function (years) {
-        return years === yearQuery;
-    }).map(function (year) {
-        return Object.keys(allUserData[year]);
-    })[0].filter(function (weeks) {
-        var weekRangeMax = weekQuery + 1;
-        var weekRangeMin = weekQuery - 4;
-        return _lodash2.default.inRange(weeks, weekRangeMin, weekRangeMax);
-    }).reduce(function (weekSet, week) {
-        return _extends({}, weekSet, _defineProperty({}, week, allUserData[2017][week]));
-    }, {});
-
-    res.status(201).json({ data: userRangeData });
 });
 
 module.exports = { router: router };
@@ -895,19 +914,19 @@ module.exports = { router: router };
 var mongoose = __webpack_require__(9);
 
 var exerciseDataSchema = mongoose.Schema({
-    user: { type: String, required: true },
-    exerciseData: {}
+    userId: { type: String, required: true },
+    exerciseData: { type: Object, required: true }
 });
 
 exerciseDataSchema.methods.apiRepr = function () {
     return {
         id: undefined.id,
-        user: undefined.projectName,
+        userId: undefined.projectName,
         exerciseData: undefined.exerciseData
     };
 };
 
-var ExerciseData = mongoose.model('exercise_data', exerciseDataSchema);
+var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 
 module.exports = ExerciseData;
 
@@ -2022,6 +2041,22 @@ var jwt = __webpack_require__(8);
 
 var router = express.Router();
 
+router.use(eJwt({ secret: 'super stank',
+    getToken: function fromQuery(req) {
+        return req.headers.token;
+    },
+    requestProperty: 'auth'
+}));
+
+router.get('/', function (req, res) {
+    _user_model.User.find({}).exec().then(function (users) {
+        var allUsers = users.map(function (user) {
+            return { user: user.user, fbId: user.fbId };
+        });
+        res.status(201).json({ allUsers: allUsers });
+    });
+});
+
 router.get('/init_profile', passport.authenticate('facebook', {
     failureRedirect: '/user/failed_auth'
 }), function (req, res) {
@@ -2041,7 +2076,6 @@ router.get('/init_profile', passport.authenticate('facebook', {
             });
         }
     }).catch(function (err) {
-        console.log('1111111111111111111111111111111111111');
         console.log(err);
     });
     res.redirect('/init_token');
@@ -2053,13 +2087,68 @@ router.get('/failed_auth', function (req, res) {
 
 router.get('/profile', function (req, res) {
     var userId = jwt.verify(req.headers.token, 'super stank').user;
-    console.log(userId);
     _user_model.User.find(userId).exec().then(function (profile) {
-        console.log('this is what come back', profile);
         res.status(201).json(profile[0].apiRepr());
     }).catch(function (err) {
         console.log(err);
         res.send(501, { err: err });
+    });
+});
+
+router.put('/add_friend', function (req, res) {
+    var user = req.body.user;
+    var friend = req.body.friend;
+
+    var friendProfile = void 0;
+    var friendProfileUpdate = O.fromPromise(_user_model.User.findOneAndUpdate({ fbId: friend.fbId }, { $push: {
+            friends: {
+                name: user.name,
+                fbId: user.fbId,
+                status: 'pending',
+                sentByUser: false
+            }
+        } }).exec().then(function (profile) {
+        console.log(profile);
+        friendProfile = profile;
+    }));
+    var userProfileUpdate = function userProfileUpdate(fProfile) {
+        return O.fromPromise(_user_model.User.findOneAndUpdate({ fbId: user.fbId }, { $push: {
+                friends: {
+                    name: fProfile.user,
+                    fbId: fProfile.fbId,
+                    status: 'pending',
+                    sentByUser: true
+                }
+            } }, { new: true }).exec().then(function (profile) {
+            return profile;
+        }));
+    };
+
+    friendProfileUpdate.map(function () {
+        return userProfileUpdate(friendProfile);
+    }).concatAll().subscribe(function (profile) {
+        res.status(201).json(profile);
+    }, function (err) {
+        console.log(err);
+    });
+});
+
+router.put('/delete_friend', function (req, res) {
+    var userId = req.body.user.id;
+    var friendId = req.body.friend.id;
+
+    _user_model.User.findOneAndUpdate({ fbId: userId }, { $pull: { friends: { friendId: friendId } } }).exec().then(function (profile) {
+        console.log(profile);
+        res.status(201).json(profile[0].apiRepr());
+    }).catch(function (err) {
+        return res.status(501).json({ err: err });
+    });
+
+    _user_model.User.findOneAndUpdate({ fbId: friendId }, { $pull: { friends: { userId: userId } } }).exec().then(function (profile) {
+        console.log(profile);
+        res.status(201).json(profile[0].apiRepr());
+    }).catch(function (err) {
+        return res.status(501).json({ err: err });
     });
 });
 
@@ -2083,9 +2172,10 @@ var UserSchema = mongoose.Schema({
 
 UserSchema.methods.apiRepr = function apiRepr() {
     return {
-        id: this.fbId,
+        fbId: this.fbId,
         user: this.user,
-        profileImage: this.profileImage
+        profileImage: this.profileImage,
+        friends: this.friends
     };
 };
 

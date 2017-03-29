@@ -16,37 +16,14 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import Snackbar from 'material-ui/Snackbar';
-import { Observable } from 'rxjs/Rx';
 import RaisedButton from 'material-ui/RaisedButton';
-import ReactDOM from 'react-dom';
+import { Observable } from 'rxjs/Rx';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/index';
 
+const O = Observable;
 
 const SelectableList = makeSelectable(List);
-
-const fakePeople = [
-    {
-        name: 'Bubba Jones',
-        avatar: 'http://lorempixel.com/400/200',
-        data: mockData,
-    },
-    {
-        name: 'Jesus Christ',
-        avatar: 'http://lorempixel.com/400/200',
-        data: mockData,
-    },
-    {
-        name: 'Milford WaxPaddy',
-        avatar: 'http://lorempixel.com/400/200',
-        data: mockData,
-    },
-    {
-        name: 'Who Bo Fo Ducky',
-        avatar: 'http://lorempixel.com/400/200',
-        data: mockData,
-    },
-];
-
-const newNames = ['Bart', 'Crapply', 'nomad', 'biddle woop woop', 'shizface'];
 
 const style = {
     paper: {
@@ -67,11 +44,30 @@ class Friends extends Component {
             deleteVerifyOpen: false,
             friendToDeleteIndex: undefined,
             snackBarOpen: false,
+            allUsers: [],
+            newFriendSelected: '',
+            newFriendSelectedIndex: undefined,
+            autoComErrTxt: '',
         };
         this.handleFriendSelect = this.handleFriendSelect.bind(this);
         this.deleteFriendModal = this.deleteFriendModal.bind(this);
         this.handleModalClose = this.handleModalClose.bind(this);
         this.deleteFriend = this.deleteFriend.bind(this);
+        this.handleAutoComChange = this.handleAutoComChange.bind(this);
+        this.handleNewFriendSelect = this.handleNewFriendSelect.bind(this);
+        this.sendNewFriendRequest = this.sendNewFriendRequest.bind(this);
+    }
+
+    componentWillMount() {
+        console.count();
+        O.ajax({
+            url: '/user',
+            headers: { token: this.props.token },
+        })
+        .flatMap(response => O.of(response.response.allUsers)
+                        .filter(user => user !== this.props.profileData)
+                        .map(user => user))
+        .subscribe(allUsers => this.setState({ allUsers }));
     }
 
     handleFriendSelect(event) {
@@ -90,12 +86,46 @@ class Friends extends Component {
     deleteFriend() {
         console.log('it will delete: ', this.state.friendToDeleteIndex);
         this.setState({ deleteVerifyOpen: false, snackBarOpen: true });
-        Observable.interval(3000)
+        O.interval(3000)
             .subscribe(() => this.setState({ snackBarOpen: false }));
-        // this.props.dispatch(actions.deletefriend())
+        this.props.dispatch(
+            actions.deletefriend(
+                this.state.friendToDeleteIndex,
+                this.props.friends[this.state.friendToDeleteIndex],
+                this.profileData.fbId,
+            ),
+        );
+    }
+
+    handleNewFriendSelect(newFriendSelected, newFriendSelectedIndex) {
+        this.setState({ newFriendSelected, newFriendSelectedIndex });
+    }
+
+    sendNewFriendRequest() {
+        if (this.state.newFriendSelected === '') {
+            this.setState({ autoComErrTxt: 'Please select a user' });
+        } else {
+            const friend = {
+                fbId: this.state.allUsers[this.state.newFriendSelectedIndex].fbId,
+                name: this.state.allUsers[this.state.newFriendSelectedIndex].user,
+            };
+            const user = {
+                fbId: this.props.profileData.fbId,
+                name: this.props.profileData.user,
+            };
+            this.props.dispatch(actions.addFriend(user, friend, this.props.token));
+        }
+    }
+
+    handleAutoComChange() {
+        this.setState({ newFriendSelected: '', autoComErrTxt: '' });
     }
 
     render() {
+        const autocompleteUserNames = this.state.allUsers.map(user => user.user);
+
+        autocompleteUserNames.push('Milford WaxPaddy');
+
         const iconButtonElement = (
             <IconButton
               touch
@@ -105,9 +135,9 @@ class Friends extends Component {
             >
                 <MoreVertIcon color={grey400} />
             </IconButton>
-);
+        );
 
-        const actions = [
+        const modalActions = [
             <FlatButton
               label="Cancel"
               primary
@@ -130,58 +160,83 @@ class Friends extends Component {
                 />);
         } else { progress = <div />; }
 
-        const friendsList = fakePeople.map((friend) => {
-            const num = fakePeople.indexOf(friend);
-            return (<ListItem
-              value={friend.name}
-              primaryText={friend.name}
-              leftAvatar={<Avatar src={friend.avatar} />}
-              onClick={this.handleFriendSelect}
-              rightIconButton={
-                  <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
-                      <MenuItem id={num} >Delete Friend</MenuItem>
-                  </IconMenu>}
-            />);
-        });
-        const newFriendsList = fakePeople.map(friend =>
-            <ListItem
-              value={friend.name}
-              primaryText={friend.name}
-              leftAvatar={<Avatar src={friend.avatar} />}
-              rightIcon={<FiberNew />}
-              onClick={this.handleFriendSelect}
-            />);
-        const pendingFriendInvites = fakePeople.map((friend) => {
-            const num = fakePeople.indexOf(friend);
-            return (<ListItem
-              value={friend.name}
-              primaryText={friend.name}
-              leftAvatar={<Avatar src={friend.avatar} />}
-              rightIconButton={
-                  <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
-                      <MenuItem id={num} onTouchTap={this.deleteFriendModal}>Cancel Friend Request</MenuItem>
-                  </IconMenu>
+        const friendsList = this.props.friends
+            .filter(friend => friend.status === 'active')
+            .map((friend) => {
+                const num = this.props.friends.indexOf(friend);
+                return (<ListItem
+                  value={friend.name}
+                  primaryText={friend.name}
+                  leftAvatar={<Avatar src={friend.avatar} />}
+                  onClick={this.handleFriendSelect}
+                  rightIconButton={
+                      <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
+                          <MenuItem id={num} >Delete Friend</MenuItem>
+                      </IconMenu>}
+                />);
+            });
+
+        const newFriendsList = this.props.friends
+            .filter(friend => friend.status === 'pending' && friend.sentByUser === false)
+            .map(friend =>
+                <ListItem
+                  value={friend.name}
+                  primaryText={friend.name}
+                  leftAvatar={<Avatar src={friend.avatar} />}
+                  rightIcon={<FiberNew />}
+                  onClick={this.handleFriendSelect}
+                />);
+
+        const pendingFriendInvites = this.props.friends
+            .filter(friend => friend.status === 'pending')
+            .map((friend) => {
+                const num = this.props.friends.indexOf(friend);
+                return (<ListItem
+                  value={friend.name}
+                  primaryText={friend.name}
+                  leftAvatar={<Avatar src={friend.avatar} />}
+                  rightIconButton={
+                      <IconMenu
+                        onItemTouchTap={this.deleteFriendModal}
+                        iconButtonElement={iconButtonElement}
+                        onClick={e => e.stopPropagation()}
+                      >
+                          <MenuItem
+                            id={num}
+                            onTouchTap={this.deleteFriendModal}
+                          >
+                            Cancel Friend Request
+                        </MenuItem>
+                      </IconMenu>
               }
-            />);
-        });
+                />);
+            });
         return (
             <div>
                 <Dialog
                   title="Dialog With Actions"
-                  actions={actions}
+                  actions={modalActions}
                   modal
                   open={this.state.deleteVerifyOpen}
                 >
-          Only actions can close this dialog.
-                    </Dialog>
+                Are you sure you want to delete this friend?
+                </Dialog>
                 <h3>View Freinds Progress</h3>
                 <Paper style={{ marginBottom: 30 }}>
                     <AutoComplete
+                      errorText={this.state.autoComErrTxt}
                       floatingLabelText="Send New Friend Request"
                       filter={AutoComplete.fuzzyFilter}
-                      dataSource={newNames}
-                      fullWidth
+                      dataSource={autocompleteUserNames}
                       maxSearchResults={5}
+                      onUpdateInput={this.handleAutoComChange}
+                      onNewRequest={this.handleNewFriendSelect}
+                      fullWidth
+                    />
+                    <RaisedButton
+                      label="Send Freind Request"
+                      style={{ margin: 'auto', display: 'block', width: '50%' }}
+                      onTouchTap={this.sendNewFriendRequest}
                     />
                 </Paper>
                 <Paper style={style.paper}>
@@ -195,7 +250,7 @@ class Friends extends Component {
                 </Paper>
                 <Paper style={style.paper}>
                     <SelectableList>
-                        <Subheader>New Friends</Subheader>
+                        <Subheader>Awaiting Approval</Subheader>
                         {newFriendsList}
                     </SelectableList>
                     <Divider />
@@ -216,4 +271,10 @@ class Friends extends Component {
     }
 }
 
-export default Friends;
+const mapStateToProps = (state, props) => ({
+    profileData: state.userData,
+    token: state.userToken,
+    friends: state.userData.friends,
+});
+
+export default connect(mapStateToProps)(Friends);

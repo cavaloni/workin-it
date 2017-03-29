@@ -21,14 +21,16 @@ class Login extends Component {
             },
             url: 'verify_auth',
         });
-
+        let token;
         getToken
             .map((tkn) => {
+                token = tkn;
                 return verifyAuth(tkn);
             })
             .concatAll()
             .subscribe((response) => {
                 if (response.status === 201) {
+                    this.props.dispatch(actions.setUserToken(token));
                     browserHistory.push('/app');
                 }
             },

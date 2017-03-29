@@ -2,40 +2,55 @@ import moment from 'moment';
 import _ from 'lodash';
 import ExerciseData from './ex_model';
 import mockData from '../js/components/mock-data';
+import {
+    Observable
+} from 'rxjs';
 
-const jsonParser = require('body-parser').json();
+const O = Observable;
+const jsonParser = require('body-parser')
+    .json();
 const express = require('express');
 const eJwt = require('express-jwt');
 
 const router = express.Router();
 
 router.use(jsonParser);
-router.use(eJwt({ secret: 'super stank',
-    getToken: function fromQuery(req) { return req.headers.token; },
-}));
+// router.use(eJwt({ secret: 'super stank',
+//     getToken: function fromQuery(req) { return req.headers.token; },
+// }));
 
 
 router.post('/', (req, res) => {
     const requiredFields = ['user', 'exerciseData'];
     requiredFields.forEach((field) => {
         if (!(field in req.body)) {
-            res.status(400).json({
-                error: `Missing "${field}" in request body`,
-            });
+            console.log(field);
+            console.log(req.body);
+            res.status(400)
+                .json({
+                    error: `Missing "${field}" in request body`,
+                });
         }
     });
 
+    console.log(req.body);
+
     ExerciseData
         .create({
-            user: req.body.user,
-            ExerciseData: req.body.exerciseData,
+            userId: req.body.user,
+            exerciseData: JSON.parse(req.body.exerciseData),
         })
-        .then(data => res.status(201).json(data.apiRepr()))
+        .then((data) => {
+            console.log(data);
+            res.status(201)
+                .json(data);
+        })
         .catch((err) => {
-            res.status(500).json({
-                error: 'something went wrong',
-                errData: err,
-            });
+            res.status(500)
+                .json({
+                    error: 'something went wrong',
+                    errData: err,
+                });
         });
 });
 
@@ -43,9 +58,10 @@ router.put('/', (req, res) => {
     const requiredFields = ['user', 'exerciseData'];
     requiredFields.forEach((field) => {
         if (!(field in req.body)) {
-            res.status(400).json({
-                error: `Missing "${field}" in request body`,
-            });
+            res.status(400)
+                .json({
+                    error: `Missing "${field}" in request body`,
+                });
         }
     });
 
@@ -64,49 +80,73 @@ router.put('/', (req, res) => {
     };
 
     ExerciseData
-        .findByIdAndUpdate(req.params.id, { $set: newData }) // TODO: need to figure out what the id is going to be
-        .then(data => res.status(201).json(data.apiRepr()))
+        .findByIdAndUpdate(req.params.id, {
+            $set: newData
+        }) // TODO: need to figure out what the id is going to be
+        .then(data => res.status(201)
+            .json(data.apiRepr()))
         .catch((err) => {
-            res.status(500).json({
-                error: 'something went wrong',
-                errData: err,
-            });
+            res.status(500)
+                .json({
+                    error: 'something went wrong',
+                    errData: err,
+                });
         });
 });
 
-router.get('/', (req, res) => {
+router.post('/get_data', (req, res) => {
+    console.log(req.body);
     let allUserData;
     ExerciseData
         .findOne({
-            user: req.body.user,
+            userId: req.body.user,
         })
-        .then((data) => { allUserData = data.apiRepr(); });
+        .then((data) => {
+            console.log(data);
+            allUserData = data;
+            if (!allUserData) {
+                res.status(201)
+                    .json({
+                        data: 'no data'
+                    });
+            } else {
+                let yearQuery;
+                let weekQuery;
+                const { exerciseData } = allUserData;
 
-    let yearQuery;
-    let weekQuery;
+                if (!req.body.year) {
+                    yearQuery = moment()
+                        .year().toString();
+                } else {
+                    yearQuery = req.body.year;
+                }
 
-    if (!req.body.yearQuery) {
-        yearQuery = moment().year();
-    } else { yearQuery = req.body.year; }
+                if (!req.body.week) {
+                    weekQuery = moment()
+                        .week().toString();
+                } else {
+                    weekQuery = req.body.week;
+                }
 
-    if (!req.body.weekQuery) {
-        weekQuery = moment.week();
-    } else { weekQuery = req.body.week; }
+                const userRangeData = Object.keys(exerciseData)
+                    .filter(years => years === yearQuery)
+                    .map(year => Object.keys(exerciseData[year]))[0]
+                    .filter((weeks) => {
+                        const weekRangeMax = weekQuery + 1;
+                        const weekRangeMin = weekQuery - 4;
+                        return _.inRange(weeks, weekRangeMin, weekRangeMax);
+                    })
+                    .reduce((weekSet, week) => ({
+                        ...weekSet,
+                        [week]: exerciseData[2017][week],
+                    }), {});
 
-    const userRangeData = Object.keys(allUserData)
-        .filter(years => years === yearQuery)
-        .map(year => Object.keys(allUserData[year]))[0]
-        .filter((weeks) => {
-            const weekRangeMax = weekQuery + 1;
-            const weekRangeMin = weekQuery - 4;
-            return _.inRange(weeks, weekRangeMin, weekRangeMax);
-        })
-        .reduce((weekSet, week) => ({
-            ...weekSet,
-            [week]: allUserData[2017][week],
-        }), {});
-
-    res.status(201).json({ data: userRangeData });
+                res.status(201)
+                    .json({
+                        data: userRangeData,
+                    });
+            }
+        });
 });
 
 module.exports = { router };

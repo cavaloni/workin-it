@@ -8,15 +8,18 @@ import MenuItem from 'material-ui/MenuItem';
 import _ from 'lodash';
 import mockData from '../mock-data';
 import ExerciseChart from '../chart-card/chart-card';
+import * as actions from '../../actions/index';
+import { connect } from 'react-redux';
 
 
 class Progress extends Component {
     constructor(props) {
         super(props);
+        console.log(props);
         let data;
         if (props.friends !== undefined) {
             data = props.data;
-        } else { data = mockData; }
+        } else { data = {}; }
         this.state = {
             friendsProgress: this.props.friends,
             value: this.getDefaultValue(data),
@@ -37,17 +40,21 @@ class Progress extends Component {
         this.getExerciseAverages = this.getExerciseAverages.bind(this);
     }
 
-    componentDidMount() {
-        this.setState({ firstMount: false });
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.exerciseData) {
+            this.setState(nextProps.exerciseData);
+        }
+    }
+
+    componentWillMount() {
+        console.log(this.props.profileData);
+        this.props.dispatch(actions.getExerciseData(this.props.profileData.fbId));
+        console.log(this.props.exerciseData);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.popoverOpen !== this.state.popoverOpen) {
             return true;
-        }
-        if (nextState.value === this.state.value ||
-            nextState.firstMount === this.state.firstMount) {
-            return false;
         }
         if (nextState.group !== this.state.group && nextState.groupRender === false
             && nextState.popoverOpen === this.state.popoverOpen) {
@@ -56,7 +63,16 @@ class Progress extends Component {
         return true;
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.props.exerciseData);
+    }
+
     getDefaultValue(data) {
+        console.log(data);
+        if (_.isEmpty(data)) {
+            console.log('this her fuckderd');
+            return 0;
+        }
         const exerciseKey = Object.keys(_.get(data, '10.arms'));
         console.log(exerciseKey);
         return exerciseKey[0];
@@ -101,8 +117,8 @@ class Progress extends Component {
                                 const fullName = this.state.data[weekSet][group][exercise].fullName;
                                 const sum = thisData
                                     .reduce((accData, curData) => ({
-                                        weight: curData.weight + accData.weight,
-                                        reps: curData.reps + accData.reps,
+                                        weight: _.toNumber(curData.weight) + _.toNumber(accData.weight),
+                                        reps: _.toNumber(curData.reps) + _.toNumber(accData.reps),
                                     }));
                                 _.set(parsedAvgs, `${group}.${exercise}[${exerciseIndex}]`, {
                                     fullName,
@@ -119,6 +135,14 @@ class Progress extends Component {
     }
 
     render() {
+        if (_.isEmpty(this.state.data || this.state.data === 'no data')) {
+            return (
+                <div>
+                    <h1>No Data</h1>
+                </div>
+            );
+        }
+
         const parsedAvgs = this.getExerciseAverages();
 
         const week = this.state.week;
@@ -269,4 +293,6 @@ Progress.propTypes = {
     ]).isRequired,
 };
 
-export default Progress;
+const mapStateToProps = (state, props) => ({ profileData: state.userData, exerciseData: state.exerciseData });
+
+export default connect(mapStateToProps)(Progress);
