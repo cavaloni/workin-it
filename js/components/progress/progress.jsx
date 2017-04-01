@@ -48,7 +48,7 @@ class Progress extends Component {
 
     componentWillMount() {
         console.log(this.props.profileData);
-        this.props.dispatch(actions.getExerciseData(this.props.profileData.fbId));
+        this.props.dispatch(actions.getExerciseData(this.props.token, this.props.profileData.fbId));
         console.log(this.props.exerciseData);
     }
 
@@ -293,6 +293,10 @@ Progress.propTypes = {
     ]).isRequired,
 };
 
-const mapStateToProps = (state, props) => ({ profileData: state.userData, exerciseData: state.exerciseData });
+const mapStateToProps = (state, props) => ({ 
+    profileData: state.userData, 
+    exerciseData: state.exerciseData, 
+    token: userToken,
+});
 
 export default connect(mapStateToProps)(Progress);

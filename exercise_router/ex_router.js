@@ -2,9 +2,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import ExerciseData from './ex_model';
 import mockData from '../js/components/mock-data';
-import {
-    Observable
-} from 'rxjs';
+import { Observable } from 'rxjs';
 
 const O = Observable;
 const jsonParser = require('body-parser')
@@ -15,9 +13,10 @@ const eJwt = require('express-jwt');
 const router = express.Router();
 
 router.use(jsonParser);
-// router.use(eJwt({ secret: 'super stank',
-//     getToken: function fromQuery(req) { return req.headers.token; },
-// }));
+router.use(eJwt({ secret: 'super stank',
+    getToken: function fromQuery(req) { return req.headers.token; },
+    requestProperty: 'auth',
+}));
 
 
 router.post('/', (req, res) => {
@@ -42,7 +41,7 @@ router.post('/', (req, res) => {
         })
         .then((data) => {
             console.log(data);
-            res.status(201)
+            res.status(200)
                 .json(data);
         })
         .catch((err) => {
@@ -55,6 +54,13 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
+    const exSets = req.body.dataToSave[0].exerciseData;
+    const exName = req.body.dataToSave[0].exercise;
+    const camelName = _.camelCase(req.body.dataToSave[0].exercise);
+    const exGroup = req.body.dataToSave[0].exerciseGroup;
+    const week = req.body.week || moment().week().toString();
+    const year = req.body.year || moment().year().toString();
+
     const requiredFields = ['user', 'exerciseData'];
     requiredFields.forEach((field) => {
         if (!(field in req.body)) {
@@ -65,32 +71,28 @@ router.put('/', (req, res) => {
         }
     });
 
-    let prevData;
-
     ExerciseData
-        .find(req.body.user)
+        .findOne(req.body.user.fbId)
         .exec()
-        .then((ed) => {
-            prevData = ed.map(userData => userData.apiRepr);
-        });
+        .then((prevData) => {
+            let newData = _.cloneDeep(prevData[0]);
+            newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets);
+            newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, exSets.length);
+            newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName);
 
-    const newData = {
-        ...prevData[0],
-        [Object.keys(req.body.exerciseData)[0]]: req.body.exerciseData,
-    };
-
-    ExerciseData
-        .findByIdAndUpdate(req.params.id, {
-            $set: newData
-        }) // TODO: need to figure out what the id is going to be
-        .then(data => res.status(201)
-            .json(data.apiRepr()))
-        .catch((err) => {
-            res.status(500)
-                .json({
-                    error: 'something went wrong',
-                    errData: err,
-                });
+            ExerciseData
+                .findOneAndUpdate({
+                    fbId: req.body.user.fbId,
+                }, {
+                    $set: {
+                        exerciseData: newData.exerciseData,
+                    },
+                }, {
+                    new: true,
+                })
+                .exec()
+                .then(profile => res.status(201).json(profile))
+                .catch(err => res.status(500).json(err));
         });
 });
 
@@ -107,7 +109,7 @@ router.post('/get_data', (req, res) => {
             if (!allUserData) {
                 res.status(201)
                     .json({
-                        data: 'no data'
+                        data: 'no data',
                     });
             } else {
                 let yearQuery;
@@ -141,11 +143,25 @@ router.post('/get_data', (req, res) => {
                         [week]: exerciseData[2017][week],
                     }), {});
 
-                res.status(201)
+                res.status(200)
                     .json({
                         data: userRangeData,
                     });
             }
+        });
+});
+
+router.put('/get_weeks', (req, res) => {
+    ExerciseData
+        .findOne({
+            userId: req.body.user,
+        })
+        .then((data) => {
+            console.log(data);
+            const years = Object.keys(data.exerciseData);
+            const numOfYears = years.length;
+            const numOfWeeks = years.map(year => Object.keys(data.exerciseData[year]).length);
+            res.status(200).json({ weeks: numOfWeeks * numOfYears });
         });
 });
 

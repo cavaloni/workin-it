@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import { List, ListItem, makeSelectable } from 'material-ui/List';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
@@ -10,8 +11,6 @@ import FiberNew from 'material-ui/svg-icons/av/fiber-new';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
-import Progress from '../progress/progress';
-import mockData from '../mock-data';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
@@ -19,6 +18,9 @@ import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Observable } from 'rxjs/Rx';
 import { connect } from 'react-redux';
+import Progress from '../progress/progress';
+import mockData from '../mock-data';
+
 import * as actions from '../../actions/index';
 
 const O = Observable;
@@ -56,10 +58,10 @@ class Friends extends Component {
         this.handleAutoComChange = this.handleAutoComChange.bind(this);
         this.handleNewFriendSelect = this.handleNewFriendSelect.bind(this);
         this.sendNewFriendRequest = this.sendNewFriendRequest.bind(this);
+        this.acceptFriend = this.acceptFriend.bind(this);
     }
 
     componentWillMount() {
-        console.count();
         O.ajax({
             url: '/user',
             headers: { token: this.props.token },
@@ -87,14 +89,31 @@ class Friends extends Component {
         console.log('it will delete: ', this.state.friendToDeleteIndex);
         this.setState({ deleteVerifyOpen: false, snackBarOpen: true });
         O.interval(3000)
+            .take(1)
             .subscribe(() => this.setState({ snackBarOpen: false }));
         this.props.dispatch(
-            actions.deletefriend(
+            actions.deleteFriend(
                 this.state.friendToDeleteIndex,
                 this.props.friends[this.state.friendToDeleteIndex],
-                this.profileData.fbId,
+                this.props.profileData.fbId,
+                this.props.token,
             ),
         );
+    }
+
+    acceptFriend(e, i) {
+        e.preventDefault();
+        const friendData = this.state.allUsers[i.props.id].fbId;
+        const userData = this.props.profileData.fbId;
+        const token = this.props.token;
+        const objToDispatch = actions.acceptFriend(
+            friendData,
+            userData,
+            token,
+        );
+
+        console.log(objToDispatch)
+        this.props.dispatch(objToDispatch);
     }
 
     handleNewFriendSelect(newFriendSelected, newFriendSelectedIndex) {
@@ -109,6 +128,12 @@ class Friends extends Component {
                 fbId: this.state.allUsers[this.state.newFriendSelectedIndex].fbId,
                 name: this.state.allUsers[this.state.newFriendSelectedIndex].user,
             };
+
+            if (_.some(this.props.friends, ['fbId', friend.fbId])) {
+                this.setState( { autoComErrTxt: 'Check your friends lists' });
+                return;
+            }
+
             const user = {
                 fbId: this.props.profileData.fbId,
                 name: this.props.profileData.user,
@@ -122,6 +147,8 @@ class Friends extends Component {
     }
 
     render() {
+        console.log(this.props.friends);
+
         const autocompleteUserNames = this.state.allUsers.map(user => user.user);
 
         autocompleteUserNames.push('Milford WaxPaddy');
@@ -170,7 +197,11 @@ class Friends extends Component {
                   leftAvatar={<Avatar src={friend.avatar} />}
                   onClick={this.handleFriendSelect}
                   rightIconButton={
-                      <IconMenu onItemTouchTap={this.deleteFriendModal} iconButtonElement={iconButtonElement} onClick={e => e.stopPropagation()} >
+                      <IconMenu
+                        onItemTouchTap={this.deleteFriendModal}
+                        iconButtonElement={iconButtonElement}
+                        onClick={e => e.stopPropagation()}
+                      >
                           <MenuItem id={num} >Delete Friend</MenuItem>
                       </IconMenu>}
                 />);
@@ -178,17 +209,36 @@ class Friends extends Component {
 
         const newFriendsList = this.props.friends
             .filter(friend => friend.status === 'pending' && friend.sentByUser === false)
-            .map(friend =>
-                <ListItem
+            .map((friend) => {
+                const num = this.props.friends.indexOf(friend);
+                return (<ListItem
                   value={friend.name}
                   primaryText={friend.name}
                   leftAvatar={<Avatar src={friend.avatar} />}
-                  rightIcon={<FiberNew />}
                   onClick={this.handleFriendSelect}
+                  rightIconButton={
+                      <IconMenu
+                        onItemTouchTap={this.acceptFriend}
+                        iconButtonElement={iconButtonElement}
+                        onClick={e => e.stopPropagation()}
+                      >
+                          <MenuItem
+                            id={num}
+                          >
+                            Delete
+                          </MenuItem>
+                          <MenuItem
+                            id={num}
+                          >
+                            Accept
+                        </MenuItem>
+                      </IconMenu>
+              }
                 />);
+            });
 
         const pendingFriendInvites = this.props.friends
-            .filter(friend => friend.status === 'pending')
+            .filter(friend => friend.status === 'pending' && friend.sentByUser === true)
             .map((friend) => {
                 const num = this.props.friends.indexOf(friend);
                 return (<ListItem
@@ -203,7 +253,7 @@ class Friends extends Component {
                       >
                           <MenuItem
                             id={num}
-                            onTouchTap={this.deleteFriendModal}
+                            // onTouchTap={this.deleteFriendModal}
                           >
                             Cancel Friend Request
                         </MenuItem>
@@ -214,7 +264,7 @@ class Friends extends Component {
         return (
             <div>
                 <Dialog
-                  title="Dialog With Actions"
+                  title="Delete Friend"
                   actions={modalActions}
                   modal
                   open={this.state.deleteVerifyOpen}
@@ -250,12 +300,12 @@ class Friends extends Component {
                 </Paper>
                 <Paper style={style.paper}>
                     <SelectableList>
-                        <Subheader>Awaiting Approval</Subheader>
+                        <Subheader>Awaiting Your Approval</Subheader>
                         {newFriendsList}
                     </SelectableList>
                     <Divider />
                     <SelectableList>
-                        <Subheader>Pending Friend Invites</Subheader>
+                        <Subheader>Sent Friend Requests</Subheader>
                         {pendingFriendInvites}
                     </SelectableList>
                 </Paper>

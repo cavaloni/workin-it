@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -7,6 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
+import * as actions from '../../actions/index';
+
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
@@ -41,7 +44,7 @@ class WorkoutCard extends Component {
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
         this.saveData = this.saveData.bind(this);
-        this.getExerciseData = this.getExerciseData.bind(this);
+        this.getExDataFromComponents = this.getExDataFromComponents.bind(this);
         this.state = {
             itemList: [],
             chooseWorkout: false,
@@ -55,7 +58,7 @@ class WorkoutCard extends Component {
         this.workoutItem = (<WorkoutItem />);
     }
 
-    getExerciseData(exerciseData, exercise) {
+    getExDataFromComponents(exerciseData, exercise) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
         dataToSaveCopy.push({
             exerciseData,
@@ -66,7 +69,11 @@ class WorkoutCard extends Component {
         if (this.tempDataToSave.length === this.state.itemList.length) {
             const dataToSave = _.flatten(dataToSaveCopy);
             this.tempDataToSave = [];
-            console.log('it would dispatch: ', dataToSave);
+            this.props.dispatch(actions.saveExerciseData(
+                this.props.token,
+                this.props.profileData.fbId, 
+                dataToSave,
+                ))
             this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
         }
     }
@@ -104,7 +111,7 @@ class WorkoutCard extends Component {
                   key={itemIndex}
                   item={fakeworks[itemIndex]}
                   sets={this.state.sameSets}
-                  saved={this.getExerciseData}
+                  saved={this.getExDataFromComponents}
                 />);
         return (
             <MuiThemeProvider>
@@ -163,4 +170,9 @@ WorkoutCard.propTypes = {
     cardType: React.PropTypes.string.isRequired,
 };
 
-export default WorkoutCard;
+const mapStateToProps = (state, props) => ({ 
+    profileData: state.userData, 
+    token: state.userToken, 
+});
+
+export default connect(mapStateToProps)(WorkoutCard);

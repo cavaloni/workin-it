@@ -20,18 +20,18 @@ export const DELETE_FRIEND_LOCAL = 'DELETE_FRIEND_LOCAL';
 export const deleteFriendLocal = index => ({ type: DELETE_FRIEND_LOCAL, index });
 
 export const DELETE_FRIEND = 'DELETE_FRIEND';
-export const deleteFriend = (index, friend, user) => (dispatch) => {
+export const deleteFriend = (index, friend, user, token) => (dispatch) => {
     O.ajax({
         url: '/user/delete_friend',
+        method: 'PUT',
+        headers: { token },
         body: qs.stringify({
             index,
             friend,
             user,
         }),
-        method: 'PUT',
     }).subscribe((response) => {
-        console.log(response);
-        dispatch(profileFetchSuccess(response));
+        dispatch(profileFetchSuccess(response.response));
     });
 };
 
@@ -49,6 +49,25 @@ export const addFriend = (user, friend, token) => (dispatch) => {
                 fbId: friend.fbId,
                 name: friend.name,
             },
+        }),
+        responseType: 'json',
+    }).subscribe((response) => {
+        dispatch(profileFetchSuccess(response.response));
+    },
+    err => console.log(err),
+    );
+};
+
+export const acceptFriend = (friendFbId, userFbId, token) => (dispatch) => {
+    console.log(friendFbId);
+    console.log(userFbId);
+    O.ajax({
+        url: '/user/accept_friend',
+        method: 'PUT',
+        headers: { token },
+        body: qs.stringify({
+            userFbId,
+            friendFbId,
         }),
         responseType: 'json',
     }).subscribe((response) => {
@@ -91,13 +110,26 @@ export const setUserProfile = () => (dispatch) => {
         }));
 };
 
-export const getExerciseData = user => (dispatch) => {
+export const getExerciseData = (token, user) => (dispatch) => {
     console.log(user);
     O.ajax({
         url: '/exercise_data/get_data',
         body: { user },
+        headers: { token },
         method: 'POST',
     })
-            .subscribe(response => dispatch(exerciseDataFetchSuccess(response.response)));
-}
-;
+        .subscribe(response => dispatch(exerciseDataFetchSuccess(response.response)));
+};
+
+export const saveExerciseData = (token, user, dataToSave) => (dispatch) => {
+    console.log(dataToSave);
+    O.ajax({
+        url: '/exercise_data',
+        body: qs.stringify({ user, dataToSave }),
+        headers: {
+            token,
+        },
+        method: 'PUT',
+    })
+        .subscribe(response => dispatch(exerciseDataFetchSuccess(response.response)));
+};

@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.bundle.js",
-    "dev-build": "run-s start clean webpack:dev webpack:client",
+    "dev-build": "run-p start webpack:dev webpack:client",
     "clean": "rmraf build",
     "webpack:dev": "webpack --watch --progress --colors --config webpack.dev.js",
     "webpack:client": "webpack --watch",
@@ -13,6 +13,7 @@
     "heroku-postbuild": "npm run build-prod",
     "dev": "webpack-dev-server --inline --hot",
     "test": "mocha --compilers js:babel-core/register",
+    "jest": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "build-prod": "webpack -p --progress --colors --config webpack.config.js",
@@ -118,6 +119,8 @@
     "rxjs": "^5.1.0",
     "shortid": "^2.2.8",
     "style-loader": "^0.13.1",
+    "supertest": "^3.0.0",
+    "supertest-as-promised": "^4.0.2",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1"

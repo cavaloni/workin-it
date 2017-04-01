@@ -127,29 +127,87 @@ router.put('/add_friend', (req, res) => {
             }));
 });
 
+router.put('/accept_friend', (req, res) => {
+    User
+        .findOneAndUpdate({
+            fbId: req.body.friendFbId,
+            friends: {
+                $elemMatch: {
+                    fbId: req.body.userFbId,
+                },
+            },
+        }, {
+            $set: {
+                'friends.$.status': 'active',
+            },
+        }, {
+            new: true,
+        })
+        .exec()
+        .then((profile) => {
+            console.log('at least this happened');
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500)
+                .json({
+                    err,
+                });
+        });
+
+
+    User
+        .findOneAndUpdate({
+            fbId: req.body.userFbId,
+            friends: {
+                $elemMatch: {
+                    fbId: req.body.friendFbId,
+                },
+            },
+        }, {
+            $set: {
+                'friends.$.status': 'active',
+            },
+        }, {
+            new: true,
+        })
+        .exec()
+        .then((profile) => {
+            res.status(200)
+                .json(profile);
+        })
+        .catch(err => res.status(500)
+            .json({
+                err,
+            }));
+});
+
+
 router.put('/delete_friend', (req, res) => {
-    const userId = req.body.user.id;
-    const friendId = req.body.friend.id;
+    const userId = req.body.user;
+    const friendId = req.body.friend.fbId;
 
     User
-        .findOneAndUpdate({ fbId: userId },
-        { $pull: { friends: { friendId } } })
+        .findOneAndUpdate(
+        { fbId: userId },
+        { $pull: { friends: { fbId: friendId } } },
+        { new: true })
         .exec()
         .then((profile) => {
             console.log(profile);
-            res.status(201).json(profile[0].apiRepr());
+            res.status(200).json(profile);
         })
-        .catch(err => res.status(501).json({ err }));
+        .catch(err => res.status(500).json({ err }));
 
     User
-        .findOneAndUpdate({ fbId: friendId },
-        { $pull: { friends: { userId } } })
+        .findOneAndUpdate(
+        { fbId: friendId },
+        { $pull: { friends: { fbId: userId } } }, { new: true })
         .exec()
         .then((profile) => {
             console.log(profile);
-            res.status(201).json(profile[0].apiRepr());
         })
-        .catch(err => res.status(501).json({ err }));
+        .catch(err => res.status(500).json({ err }));
 });
 
 module.exports = { router };
