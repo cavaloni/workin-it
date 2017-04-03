@@ -16,6 +16,9 @@ export const profileFetchSuccess = profile => ({ type: PROFILE_FETCH_SUCCESS, pr
 export const EXERCISE_DATA_FETCH_SUCCESS = 'EXERCISE_DATA_FETCH_SUCCESS';
 export const exerciseDataFetchSuccess = data => ({ type: EXERCISE_DATA_FETCH_SUCCESS, data });
 
+export const EXERCISE_DATA_ONE_WEEK = 'EXERCISE_DATA_ONE_WEEK';
+export const exerciseDataOneWeek = data => ({ type: EXERCISE_DATA_ONE_WEEK, data });
+
 export const DELETE_FRIEND_LOCAL = 'DELETE_FRIEND_LOCAL';
 export const deleteFriendLocal = index => ({ type: DELETE_FRIEND_LOCAL, index });
 
@@ -110,15 +113,21 @@ export const setUserProfile = () => (dispatch) => {
         }));
 };
 
-export const getExerciseData = (token, user) => (dispatch) => {
+export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) => {
     console.log(user);
     O.ajax({
         url: '/exercise_data/get_data',
-        body: { user },
+        body: { user, year, week, oneWeek },
         headers: { token },
         method: 'POST',
     })
-        .subscribe(response => dispatch(exerciseDataFetchSuccess(response.response)));
+        .subscribe((response) => {
+            console.log(response);
+            if (oneWeek) {
+                dispatch(exerciseDataOneWeek(response.response));
+            }
+            dispatch(exerciseDataFetchSuccess(response.response));
+        });
 };
 
 export const saveExerciseData = (token, user, dataToSave) => (dispatch) => {

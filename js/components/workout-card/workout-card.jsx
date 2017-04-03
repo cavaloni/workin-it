@@ -10,21 +10,14 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
 
+import exercisesList from '../exercise-list';
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
 
 import styles from './styles.css';
 
-const fakeworks = [
-    'Pull-Ups',
-    'Deadlift',
-    'Fatties',
-    'Heavy Shit',
-    'Overhead Tricep Press',
-    'hats',
-    'cats',
-];
+// TODO: need to pass in the category of workout 'arms' 'back' to the workout item so it can access the oneWeekData object
 
 class WorkoutCard extends Component {
     constructor(props) {
@@ -45,21 +38,51 @@ class WorkoutCard extends Component {
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
         this.saveData = this.saveData.bind(this);
         this.getExDataFromComponents = this.getExDataFromComponents.bind(this);
+        this.populatedCallback = this.populatedCallback.bind(this)
         this.state = {
             itemList: [],
             chooseWorkout: false,
             listNotEmpty: false,
             sameSets: true,
+            isChecked: true,
             snackbarOpen: false,
             tiggerSave: false,
+            populateWeek: false,
             dataToSave: [],
         };
         this.tempDataToSave = [];
         this.workoutItem = (<WorkoutItem />);
     }
 
-    getExDataFromComponents(exerciseData, exercise) {
+    componentWillUpdate(nextProps, nextState) {
+        const type = this.props.cardType.toLowerCase();
+        console.log(nextProps.weekData[type]);
+        if (nextProps.weekData !== this.props.weekData && nextProps.weekData[type]) {
+            let isChecked = true;
+            let sameSets = true;
+            const itemList = Object.keys(nextProps.weekData[type]).map((exercise) => {
+                console.log(nextProps.weekData[type][exercise].data.length)
+                if (nextProps.weekData[type][exercise].data.length > 1) {
+                    isChecked = false;
+                    sameSets = false;
+                }
+                return nextProps.weekData[type][exercise].fullName;
+            });
+            this.setState({
+                populateWeek: true,
+                listNotEmpty: true,
+                itemList,
+                isChecked,
+                sameSets,
+            },
+                () => this.setState({ populateWeek: false }));
+        }
+    }
+
+
+    getExDataFromComponents(exerciseData, exName) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
+        const exercise = _.camelCase(exName);
         dataToSaveCopy.push({
             exerciseData,
             exercise,
@@ -71,25 +94,25 @@ class WorkoutCard extends Component {
             this.tempDataToSave = [];
             this.props.dispatch(actions.saveExerciseData(
                 this.props.token,
-                this.props.profileData.fbId, 
+                this.props.profileData.fbId,
                 dataToSave,
-                ))
+                ));
             this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
         }
     }
 
     sameSetsCheck(e, checked) {
-        this.setState({ sameSets: checked });
+        e.preventDefault();
+        this.setState({ sameSets: !this.state.sameSets, isChecked: !this.state.isChecked });
     }
 
     addWorkouts(value) {
-        let idx;
+        let exName;
         if (typeof (value) === 'string') {
-            fakeworks.push(value);
-            idx = fakeworks.indexOf(value);
-        } else { idx = value; }
+            exName = value;
+        } else { exName = exercisesList[this.props.cardType.toLowerCase()][value]; }
         const newArry = Array.from(this.state.itemList);
-        newArry.push(idx);
+        newArry.push(_.capitalize(exName));
         this.setState({ itemList: newArry, chooseWorkout: false, listNotEmpty: true });
     }
 
@@ -103,20 +126,34 @@ class WorkoutCard extends Component {
         this.setState({ chooseWorkout: true });
     }
 
+    populatedCallback() {
+        this.setState({ populateWeek: false });
+    }
+
     render() {
         const workoutItemsList = this.state.itemList
-            .map(itemIndex =>
+            .map(item =>
                 <WorkoutItem
+                  populateWeek={this.state.populateWeek}
+                  populatedCallback={this.populatedCallback}
+                  exerciseGroup={this.props.cardType}
                   triggerSave={this.state.triggerSave}
-                  key={itemIndex}
-                  item={fakeworks[itemIndex]}
+                  key={item}
+                  item={item}
                   sets={this.state.sameSets}
                   saved={this.getExDataFromComponents}
                 />);
+
+        console.log(this.props.cardType);
+
         return (
             <MuiThemeProvider>
                 <Card style={this.style.card}>
-                    <WorkoutChooser opener={this.state.chooseWorkout} clicker={this.addWorkouts} />
+                    <WorkoutChooser
+                      opener={this.state.chooseWorkout}
+                      clicker={this.addWorkouts}
+                      type={this.props.cardType}
+                    />
                     <CardHeader
                       title={this.props.cardType}
                       titleStyle={{
@@ -128,7 +165,7 @@ class WorkoutCard extends Component {
                       disabled={!this.state.listNotEmpty}
                       label="Same sets throughout"
                       labelStyle={{ right: '13%' }}
-                      defaultChecked
+                      checked={this.state.isChecked}
                       style={styles.checkbox}
                     /> {workoutItemsList}
                     <FloatingActionButton
@@ -141,7 +178,8 @@ class WorkoutCard extends Component {
                       mini
                       onClick={this.openWorkoutChooser}
 
-                    > <ContentAdd />
+                    >
+                        <ContentAdd />
                     </FloatingActionButton>
                     <RaisedButton
                       disabled={!this.state.listNotEmpty}
@@ -170,9 +208,10 @@ WorkoutCard.propTypes = {
     cardType: React.PropTypes.string.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({ 
-    profileData: state.userData, 
-    token: state.userToken, 
+const mapStateToProps = (state, props) => ({
+    profileData: state.userData,
+    token: state.userToken,
+    weekData: state.oneWeekData,
 });
 
 export default connect(mapStateToProps)(WorkoutCard);

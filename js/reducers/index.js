@@ -2,6 +2,7 @@ const initialState = {
     userData: {},
     exerciseData: {},
     userToken: '',
+    oneWeekData: {},
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -33,6 +34,13 @@ export const appReducer = (state = initialState, action) => {
             return {
                 ...state,
                 userToken: action.token,
+            };
+        }
+        case 'EXERCISE_DATA_ONE_WEEK': {
+            console.log(action.data);
+            return {
+                ...state,
+                oneWeekData: action.data.data[Object.keys(action.data.data)[0]],
             };
         }
 

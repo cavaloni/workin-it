@@ -6,6 +6,8 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import { orange500, blue500 } from 'material-ui/styles/colors';
 
+import exercisesList from '../exercise-list';
+
 const styles = {
     radioButton: {
         marginTop: 16,
@@ -18,11 +20,13 @@ const styles = {
     },
 };
 
-const fakeworks = ['Pull-Ups', 'Deadlift', 'Fatties', 'Heavy Shit', 'Overhead Tricep Press', 'hats', 'cats'];
+
 
 export default class ChooseWorkout extends React.Component {
     constructor(props, context) {
         super(props, context);
+        this.type = props.type.toLowerCase();
+        console.log(exercisesList);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -30,7 +34,7 @@ export default class ChooseWorkout extends React.Component {
         this.state = {
             selected: undefined,
             open: this.props.opener,
-            worksList: fakeworks.map(() => false),
+            worksList: exercisesList[this.type].map(() => false),
             customWorkout: '',
         };
         this.customWorkout = '';
@@ -60,12 +64,12 @@ export default class ChooseWorkout extends React.Component {
         }
         if (this.state.selected === undefined) { return; }
         this.props.clicker(this.state.selected);
-        const newArry = fakeworks.map(() => false); // reset checked state
+        const newArry = exercisesList[this.type].map(() => false); // reset checked state
         this.setState({ worksList: newArry });
     }
 
     handleSelect(event, menuObj, index) {
-        const newArry = fakeworks.map(() => false);
+        const newArry = exercisesList[this.type].map(() => false);
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });
     }
@@ -78,8 +82,8 @@ export default class ChooseWorkout extends React.Component {
         />,
         ];
 
-        const menuItems = fakeworks.map((exercise) => {
-            const i = fakeworks.indexOf(exercise);
+        const menuItems = exercisesList[this.type].map((exercise) => {
+            const i = exercisesList[this.type].indexOf(exercise);
             return (
                 <MenuItem
                   checked={this.state.worksList[i]}

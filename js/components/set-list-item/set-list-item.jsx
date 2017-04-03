@@ -51,7 +51,7 @@ class SetListItem extends Component {
                       style={styles.numberFields}
                       inputStyle={styles.input}
                       floatingLabelText="Reps"
-                      min={1}
+                      min={0}
                       max={100}
                     />
                     <NumberInput
@@ -61,7 +61,7 @@ class SetListItem extends Component {
                       style={styles.numberFields}
                       inputStyle={styles.input}
                       floatingLabelText="Weight"
-                      min={5}
+                      min={0}
                       max={900}
                     />
                 </div>

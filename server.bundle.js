@@ -118,160 +118,169 @@ module.exports = require("passport");
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _lodash = __webpack_require__(8);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var mockData = {
-    10: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 180,
-                    reps: 4
-                }, {
-                    weight: 180,
-                    reps: 5
-                }, {
-                    weight: 180,
-                    reps: 6
-                }]
+    2017: {
+        10: {
+            arms: {
+                pullUps: {
+                    fullName: 'Pull Ups',
+                    sets: 3,
+                    data: [{
+                        weight: 180,
+                        reps: 4
+                    }, {
+                        weight: 180,
+                        reps: 5
+                    }, {
+                        weight: 180,
+                        reps: 6
+                    }]
+                },
+                tricepPullDown: {
+                    fullName: 'Tricep Pull Down',
+                    sets: 3,
+                    data: [{
+                        weight: 80,
+                        reps: 4
+                    }]
+                }
             },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 80,
-                    reps: 4
-                }]
+            back: {
+                cockPushUps: {
+                    fullName: 'Cock Push Ups',
+                    sets: 2,
+                    data: [{
+                        weight: 280,
+                        reps: 1
+                    }, {
+                        weight: 280,
+                        reps: 2
+                    }]
+                }
             }
         },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 280,
-                    reps: 1
-                }, {
-                    weight: 280,
-                    reps: 2
-                }]
-            }
-        }
-    },
-    11: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 185,
-                    reps: 4
-                }, {
-                    weight: 185,
-                    reps: 5
-                }, {
-                    weight: 185,
-                    reps: 6
-                }]
+        11: {
+            arms: {
+                pullUps: {
+                    fullName: 'Pull Ups',
+                    sets: 3,
+                    data: [{
+                        weight: 185,
+                        reps: 4
+                    }, {
+                        weight: 185,
+                        reps: 5
+                    }, {
+                        weight: 185,
+                        reps: 6
+                    }]
+                },
+                tricepPullDown: {
+                    fullName: 'Tricep Pull Down',
+                    sets: 3,
+                    data: [{
+                        weight: 85,
+                        reps: 4
+                    }]
+                }
             },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 85,
-                    reps: 4
-                }]
+            back: {
+                cockPushUps: {
+                    fullName: 'Cock Push Ups',
+                    sets: 2,
+                    data: [{
+                        weight: 280,
+                        reps: 1
+                    }, {
+                        weight: 280,
+                        reps: 2
+                    }]
+                }
             }
         },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 280,
-                    reps: 1
-                }, {
-                    weight: 280,
-                    reps: 2
-                }]
-            }
-        }
-    },
-    12: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 190,
-                    reps: 4
-                }, {
-                    weight: 190,
-                    reps: 5
-                }, {
-                    weight: 190,
-                    reps: 6
-                }]
+        12: {
+            arms: {
+                pullUps: {
+                    fullName: 'Pull Ups',
+                    sets: 3,
+                    data: [{
+                        weight: 190,
+                        reps: 4
+                    }, {
+                        weight: 190,
+                        reps: 5
+                    }, {
+                        weight: 190,
+                        reps: 6
+                    }]
+                },
+                tricepPullDown: {
+                    fullName: 'Tricep Pull Down',
+                    sets: 3,
+                    data: [{
+                        weight: 90,
+                        reps: 4
+                    }]
+                }
             },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 90,
-                    reps: 4
-                }]
+            back: {
+                cockPushUps: {
+                    fullName: 'Cock Push Ups',
+                    sets: 2,
+                    data: [{
+                        weight: 290,
+                        reps: 1
+                    }, {
+                        weight: 290,
+                        reps: 2
+                    }]
+                }
             }
         },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 290,
-                    reps: 1
-                }, {
-                    weight: 290,
-                    reps: 2
-                }]
-            }
-        }
-    },
-    13: {
-        arms: {
-            pullUps: {
-                fullName: 'Pull Ups',
-                sets: 3,
-                data: [{
-                    weight: 200,
-                    reps: 5
-                }, {
-                    weight: 200,
-                    reps: 4
-                }, {
-                    weight: 200,
-                    reps: 4
-                }]
+        13: {
+            arms: {
+                pullUps: {
+                    fullName: 'Pull Ups',
+                    sets: 3,
+                    data: [{
+                        weight: 200,
+                        reps: 5
+                    }, {
+                        weight: 200,
+                        reps: 4
+                    }, {
+                        weight: 200,
+                        reps: 4
+                    }]
+                },
+                tricepPullDown: {
+                    fullName: 'Tricep Pull Down',
+                    sets: 3,
+                    data: [{
+                        weight: 100,
+                        reps: 4
+                    }]
+                }
             },
-            tricepPullDown: {
-                fullName: 'Tricep Pull Down',
-                sets: 3,
-                data: [{
-                    weight: 100,
-                    reps: 4
-                }]
-            }
-        },
-        back: {
-            cockPushUps: {
-                fullName: 'Cock Push Ups',
-                sets: 2,
-                data: [{
-                    weight: 310,
-                    reps: 1
-                }, {
-                    weight: 300,
-                    reps: 2
-                }]
+            back: {
+                cockPushUps: {
+                    fullName: 'Cock Push Ups',
+                    sets: 2,
+                    data: [{
+                        weight: 310,
+                        reps: 1
+                    }, {
+                        weight: 300,
+                        reps: 2
+                    }]
+                }
             }
         }
     }
@@ -301,10 +310,16 @@ exports.default = mockData;
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = require("rxjs");
+module.exports = require("lodash");
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("rxjs");
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -314,7 +329,7 @@ exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongo
 exports.PORT = process.env.PORT || 8081;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -326,11 +341,11 @@ var _moment = __webpack_require__(24);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _lodash = __webpack_require__(23);
+var _lodash = __webpack_require__(8);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ex_model = __webpack_require__(21);
+var _ex_model = __webpack_require__(22);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
 
@@ -338,7 +353,7 @@ var _mockData = __webpack_require__(7);
 
 var _mockData2 = _interopRequireDefault(_mockData);
 
-var _rxjs = __webpack_require__(8);
+var _rxjs = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -462,12 +477,17 @@ router.post('/get_data', function (req, res) {
             }).map(function (year) {
                 return Object.keys(exerciseData[year]);
             })[0].filter(function (weeks) {
+                if (req.body.oneWeek) {
+                    return weeks === weekQuery;
+                }
                 var weekRangeMax = weekQuery + 1;
                 var weekRangeMin = weekQuery - 4;
                 return _lodash2.default.inRange(weeks, weekRangeMin, weekRangeMax);
             }).reduce(function (weekSet, week) {
                 return _extends({}, weekSet, _defineProperty({}, week, exerciseData[2017][week]));
             }, {});
+
+            console.log(userRangeData);
 
             res.status(200).json({
                 data: userRangeData
@@ -483,29 +503,34 @@ router.put('/get_weeks', function (req, res) {
         console.log(data);
         var years = Object.keys(data.exerciseData);
         var numOfYears = years.length;
-        var numOfWeeks = years.map(function (year) {
-            return Object.keys(data.exerciseData[year]).length;
+        var weekRanges = years.map(function (year) {
+            return _defineProperty({}, year, Object.keys(data.exerciseData[year]).map(function (week) {
+                var weekStart = (0, _moment2.default)().startOf('week').week(week).format('MMM DD YY');
+                var weekEnd = (0, _moment2.default)().endOf('week').week(week).format('MMM DD YY');
+                return weekStart + ' to ' + weekEnd;
+            }));
         });
-        res.status(200).json({ weeks: numOfWeeks * numOfYears });
+        console.log(weekRanges);
+        res.status(200).json({ weekRanges: weekRanges });
     });
 });
 
 module.exports = { router: router };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _user_model = __webpack_require__(22);
+var _user_model = __webpack_require__(23);
 
 var _mockData = __webpack_require__(7);
 
 var _mockData2 = _interopRequireDefault(_mockData);
 
-var _rxjs = __webpack_require__(8);
+var _rxjs = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -676,7 +701,7 @@ router.put('/delete_friend', function (req, res) {
 module.exports = { router: router };
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -704,55 +729,55 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("cookie-parser");
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("cors");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("express-session");
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("json-circular");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("morgan");
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("node-codein");
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-facebook");
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = require("shortid");
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -778,7 +803,7 @@ var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 module.exports = ExerciseData;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,12 +832,6 @@ var User = mongoose.model('user_data', UserSchema);
 module.exports = { User: User };
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-module.exports = require("lodash");
-
-/***/ }),
 /* 24 */
 /***/ (function(module, exports) {
 
@@ -827,27 +846,27 @@ module.exports = require("moment");
 
 var passport = __webpack_require__(6);
 var bodyParser = __webpack_require__(0);
-var cookieParser = __webpack_require__(13);
+var cookieParser = __webpack_require__(14);
 var mongoose = __webpack_require__(3);
 var express = __webpack_require__(1);
-var Strategy = __webpack_require__(19).Strategy;
-var morgan = __webpack_require__(17)('combined');
-var expressSession = __webpack_require__(15);
+var Strategy = __webpack_require__(20).Strategy;
+var morgan = __webpack_require__(18)('combined');
+var expressSession = __webpack_require__(16);
 var jwt = __webpack_require__(5);
-var cors = __webpack_require__(14);
+var cors = __webpack_require__(15);
 var eJwt = __webpack_require__(2);
-var shortid = __webpack_require__(20);
+var shortid = __webpack_require__(21);
 
-var _require = __webpack_require__(10),
+var _require = __webpack_require__(11),
     exerciseDataRouter = _require.router;
 
-var _require2 = __webpack_require__(11),
+var _require2 = __webpack_require__(12),
     userRouter = _require2.router;
 
 var JwtStrategy = __webpack_require__(4).Strategy;
 var ExtractJwt = __webpack_require__(4).ExtractJwt;
-var JsonCircular = __webpack_require__(16);
-var codein = __webpack_require__(18);
+var JsonCircular = __webpack_require__(17);
+var codein = __webpack_require__(19);
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -883,7 +902,7 @@ mongoose.Promise = global.Promise;
 
 var app = express();
 
-var _require3 = __webpack_require__(9),
+var _require3 = __webpack_require__(10),
     PORT = _require3.PORT,
     DATABASE_URL = _require3.DATABASE_URL;
 
@@ -1008,7 +1027,7 @@ if (__webpack_require__.c[__webpack_require__.s] === module) {
 }
 
 module.exports = { app: app, runServer: runServer, closeServer: closeServer };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ })
 /******/ ]);

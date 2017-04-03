@@ -134,6 +134,9 @@ router.post('/get_data', (req, res) => {
                     .filter(years => years === yearQuery)
                     .map(year => Object.keys(exerciseData[year]))[0]
                     .filter((weeks) => {
+                        if (req.body.oneWeek) {
+                            return weeks === weekQuery;
+                        }
                         const weekRangeMax = weekQuery + 1;
                         const weekRangeMin = weekQuery - 4;
                         return _.inRange(weeks, weekRangeMin, weekRangeMax);
@@ -142,6 +145,8 @@ router.post('/get_data', (req, res) => {
                         ...weekSet,
                         [week]: exerciseData[2017][week],
                     }), {});
+
+                    console.log(userRangeData);
 
                 res.status(200)
                     .json({
@@ -160,8 +165,15 @@ router.put('/get_weeks', (req, res) => {
             console.log(data);
             const years = Object.keys(data.exerciseData);
             const numOfYears = years.length;
-            const numOfWeeks = years.map(year => Object.keys(data.exerciseData[year]).length);
-            res.status(200).json({ weeks: numOfWeeks * numOfYears });
+            const weekRanges = years.map(year => ({
+                [year]: Object.keys(data.exerciseData[year]).map((week) => {
+                    const weekStart = moment().startOf('week').week(week).format('MMM DD YY');
+                    const weekEnd = moment().endOf('week').week(week).format('MMM DD YY');
+                    return `${weekStart} to ${weekEnd}`;
+                }),
+            }));
+            console.log(weekRanges);
+            res.status(200).json({ weekRanges });
         });
 });
 

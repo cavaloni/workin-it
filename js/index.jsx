@@ -28,7 +28,6 @@ function requireAuth(nextState, replace) {
         url: 'verify_auth',
     })
         .subscribe((response) => {
-            console.log(response);
             if (response.status !== 201) {
                 replace({
                     pathname: '/',
