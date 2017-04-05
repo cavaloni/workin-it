@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
 import Rx from 'rxjs';
 import { browserHistory } from 'react-router';
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
+
 
 class Auth extends Component {
     constructor(props) {
@@ -24,5 +25,14 @@ class Auth extends Component {
         );
     }
 }
+
+Auth.propTypes = {
+    // initial user token in routing parameter
+    params: React.PropTypes.shape({
+        initToken: React.PropTypes.string,
+    }).isRequired,
+    // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
+};
 
 export default connect()(Auth);

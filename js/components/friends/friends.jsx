@@ -7,7 +7,6 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/MenuItem';
 import { grey400 } from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
-import FiberNew from 'material-ui/svg-icons/av/fiber-new';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
@@ -56,7 +55,7 @@ class Friends extends Component {
         this.handleModalClose = this.handleModalClose.bind(this);
         this.deleteFriend = this.deleteFriend.bind(this);
         this.handleAutoComChange = this.handleAutoComChange.bind(this);
-        this.handleNewFriendSelect = this.handleNewFriendSelect.bind(this);
+        this.handleAutoComSelect = this.handleAutoComSelect.bind(this);
         this.sendNewFriendRequest = this.sendNewFriendRequest.bind(this);
         this.acceptFriend = this.acceptFriend.bind(this);
     }
@@ -112,11 +111,11 @@ class Friends extends Component {
             token,
         );
 
-        console.log(objToDispatch)
+        console.log(objToDispatch);
         this.props.dispatch(objToDispatch);
     }
 
-    handleNewFriendSelect(newFriendSelected, newFriendSelectedIndex) {
+    handleAutoComSelect(newFriendSelected, newFriendSelectedIndex) {
         this.setState({ newFriendSelected, newFriendSelectedIndex });
     }
 
@@ -130,7 +129,7 @@ class Friends extends Component {
             };
 
             if (_.some(this.props.friends, ['fbId', friend.fbId])) {
-                this.setState( { autoComErrTxt: 'Check your friends lists' });
+                this.setState({ autoComErrTxt: 'Check your friends lists' });
                 return;
             }
 
@@ -280,7 +279,7 @@ class Friends extends Component {
                       dataSource={autocompleteUserNames}
                       maxSearchResults={5}
                       onUpdateInput={this.handleAutoComChange}
-                      onNewRequest={this.handleNewFriendSelect}
+                      onNewRequest={this.handleAutoComSelect}
                       fullWidth
                     />
                     <RaisedButton
@@ -320,6 +319,22 @@ class Friends extends Component {
         );
     }
 }
+
+Friends.propTypes = {
+    // list of friends
+    friends: React.PropTypes.array.isRequired,
+    // user profile info from redux store
+    profileData: React.PropTypes.shape({
+        fbId: React.PropTypes.string.isRequired,
+        user: React.PropTypes.string.isRequired,
+        profileImage: React.PropTypes.string,
+        friends: React.PropTypes.array,
+    }).isRequired,
+    // the users JWT
+    token: React.PropTypes.string.isRequired,
+    // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state, props) => ({
     profileData: state.userData,

@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
-import _ from 'lodash';
-import Divider from 'material-ui/Divider';
-import NumberInput from 'material-ui-number-input';
-import FlatButton from 'material-ui/FlatButton';
-import SetListItem from '../set-list-item/set-list-item';
 import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
+import _ from 'lodash';
+import Divider from 'material-ui/Divider';
+import FlatButton from 'material-ui/FlatButton';
+import SetListItem from '../set-list-item/set-list-item';
+
 
 
 class WorkoutItem extends Component {
@@ -112,7 +112,11 @@ class WorkoutItem extends Component {
     getSetsData(setData) {
         const setsDataCopy = Array.from(this.state.setsData);
         const setTypeKey = Object.keys(setData)[0];
-        setsDataCopy[setData.setNum] = Object.assign({}, setsDataCopy[setData.setNum], { [setTypeKey]: setData[setTypeKey] });
+        setsDataCopy[setData.setNum] = Object.assign(
+            {},
+            setsDataCopy[setData.setNum],
+            { [setTypeKey]: setData[setTypeKey] },
+            );
         this.setState({ setsData: setsDataCopy });
     }
 
@@ -127,7 +131,6 @@ class WorkoutItem extends Component {
     }
 
     populateWeek() {
-        console.log('populateWeek()');
         const weekData = this.props.weekData;
         const dbWrktName = _.camelCase(this.props.item);
         const grpName = this.props.exerciseGroup.toLowerCase();
@@ -144,7 +147,7 @@ class WorkoutItem extends Component {
 
     modalDelete(e) {
         if (!e.currentTarget.parentElement.getElementsByTagName('button')[0].children[0]) {
-            this.eNameToDelete = e.currentTarget.parentElement.getElementsByTagName('button')[0].childNodes[0].data
+            this.eNameToDelete = e.currentTarget.parentElement.getElementsByTagName('button')[0].childNodes[0].data;
         } else { this.eNameToDelete = e.currentTarget.parentElement.getElementsByTagName('button')[0].children[0].innerText; }
         this.setState({ modalDeleteOpen: true });
     }
@@ -185,18 +188,13 @@ class WorkoutItem extends Component {
             _.set(this.styles, 'name.color', 'black');
         } else { _.unset(this.styles, 'name.color'); }
 
-        let noStyle;
         const setList = [];
         if (this.state.showSets) {
             for (let i = 1; i < Number(this.state.sets); i++) {
                 setList.push(<SetListItem set={i} getData={this.getSetsData} />);
             }
         }
-        if (!this.props.sets) {
-            noStyle = {
-                color: 'black',
-            };
-        }
+
         return (
             <div style={this.styles.container}>
                 <Dialog
@@ -244,7 +242,11 @@ class WorkoutItem extends Component {
                     >
                         {items}
                     </SelectField>
-                    <IconButton style={this.styles.delete} onTouchTap={this.modalDelete} tooltip="Delete">
+                    <IconButton
+                      style={this.styles.delete}
+                      onTouchTap={this.modalDelete}
+                      tooltip="Delete"
+                    >
                         <ActionDelete />
                     </IconButton>
                 </div>
@@ -263,6 +265,25 @@ WorkoutItem.propTypes = {
     // boolean to start the saving process in this component and its
     // potential set-item children
     triggerSave: React.PropTypes.bool.isRequired,
+    // function that lets this component know when population of data to children
+    // has completed
+    populatedCallback: React.PropTypes.func.isRequired,
+    // boolean to trigger this component to populate the data from props.weekData
+    populateWeek: React.PropTypes.bool.isRequired,
+    // callback to parent component, workout-card, to send the name of item to delete
+    delete: React.PropTypes.func.isRequired,
+    // callback letting parent component know that the user has modified a field
+    changed: React.PropTypes.func.isRequired,
+    // the group of exercise (arms, legs, etc)
+    exerciseGroup: React.PropTypes.string.isRequired,
+    // the redux connected oneWeekData
+    weekData: React.PropTypes.shape({}),
+    // callback to send save data from this component and its children to parent
+    saved: React.PropTypes.func.isRequired,
+};
+
+WorkoutItem.defaultProps = {
+    weekData: {},
 };
 
 const mapStateToProps = (state, props) => ({

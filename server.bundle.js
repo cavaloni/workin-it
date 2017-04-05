@@ -91,12 +91,7 @@ module.exports = require("express-jwt");
 module.exports = require("mongoose");
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("passport-jwt");
-
-/***/ }),
+/* 4 */,
 /* 5 */
 /***/ (function(module, exports) {
 
@@ -349,17 +344,10 @@ var _ex_model = __webpack_require__(22);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
 
-var _mockData = __webpack_require__(7);
-
-var _mockData2 = _interopRequireDefault(_mockData);
-
-var _rxjs = __webpack_require__(9);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var O = _rxjs.Observable;
 var jsonParser = __webpack_require__(0).json();
 var express = __webpack_require__(1);
 var eJwt = __webpack_require__(2);
@@ -535,9 +523,7 @@ router.put('/get_weeks', function (req, res) {
     _ex_model2.default.findOne({
         userId: req.body.user
     }).then(function (data) {
-        console.log(data);
         var years = Object.keys(data.exerciseData);
-        var numOfYears = years.length;
         var weekRanges = years.map(function (year) {
             return _defineProperty({}, year, Object.keys(data.exerciseData[year]).map(function (week) {
                 var weekStart = (0, _moment2.default)().startOf('week').week(week).format('MMM DD YY');
@@ -545,7 +531,6 @@ router.put('/get_weeks', function (req, res) {
                 return weekStart + ' to ' + weekEnd;
             }));
         });
-        console.log(weekRanges);
         res.status(200).json({ weekRanges: weekRanges });
     });
 });
@@ -782,12 +767,7 @@ module.exports = require("cors");
 module.exports = require("express-session");
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = require("json-circular");
-
-/***/ }),
+/* 17 */,
 /* 18 */
 /***/ (function(module, exports) {
 
@@ -898,9 +878,6 @@ var _require = __webpack_require__(11),
 var _require2 = __webpack_require__(12),
     userRouter = _require2.router;
 
-var JwtStrategy = __webpack_require__(4).Strategy;
-var ExtractJwt = __webpack_require__(4).ExtractJwt;
-var JsonCircular = __webpack_require__(17);
 var codein = __webpack_require__(19);
 
 var blacklist = { // this object is to keep the inital temporary tokens

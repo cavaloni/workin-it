@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { Observable } from 'rxjs';
-import _ from 'lodash';
-import moment from 'moment';
-import qs from 'qs';
-import { connect } from 'react-redux';
-import * as actions from '../../actions/index';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
-import WorkoutCard from '../workout-card/workout-card';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import _ from 'lodash';
+import moment from 'moment';
+import { connect } from 'react-redux';
+import WorkoutCard from '../workout-card/workout-card';
+import * as actions from '../../actions/index';
+
 
 const O = Observable;
 
@@ -26,7 +26,7 @@ class Workout extends Component {
                 margin: '10px',
                 display: 'block',
                 width: '190px',
-            }
+            },
         };
         this.state = {
             weekRanges: [],
@@ -172,10 +172,10 @@ class Workout extends Component {
                 >
                     {modalInfo.content}
                 </Dialog>
-                <DropDownMenu 
+                <DropDownMenu
                   style={this.style.weekSelector}
-                  maxHeight={300} 
-                  value={this.state.selectedWeek} 
+                  maxHeight={300}
+                  value={this.state.selectedWeek}
                   onChange={this.handleWeekChange}
                 >
                     {this.state.weekRanges}
@@ -192,9 +192,24 @@ class Workout extends Component {
     }
 }
 
+Workout.propTypes = {
+    // redux store data for the user selected week, or default current week
+    oneWeekData: React.PropTypes.shape({}).isRequired,
+    // the users JWT
+    token: React.PropTypes.string.isRequired,
+    // the users profile information from redux store
+    profileData: React.PropTypes.shape({
+        fbId: React.PropTypes.string.isRequired,
+        user: React.PropTypes.string.isRequired,
+        profileImage: React.PropTypes.string,
+        friends: React.PropTypes.array,
+    }).isRequired,
+    // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
+};
+
 const mapStateToProps = (state, props) => ({
     profileData: state.userData,
-    exerciseData: state.exerciseData,
     token: state.userToken,
     oneWeekData: state.oneWeekData,
 });

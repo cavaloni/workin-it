@@ -26,7 +26,6 @@ export default class ChooseWorkout extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.type = props.type.toLowerCase();
-        console.log(exercisesList);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -129,4 +128,6 @@ ChooseWorkout.propTypes = {
     opener: React.PropTypes.bool.isRequired,
     // callback to send clicked workout back to parent component
     clicker: React.PropTypes.func.isRequired,
+    // the type of the exercise (arms, back, etc)
+    type: React.PropTypes.string.isRequired,
 };

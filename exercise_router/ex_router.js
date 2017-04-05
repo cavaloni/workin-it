@@ -1,10 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 import ExerciseData from './ex_model';
-import mockData from '../js/components/mock-data';
-import { Observable } from 'rxjs';
 
-const O = Observable;
 const jsonParser = require('body-parser')
     .json();
 const express = require('express');
@@ -99,7 +96,8 @@ router.put('/', (req, res) => {
                 newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName);
             });
 
-            const exercisesInDatabase = _.uniq(_.flatten(Object.keys(newData.exerciseData[year][week])
+            const exercisesInDatabase = _.uniq(
+                _.flatten(Object.keys(newData.exerciseData[year][week])
                 .map(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
                     .map(exercise => exercise),
                 )));
@@ -200,9 +198,7 @@ router.put('/get_weeks', (req, res) => {
             userId: req.body.user,
         })
         .then((data) => {
-            console.log(data);
             const years = Object.keys(data.exerciseData);
-            const numOfYears = years.length;
             const weekRanges = years.map(year => ({
                 [year]: Object.keys(data.exerciseData[year]).map((week) => {
                     const weekStart = moment().startOf('week').week(week).format('MMM DD YY');
@@ -210,7 +206,6 @@ router.put('/get_weeks', (req, res) => {
                     return `${weekStart} to ${weekEnd}`;
                 }),
             }));
-            console.log(weekRanges);
             res.status(200).json({ weekRanges });
         });
 });

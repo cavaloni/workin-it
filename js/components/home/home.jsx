@@ -54,29 +54,25 @@ const style = {
 };
 
 class Home extends Component {
-    constructor(props, context) {
-        super(props, context);
-        this.workoutRoute = this.workoutRoute.bind(this);
-        this.progressRoute = this.progressRoute.bind(this);
+    static workoutRoute(e) {
+        e.preventDefault();
+        browserHistory.push('/app/1');
     }
 
+    static progressRoute(e) {
+        e.preventDefault();
+        browserHistory.push('/app/2');
+    }
+
+    constructor(props, context) {
+        super(props, context);
+    }
 
     componentWillMount() {
         if (this.props.params.jwToken) {
             this.props.dispatch(actions.setUserToken());
         }
         this.props.dispatch(actions.setUserProfile());
-    }
-
-
-    workoutRoute(e) {
-        e.preventDefault();
-        browserHistory.push('/app/1');
-    }
-
-    progressRoute(e) {
-        e.preventDefault();
-        browserHistory.push('/app/2');
     }
 
     render() {
@@ -125,6 +121,21 @@ class Home extends Component {
         );
     }
 }
+
+Home.propTypes = {
+    profileData: React.PropTypes.shape({
+        fbId: React.PropTypes.string.isRequired,
+        user: React.PropTypes.string.isRequired,
+        profileImage: React.PropTypes.string,
+        friends: React.PropTypes.array,
+    }).isRequired,
+    // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
+    // parameter for initial jwToken
+    params: React.PropTypes.shape({
+        jwToken: React.PropTypes.string,
+    }).isRequired,
+};
 
 const mapStateToProps = (state, props) => ({ profileData: state.userData });
 

@@ -12,10 +12,7 @@ const eJwt = require('express-jwt');
 const shortid = require('shortid');
 const { router: exerciseDataRouter } = require('./exercise_router/ex_router');
 const { router: userRouter } = require('./user_router/user_router');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-var JsonCircular = require('json-circular');
-var codein = require("node-codein");
+const codein = require("node-codein");
 
 
 const blacklist = { // this object is to keep the inital temporary tokens

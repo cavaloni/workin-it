@@ -115,9 +115,6 @@ class WorkoutCard extends Component {
             } else { oneDayInWeek = this.props.selectedWeek.slice(0, 9); }
             const week = moment(oneDayInWeek, 'MMM DD YY').week();
             const year = moment(oneDayInWeek, 'MMM DD YY').year();
-            console.log('1111111111111111111111111111111111');
-            console.log(week);
-            console.log(year);
             this.tempDataToSave = [];
             this.props.dispatch(actions.saveExerciseData(
                 this.props.token,
@@ -130,7 +127,7 @@ class WorkoutCard extends Component {
         }
     }
 
-    sameSetsCheck(e, checked) {
+    sameSetsCheck(e) {
         e.preventDefault();
         this.setState({ sameSets: !this.state.sameSets, isChecked: !this.state.isChecked });
     }
@@ -252,6 +249,21 @@ class WorkoutCard extends Component {
 WorkoutCard.propTypes = {
     // determines the exercise group card type(arms, chest, etc)
     cardType: React.PropTypes.string.isRequired,
+    // the current week the user has selected to dislpay
+    selectedWeek: React.PropTypes.string.isRequired,
+    // redux store data for the user selected week, or default current week
+    weekData: React.PropTypes.shape({}).isRequired,
+    // user JWT
+    token: React.PropTypes.string.isRequired,
+    // the users profile information
+    profileData: React.PropTypes.shape({
+        fbId: React.PropTypes.string.isRequired,
+        user: React.PropTypes.string.isRequired,
+        profileImage: React.PropTypes.string,
+        friends: React.PropTypes.array,
+    }).isRequired,
+    // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => ({
