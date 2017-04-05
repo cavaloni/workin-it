@@ -403,14 +403,8 @@ router.post('/', function (req, res) {
 });
 
 router.put('/', function (req, res) {
-    var exSets = req.body.dataToSave[0].exerciseData;
-    var exName = req.body.dataToSave[0].exercise;
-    var camelName = _lodash2.default.camelCase(req.body.dataToSave[0].exercise);
-    var exGroup = req.body.dataToSave[0].exerciseGroup;
-    var week = req.body.week || (0, _moment2.default)().week().toString();
-    var year = req.body.year || (0, _moment2.default)().year().toString();
-
-    var requiredFields = ['user', 'exerciseData'];
+    console.log(req.body);
+    var requiredFields = ['user', 'dataToSave'];
     requiredFields.forEach(function (field) {
         if (!(field in req.body)) {
             res.status(400).json({
@@ -420,10 +414,54 @@ router.put('/', function (req, res) {
     });
 
     _ex_model2.default.findOne(req.body.user.fbId).exec().then(function (prevData) {
-        var newData = _lodash2.default.cloneDeep(prevData[0]);
-        newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.data', exSets);
-        newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', exSets.length);
-        newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName);
+        var newData = _lodash2.default.cloneDeep(prevData);
+        var year = void 0;
+        var week = void 0;
+
+        if (req.body.year === 'undefined') {
+            year = (0, _moment2.default)().year().toString();
+        } else {
+            year = req.body.year;
+        }
+
+        if (req.body.week === 'undefined') {
+            week = (0, _moment2.default)().week().toString();
+        } else {
+            week = req.body.week;
+        }
+
+        var exercisesInDataToSave = [];
+        req.body.dataToSave.forEach(function (data) {
+            var i = req.body.dataToSave.indexOf(data);
+            var exSets = req.body.dataToSave[i].exerciseData;
+            var exName = req.body.dataToSave[i].exercise;
+            var camelName = _lodash2.default.camelCase(req.body.dataToSave[i].exercise);
+            var exGroup = req.body.dataToSave[i].exerciseGroup;
+            exercisesInDataToSave.push(camelName);
+
+            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.data', exSets);
+            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', exSets.length);
+            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName);
+        });
+
+        var exercisesInDatabase = _lodash2.default.uniq(_lodash2.default.flatten(Object.keys(newData.exerciseData[year][week]).map(function (exGroup) {
+            return Object.keys(newData.exerciseData[year][week][exGroup]).map(function (exercise) {
+                return exercise;
+            });
+        })));
+        var exercisesToDelete = _lodash2.default.difference(exercisesInDatabase, exercisesInDataToSave);
+        Object.keys(newData.exerciseData[year][week]).filter(function (exGroup) {
+            var groupsInDataToSave = Object.keys(req.body.dataToSave).map(function (data) {
+                return req.body.dataToSave[data].exerciseGroup;
+            });
+            return groupsInDataToSave.includes(exGroup);
+        }).forEach(function (exGroup) {
+            return Object.keys(newData.exerciseData[year][week][exGroup]).forEach(function (exercise) {
+                if (exercisesToDelete.includes(exercise)) {
+                    delete newData.exerciseData[year][week][exGroup][exercise];
+                }
+            });
+        });
 
         _ex_model2.default.findOneAndUpdate({
             fbId: req.body.user.fbId
@@ -436,20 +474,19 @@ router.put('/', function (req, res) {
         }).exec().then(function (profile) {
             return res.status(201).json(profile);
         }).catch(function (err) {
-            return res.status(500).json(err);
+            console.log(err);
+            res.status(500).json(err);
         });
     });
 });
 
 router.post('/get_data', function (req, res) {
-    console.log(req.body);
     var allUserData = void 0;
     _ex_model2.default.findOne({
         userId: req.body.user
     }).then(function (data) {
-        console.log(data);
         allUserData = data;
-        if (!allUserData) {
+        if (_lodash2.default.isEmpty(allUserData)) {
             res.status(201).json({
                 data: 'no data'
             });
@@ -460,13 +497,13 @@ router.post('/get_data', function (req, res) {
                 exerciseData = _allUserData.exerciseData;
 
 
-            if (!req.body.year) {
+            if (req.body.year === 'undefined') {
                 yearQuery = (0, _moment2.default)().year().toString();
             } else {
                 yearQuery = req.body.year;
             }
 
-            if (!req.body.week) {
+            if (req.body.week === 'undefined') {
                 weekQuery = (0, _moment2.default)().week().toString();
             } else {
                 weekQuery = req.body.week;
@@ -477,7 +514,7 @@ router.post('/get_data', function (req, res) {
             }).map(function (year) {
                 return Object.keys(exerciseData[year]);
             })[0].filter(function (weeks) {
-                if (req.body.oneWeek) {
+                if (req.body.oneWeek === 'true') {
                     return weeks === weekQuery;
                 }
                 var weekRangeMax = weekQuery + 1;
@@ -486,8 +523,6 @@ router.post('/get_data', function (req, res) {
             }).reduce(function (weekSet, week) {
                 return _extends({}, weekSet, _defineProperty({}, week, exerciseData[2017][week]));
             }, {});
-
-            console.log(userRangeData);
 
             res.status(200).json({
                 data: userRangeData
@@ -548,7 +583,7 @@ router.use(eJwt({ secret: 'super stank',
         return req.headers.token;
     },
     requestProperty: 'auth'
-}));
+}).unless({ path: ['/user/init_profile'] }));
 
 router.get('/', function (req, res) {
     _user_model.User.find({}).exec().then(function (users) {

@@ -10,20 +10,34 @@ import MenuItem from 'material-ui/MenuItem';
 import WorkoutCard from '../workout-card/workout-card';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 const O = Observable;
 
 class Workout extends Component {
     constructor(props, context) {
         super(props, context);
+        this.style = {
+            weekSelector: {
+                display: 'block',
+                width: '200px',
+            },
+            copy: {
+                margin: '10px',
+                display: 'block',
+                width: '190px',
+            }
+        };
         this.state = {
             weekRanges: [],
             selectedWeek: 'This Week',
             selectDialogOpen: false,
+            import: false,
         };
         this.handleWeekChange = this.handleWeekChange.bind(this);
-        this.confirmWeekChange = this.confirmWeekChange.bind(this);
+        this.confirm = this.confirm.bind(this);
         this.handleModalClose = this.handleModalClose.bind(this);
+        this.importToThisWeek = this.importToThisWeek.bind(this);
     }
 
     componentWillMount() {
@@ -47,11 +61,21 @@ class Workout extends Component {
             orderedWeekRangesList.unshift(<MenuItem value={'This Week'} key={key} primaryText={'This Week'} />);
             this.setState({ weekRanges: weekRangesList });
         });
+        this.props.dispatch(actions.getExerciseData(
+                    this.props.token,
+                    this.props.profileData.fbId,
+                    moment().year().toString(),
+                    moment().week().toString(),
+                    true,
+            ));
     }
 
     componentWillUpdate(nextProps, nextState) {
         if (nextState.selectedWeek !== this.state.selectedWeek) {
-            const oneDayInWeek = nextState.selectedWeek.slice(0, 9);
+            let oneDayInWeek;
+            if (nextState.selectedWeek === 'This Week') {
+                oneDayInWeek = moment().format('MMM DD YY');
+            } else { oneDayInWeek = nextState.selectedWeek.slice(0, 9); }
             const week = moment(oneDayInWeek, 'MMM DD YY').week();
             const year = moment(oneDayInWeek, 'MMM DD YY').year();
             this.props.dispatch(actions.getExerciseData(
@@ -69,12 +93,39 @@ class Workout extends Component {
         this.setState({ selectDialogOpen: true });
     }
 
-    confirmWeekChange() {
-        this.setState({ selectedWeek: this.selectedWeek, selectDialogOpen: false });
+    confirm() {
+        if (this.state.import) {
+            const curWeek = this.props.oneWeekData;
+            const dataToSave = _.flatten(Object.keys(curWeek)
+                .map(group => Object.keys(curWeek[group])
+                    .reduce((acc, cur) => {
+                        acc.push({
+                            exercise: curWeek[group][cur].fullName,
+                            exerciseGroup: group,
+                            exerciseData: curWeek[group][cur].data,
+                        });
+                        return acc;
+                    }, []),
+                ));
+            const week = moment().week();
+            const year = moment().year();
+            this.props.dispatch(actions.saveExerciseData(
+                this.props.token,
+                this.props.profileData.fbId,
+                dataToSave,
+                year,
+                week,
+            ));
+            this.setState({ selectDialogOpen: false, import: false, selectedWeek: 'This Week' });
+        } else { this.setState({ selectedWeek: this.selectedWeek, selectDialogOpen: false }); }
     }
 
     handleModalClose() {
         this.setState({ selectDialogOpen: false });
+    }
+
+    importToThisWeek() {
+        this.setState({ selectDialogOpen: true, import: true });
     }
 
     render() {
@@ -87,31 +138,55 @@ class Workout extends Component {
             <FlatButton
               label="Confirm"
               primary
-              onTouchTap={this.confirmWeekChange}
+              onTouchTap={this.confirm}
             />,
         ];
+
+        let importButton;
+        if (this.state.selectedWeek !== 'This Week') {
+            importButton = (<RaisedButton
+              style={this.style.copy}
+              label="Copy To This Week"
+              onTouchTap={this.importToThisWeek}
+            />);
+        } else importButton = '';
+
+        const modalInfo = {};
+        if (this.state.import) {
+            modalInfo.title = 'Comfirm Week Import';
+            modalInfo.content = 'Importing to current week will overwrite exercises you already have in this week. Continue?';
+        } else {
+            modalInfo.title = 'Confirm Week Change';
+            modalInfo.content = 'Changing the week you will lose any unsaved data. Continue?';
+        }
 
         return (
             <div>
                 <Dialog
                   key={1}
                   autoScrollBodyContent
-                  title="Confirm Week Change"
+                  title={modalInfo.title}
                   actions={modalActions}
                   modal
                   open={this.state.selectDialogOpen}
                 >
-                Changing the week you will lose any unsaved data. Continue?
+                    {modalInfo.content}
                 </Dialog>
-                <DropDownMenu maxHeight={300} value={this.state.selectedWeek} onChange={this.handleWeekChange}>
+                <DropDownMenu 
+                  style={this.style.weekSelector}
+                  maxHeight={300} 
+                  value={this.state.selectedWeek} 
+                  onChange={this.handleWeekChange}
+                >
                     {this.state.weekRanges}
                 </DropDownMenu>
-                <WorkoutCard cardType="Back" />
-                <WorkoutCard cardType="Arms" />
-                <WorkoutCard cardType="Shoulders" />
-                <WorkoutCard cardType="Legs" />
-                <WorkoutCard cardType="Chest" />
-                <WorkoutCard cardType="Abs" />
+                {importButton}
+                <WorkoutCard cardType="Back" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard cardType="Arms" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard cardType="Shoulders" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard cardType="Legs" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard cardType="Chest" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard cardType="Abs" selectedWeek={this.state.selectedWeek} />
             </div>
         );
     }
@@ -121,6 +196,7 @@ const mapStateToProps = (state, props) => ({
     profileData: state.userData,
     exerciseData: state.exerciseData,
     token: state.userToken,
+    oneWeekData: state.oneWeekData,
 });
 
 

@@ -16,8 +16,14 @@ export const profileFetchSuccess = profile => ({ type: PROFILE_FETCH_SUCCESS, pr
 export const EXERCISE_DATA_FETCH_SUCCESS = 'EXERCISE_DATA_FETCH_SUCCESS';
 export const exerciseDataFetchSuccess = data => ({ type: EXERCISE_DATA_FETCH_SUCCESS, data });
 
+export const EXERCISE_DATA_NO_DATA = 'EXERCISE_DATA_NO_DATA';
+export const exerciseDataNoData = () => ({ type: EXERCISE_DATA_NO_DATA })
+
 export const EXERCISE_DATA_ONE_WEEK = 'EXERCISE_DATA_ONE_WEEK';
 export const exerciseDataOneWeek = data => ({ type: EXERCISE_DATA_ONE_WEEK, data });
+
+export const EXERCISE_ONE_WEEK_DATA_NO_DATA = 'EXERCISE_ONE_WEEK_DATA_NO_DATA';
+export const exerciseOneWeekDataNoData = () => ({ type: EXERCISE_ONE_WEEK_DATA_NO_DATA });
 
 export const DELETE_FRIEND_LOCAL = 'DELETE_FRIEND_LOCAL';
 export const deleteFriendLocal = index => ({ type: DELETE_FRIEND_LOCAL, index });
@@ -122,19 +128,24 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
         method: 'POST',
     })
         .subscribe((response) => {
-            console.log(response);
             if (oneWeek) {
                 dispatch(exerciseDataOneWeek(response.response));
+                if (response.response.data === 'no data') {
+                    dispatch(exerciseOneWeekDataNoData())
+                }
+            }
+            if (response.response.data === 'no data') {
+                dispatch(exerciseDataNoData())
             }
             dispatch(exerciseDataFetchSuccess(response.response));
         });
 };
 
-export const saveExerciseData = (token, user, dataToSave) => (dispatch) => {
+export const saveExerciseData = (token, user, dataToSave, year, week) => (dispatch) => {
     console.log(dataToSave);
     O.ajax({
         url: '/exercise_data',
-        body: qs.stringify({ user, dataToSave }),
+        body: qs.stringify({ user, dataToSave, year, week }),
         headers: {
             token,
         },

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Card, CardHeader } from 'material-ui/Card';
@@ -10,14 +11,13 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
 
+
 import exercisesList from '../exercise-list';
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
 
 import styles from './styles.css';
-
-// TODO: need to pass in the category of workout 'arms' 'back' to the workout item so it can access the oneWeekData object
 
 class WorkoutCard extends Component {
     constructor(props) {
@@ -37,8 +37,11 @@ class WorkoutCard extends Component {
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
         this.saveData = this.saveData.bind(this);
-        this.getExDataFromComponents = this.getExDataFromComponents.bind(this);
-        this.populatedCallback = this.populatedCallback.bind(this)
+        this.getExDataFromComponentsAndSave = this.getExDataFromComponentsAndSave.bind(this);
+        this.populatedCallback = this.populatedCallback.bind(this);
+        this.deleteItem = this.deleteItem.bind(this);
+        this.changed = this.changed.bind(this);
+        this.setComponentPopulated = this.setComponentPopulated.bind(this);
         this.state = {
             itemList: [],
             chooseWorkout: false,
@@ -54,35 +57,50 @@ class WorkoutCard extends Component {
         this.workoutItem = (<WorkoutItem />);
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        const type = this.props.cardType.toLowerCase();
-        console.log(nextProps.weekData[type]);
-        if (nextProps.weekData !== this.props.weekData && nextProps.weekData[type]) {
-            let isChecked = true;
-            let sameSets = true;
-            const itemList = Object.keys(nextProps.weekData[type]).map((exercise) => {
-                console.log(nextProps.weekData[type][exercise].data.length)
-                if (nextProps.weekData[type][exercise].data.length > 1) {
-                    isChecked = false;
-                    sameSets = false;
-                }
-                return nextProps.weekData[type][exercise].fullName;
-            });
-            this.setState({
-                populateWeek: true,
-                listNotEmpty: true,
-                itemList,
-                isChecked,
-                sameSets,
-            },
-                () => this.setState({ populateWeek: false }));
+    componentDidMount() {
+        this.setComponentPopulated(this.props);
+    }
+
+    componentWillUpdate(nextProps) {
+        console.log(nextProps);
+        console.log('1111111111111111111111111111111111111');
+        if (nextProps.weekData !== this.props.weekData) {
+            this.setComponentPopulated(nextProps);
         }
     }
 
+    setComponentPopulated(props) {
+        const type = this.props.cardType.toLowerCase();
+        let itemList;
+        let listNotEmpty;
+        let isChecked = true;
+        let sameSets = true;
+        if (!_.isEmpty(props.weekData) && props.weekData[type]) {
+            itemList = Object.keys(props.weekData[type]).map((exercise) => {
+                if (props.weekData[type][exercise].data.length >= 1) {
+                    listNotEmpty = true;
+                    isChecked = false;
+                    sameSets = false;
+                }
+                return props.weekData[type][exercise].fullName;
+            });
+        } else {
+            listNotEmpty = false;
+            itemList = [];
+        }
+        this.setState({
+            populateWeek: true,
+            listNotEmpty,
+            itemList,
+            isChecked,
+            sameSets,
+            saveSuggested: false,
+        },
+                () => this.setState({ populateWeek: false }));
+    }
 
-    getExDataFromComponents(exerciseData, exName) {
+    getExDataFromComponentsAndSave(exerciseData, exercise) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
-        const exercise = _.camelCase(exName);
         dataToSaveCopy.push({
             exerciseData,
             exercise,
@@ -91,11 +109,22 @@ class WorkoutCard extends Component {
         this.tempDataToSave = dataToSaveCopy;
         if (this.tempDataToSave.length === this.state.itemList.length) {
             const dataToSave = _.flatten(dataToSaveCopy);
+            let oneDayInWeek;
+            if (this.props.selectedWeek === 'This Week') {
+                oneDayInWeek = moment().format('MMM DD YY');
+            } else { oneDayInWeek = this.props.selectedWeek.slice(0, 9); }
+            const week = moment(oneDayInWeek, 'MMM DD YY').week();
+            const year = moment(oneDayInWeek, 'MMM DD YY').year();
+            console.log('1111111111111111111111111111111111');
+            console.log(week);
+            console.log(year);
             this.tempDataToSave = [];
             this.props.dispatch(actions.saveExerciseData(
                 this.props.token,
                 this.props.profileData.fbId,
                 dataToSave,
+                year,
+                week,
                 ));
             this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
         }
@@ -118,7 +147,11 @@ class WorkoutCard extends Component {
 
     saveData() {
         this.setState({ snackbarOpen: true });
-        this.setState({ triggerSave: true }, () => { this.setState({ triggerSave: false }); });
+        this.setState({ triggerSave: true }, () => {
+            this.setState({
+                triggerSave: false,
+                saveSuggested: false });
+        });
     }
 
     openWorkoutChooser(e) {
@@ -130,10 +163,22 @@ class WorkoutCard extends Component {
         this.setState({ populateWeek: false });
     }
 
+    deleteItem(item) {
+        const itemList = Array.from(this.state.itemList);
+        _.remove(itemList, items => items === item);
+        this.setState({ itemList });
+    }
+
+    changed() {
+        this.setState({ saveSuggested: true });
+    }
+
     render() {
         const workoutItemsList = this.state.itemList
             .map(item =>
                 <WorkoutItem
+                  changed={this.changed}
+                  delete={this.deleteItem}
                   populateWeek={this.state.populateWeek}
                   populatedCallback={this.populatedCallback}
                   exerciseGroup={this.props.cardType}
@@ -141,7 +186,7 @@ class WorkoutCard extends Component {
                   key={item}
                   item={item}
                   sets={this.state.sameSets}
-                  saved={this.getExDataFromComponents}
+                  saved={this.getExDataFromComponentsAndSave}
                 />);
 
         console.log(this.props.cardType);
@@ -182,6 +227,7 @@ class WorkoutCard extends Component {
                         <ContentAdd />
                     </FloatingActionButton>
                     <RaisedButton
+                      secondary={this.state.saveSuggested}
                       disabled={!this.state.listNotEmpty}
                       label="Save"
                       onClick={this.saveData}

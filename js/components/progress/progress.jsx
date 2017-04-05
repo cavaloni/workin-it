@@ -5,6 +5,7 @@ import Menu from 'material-ui/Menu';
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import RaisedButton from 'material-ui/RaisedButton';
 import MenuItem from 'material-ui/MenuItem';
+import moment from 'moment';
 import _ from 'lodash';
 import mockData from '../mock-data';
 import ExerciseChart from '../chart-card/chart-card';
@@ -19,12 +20,12 @@ class Progress extends Component {
         let data;
         if (props.friends !== undefined) {
             data = props.data;
-        } else { data = {}; }
+        } else { data = props.exerciseData; }
         this.state = {
             friendsProgress: this.props.friends,
-            value: this.getDefaultValue(data),
+            value: '',
             group: 'all',
-            week: 13,
+            week: moment().week(),
             popoverOpen: false,
             popoverEl: '',
             firstMount: true,
@@ -38,18 +39,24 @@ class Progress extends Component {
         this.closePopover = this.closePopover.bind(this);
         this.groupSelect = this.groupSelect.bind(this);
         this.getExerciseAverages = this.getExerciseAverages.bind(this);
-    }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.exerciseData) {
-            this.setState(nextProps.exerciseData);
-        }
+        this.trackMenuChanges = { // track changes so that does not re-render wrong from state.group
+            group: '',
+            exercise: '',
+            origGroup: '',
+        };
     }
 
     componentWillMount() {
         console.log(this.props.profileData);
         this.props.dispatch(actions.getExerciseData(this.props.token, this.props.profileData.fbId));
         console.log(this.props.exerciseData);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.exerciseData) {
+            this.setState({ data: nextProps.exerciseData });
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -63,6 +70,11 @@ class Progress extends Component {
         return true;
     }
 
+    componentWillUpdate(nextProps, nextState) {
+        console.log(nextProps, nextState);
+    }
+    
+
     componentDidUpdate(prevProps, prevState) {
         console.log(this.props.exerciseData);
     }
@@ -73,36 +85,53 @@ class Progress extends Component {
             console.log('this her fuckderd');
             return 0;
         }
-        const exerciseKey = Object.keys(_.get(data, '10.arms'));
+        const exerciseKey = Object.keys(_.get(data.exerciseData, '10.arms'));
         console.log(exerciseKey);
         return exerciseKey[0];
     }
 
     groupSelect(e) {
         e.preventDefault();
-        this.setState({ group: e.target.innerHTML.toLowerCase(), popoverOpen: false, groupRender: true });
+        const group = e.target.innerHTML.toLowerCase();
+        this.setState({ group, popoverOpen: false, groupRender: true });
     }
 
     exerciseValueChange(e) {
         e.preventDefault();
         const dbName = _.findKey(this.state.data[this.state.week][this.state.group],
             { fullName: e.target.innerHTML });
+        this.trackMenuChanges.exercise = dbName;
         this.setState({ value: dbName, popoverOpen: false, groupRender: false });
     }
 
     groupValueChange(e, menuObj) {
         e.preventDefault();
-        this.setState({ group: menuObj.props.value, groupRender: false });
+        const group = menuObj.props.value;
+        this.trackMenuChanges.group = group;
+        this.setState({ group, groupRender: false });
     }
 
     openPopover(e) {
         e.preventDefault();
+        this.trackMenuChanges.origGroup = this.state.group;
         this.setState({ popoverOpen: true, popoverEl: e.currentTarget });
     }
 
     closePopover() {
-        this.setState({ popoverOpen: false });
+        console.log(this.trackMenuChanges);
+        if (this.trackMenuChanges.group !== '' && this.trackMenuChanges.exercise !== '') {
+            this.setState({ popoverOpen: false });
+        } else {
+            this.setState({ popoverOpen: false, group: this.trackMenuChanges.origGroup })
+        }
+        this.trackMenuChanges = {
+            group: '',
+            value: '',
+            origGroup: '',
+        };
     }
+
+//TODO: just make sure clicking around the menu and then closing it still works
 
     getExerciseAverages() {
         const parsedAvgs = {};
@@ -145,6 +174,7 @@ class Progress extends Component {
 
         const parsedAvgs = this.getExerciseAverages();
 
+
         const week = this.state.week;
 
         const allCharts = _.flatten(Object.keys(parsedAvgs)
@@ -164,7 +194,7 @@ class Progress extends Component {
 
         let filteredCharts;
 
-        if (this.state.group === 'all') {
+        if (this.state.group === 'all' || this.state.value === '') {
             filteredCharts = undefined;
         } else if (this.state.groupRender) {
             filteredCharts = Object.keys(this.state.data[week][group])
@@ -293,10 +323,10 @@ Progress.propTypes = {
     ]).isRequired,
 };
 
-const mapStateToProps = (state, props) => ({ 
-    profileData: state.userData, 
-    exerciseData: state.exerciseData, 
-    token: userToken,
+const mapStateToProps = (state, props) => ({
+    profileData: state.userData,
+    exerciseData: state.exerciseData.data,
+    token: state.userToken,
 });
 
 export default connect(mapStateToProps)(Progress);

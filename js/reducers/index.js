@@ -43,7 +43,12 @@ export const appReducer = (state = initialState, action) => {
                 oneWeekData: action.data.data[Object.keys(action.data.data)[0]],
             };
         }
-
+        case 'EXERCISE_ONE_WEEK_NO_DATA': {
+            return {
+                ...state,
+                oneWeekData: {},
+            };
+        }
 
         default:
             return state;

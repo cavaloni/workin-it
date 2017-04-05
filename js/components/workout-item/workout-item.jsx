@@ -8,6 +8,9 @@ import NumberInput from 'material-ui-number-input';
 import FlatButton from 'material-ui/FlatButton';
 import SetListItem from '../set-list-item/set-list-item';
 import TextField from 'material-ui/TextField';
+import IconButton from 'material-ui/IconButton';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
+import Dialog from 'material-ui/Dialog';
 
 
 class WorkoutItem extends Component {
@@ -42,6 +45,9 @@ class WorkoutItem extends Component {
                 marginRight: 10,
                 verticalAlign: 'bottom',
             },
+            delete: {
+                verticalAlign: 'bottom',
+            },
         };
 
         this.state = {
@@ -52,6 +58,7 @@ class WorkoutItem extends Component {
             showSets: false,
             triggerSave: props.triggerSave,
             setsData: [],
+            modalDeleteOpen: false,
         };
 
         this.onNumberChange = this.onNumberChange.bind(this);
@@ -60,6 +67,9 @@ class WorkoutItem extends Component {
         this.saveAll = this.saveAll.bind(this);
         this.setSelectField = this.setSelectField.bind(this);
         this.populateWeek = this.populateWeek.bind(this);
+        this.modalDelete = this.modalDelete.bind(this);
+        this.handleModalClose = this.handleModalClose.bind(this);
+        this.confirmDelete = this.confirmDelete.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -76,7 +86,7 @@ class WorkoutItem extends Component {
     }
 
     onNumberChange(e) {
-        console.log('this changed');
+        this.props.changed();
         let shower = this.state.showSets;
         if (e.target.value === 0) {
             shower = false;
@@ -88,6 +98,7 @@ class WorkoutItem extends Component {
     }
 
     setSelectField(e, idx, value) {
+        this.props.changed();
         this.setState({ sets: value, setsVal: value });
     }
 
@@ -131,7 +142,38 @@ class WorkoutItem extends Component {
         this.props.populatedCallback(true);
     }
 
+    modalDelete(e) {
+        if (!e.currentTarget.parentElement.getElementsByTagName('button')[0].children[0]) {
+            this.eNameToDelete = e.currentTarget.parentElement.getElementsByTagName('button')[0].childNodes[0].data
+        } else { this.eNameToDelete = e.currentTarget.parentElement.getElementsByTagName('button')[0].children[0].innerText; }
+        this.setState({ modalDeleteOpen: true });
+    }
+
+    handleModalClose() {
+        this.setState({ modalDeleteOpen: false });
+    }
+
+    confirmDelete() {
+        this.props.changed();
+        this.setState({ modalDeleteOpen: false });
+        this.props.delete(this.eNameToDelete);
+        this.eNameToDelete = '';
+    }
+
     render() {
+        const modalActions = [
+            <FlatButton
+              label="Cancel"
+              primary
+              onTouchTap={this.handleModalClose}
+            />,
+            <FlatButton
+              label="Confirm"
+              primary
+              onTouchTap={this.confirmDelete}
+            />,
+        ];
+
         if (this.props.populateWeek) { this.populateWeek(); }
 
         const items = [];
@@ -157,6 +199,12 @@ class WorkoutItem extends Component {
         }
         return (
             <div style={this.styles.container}>
+                <Dialog
+                  key={1}
+                  title="Confirm Delete"
+                  actions={modalActions}
+                  open={this.state.modalDeleteOpen}
+                />
                 <div>
                     <FlatButton
                       style={this.styles.name}
@@ -196,6 +244,9 @@ class WorkoutItem extends Component {
                     >
                         {items}
                     </SelectField>
+                    <IconButton style={this.styles.delete} onTouchTap={this.modalDelete} tooltip="Delete">
+                        <ActionDelete />
+                    </IconButton>
                 </div>
                 {setList}
                 <Divider style={this.styles.divide} />

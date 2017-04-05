@@ -15,7 +15,8 @@ router.use(
     eJwt({ secret: 'super stank',
         getToken: function fromQuery(req) { return req.headers.token; },
         requestProperty: 'auth',
-    }));
+    }).unless({ path: ['/user/init_profile'] }),
+    );
 
 router.get('/', (req, res) => {
     User
