@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const exerciseDataSchema = mongoose.Schema({
     userId: { type: String, required: true },
     exerciseData: { type: Object, required: true },
-});
+}, { minimize: false });
 
 exerciseDataSchema.methods.apiRepr = () => ({
     id: this.id,

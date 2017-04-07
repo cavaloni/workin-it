@@ -78,14 +78,14 @@ passport.deserializeUser((obj, cb) => {
 // };
 
 // app.use(morgan('combined'));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+// app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
 app.use(cors());
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use('/exercise_data', exerciseDataRouter);
 app.use('/user', userRouter);
@@ -104,6 +104,7 @@ app.get('/new_token',
         isRevoked: isRevokedCallback,
     }),
     (req, res) => {
+        console.log('req.user.id: ', req.user.id);
         const newToken = jwt.sign(
             { user: req.user.id },
             'super stank',
@@ -116,7 +117,8 @@ app.get('/login/facebook',
 );
 
 app.get('/init_token', (req, res) => {
-    res.redirect(`/auth/${req.user.token}`);
+    console.log(req.params);
+    res.redirect(`/auth/${req.query.token}`);
 });
 
 app.get('/verify_auth',

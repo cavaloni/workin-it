@@ -12,7 +12,6 @@ import FlatButton from 'material-ui/FlatButton';
 import SetListItem from '../set-list-item/set-list-item';
 
 
-
 class WorkoutItem extends Component {
     constructor(props, context) {
         super(props, context);
@@ -191,7 +190,13 @@ class WorkoutItem extends Component {
         const setList = [];
         if (this.state.showSets) {
             for (let i = 1; i < Number(this.state.sets); i++) {
-                setList.push(<SetListItem set={i} getData={this.getSetsData} />);
+                console.log(this.state.setsData);
+                console.log(this.state.setsData[i - 1]);
+                setList.push(<SetListItem
+                  populateValue={this.state.setsData[i - 1]}
+                  set={i}
+                  getData={this.getSetsData}
+                />);
             }
         }
 

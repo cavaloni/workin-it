@@ -19,6 +19,9 @@ export const appReducer = (state = initialState, action) => {
                 exerciseData: action.data,
             };
         }
+        case 'EXERCISE_DATA_NO_DATA': {
+            return state;
+        }
         case 'DELETE_FRIEND': {
             const friendsListCopy = Array.from(state.userData.friends);
             friendsListCopy.splice(action.index, 1);

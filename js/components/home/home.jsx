@@ -54,18 +54,18 @@ const style = {
 };
 
 class Home extends Component {
-    static workoutRoute(e) {
+    constructor(props, context) {
+        super(props, context);
+    }
+
+     workoutRoute(e) {
         e.preventDefault();
         browserHistory.push('/app/1');
     }
 
-    static progressRoute(e) {
+    progressRoute(e) {
         e.preventDefault();
         browserHistory.push('/app/2');
-    }
-
-    constructor(props, context) {
-        super(props, context);
     }
 
     componentWillMount() {

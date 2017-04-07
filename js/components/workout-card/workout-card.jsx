@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Observable } from 'rxjs';
 import _ from 'lodash';
+import qs from 'qs';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -18,6 +20,8 @@ import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
 
 import styles from './styles.css';
+
+const O = Observable;
 
 class WorkoutCard extends Component {
     constructor(props) {
@@ -58,30 +62,38 @@ class WorkoutCard extends Component {
     }
 
     componentDidMount() {
-        this.setComponentPopulated(this.props);
+        const type = this.props.cardType.toLowerCase();
+        console.log(this.props.weekData[type]);
+        if (this.props.weekData[type] && this.props.weekData[type] !== this.props.weekData[type]) {
+            this.setComponentPopulated(this.props);
+        }
     }
 
     componentWillUpdate(nextProps) {
-        console.log(nextProps);
-        console.log('1111111111111111111111111111111111111');
-        if (nextProps.weekData !== this.props.weekData) {
+        const type = this.props.cardType.toLowerCase();
+        console.log(nextProps.weekData[type]);
+        if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
         }
     }
 
     setComponentPopulated(props) {
+        console.count();
         const type = this.props.cardType.toLowerCase();
         let itemList;
         let listNotEmpty;
-        let isChecked = true;
+        let isChecked;
         let sameSets = true;
         if (!_.isEmpty(props.weekData) && props.weekData[type]) {
             itemList = Object.keys(props.weekData[type]).map((exercise) => {
+                console.log(props.weekData[type][exercise].data.length);
                 if (props.weekData[type][exercise].data.length >= 1) {
                     listNotEmpty = true;
+                }
+                if (props.weekData[type][exercise].data.length > 1) {
                     isChecked = false;
                     sameSets = false;
-                }
+                } else { isChecked = true; }
                 return props.weekData[type][exercise].fullName;
             });
         } else {
@@ -116,6 +128,7 @@ class WorkoutCard extends Component {
             const week = moment(oneDayInWeek, 'MMM DD YY').week();
             const year = moment(oneDayInWeek, 'MMM DD YY').year();
             this.tempDataToSave = [];
+            console.log(this.props.profileData.fbId);
             this.props.dispatch(actions.saveExerciseData(
                 this.props.token,
                 this.props.profileData.fbId,
@@ -205,7 +218,7 @@ class WorkoutCard extends Component {
                     <Checkbox
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
-                      label="Same sets throughout"
+                      label="Same reps in sets"
                       labelStyle={{ right: '13%' }}
                       checked={this.state.isChecked}
                       style={styles.checkbox}
@@ -267,6 +280,7 @@ WorkoutCard.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
+    exerciseData: state.exerciseData,
     profileData: state.userData,
     token: state.userToken,
     weekData: state.oneWeekData,

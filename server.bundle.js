@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 22);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,230 +91,48 @@ module.exports = require("express-jwt");
 module.exports = require("mongoose");
 
 /***/ }),
-/* 4 */,
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = require("jsonwebtoken");
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport");
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
+var mongoose = __webpack_require__(3);
+
+var UserSchema = mongoose.Schema({
+    user: { type: String, required: true },
+    friends: { type: Array },
+    profileImage: { type: String },
+    fbId: { type: String, rqeuired: true }
 });
 
-var _lodash = __webpack_require__(8);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var mockData = {
-    2017: {
-        10: {
-            arms: {
-                pullUps: {
-                    fullName: 'Pull Ups',
-                    sets: 3,
-                    data: [{
-                        weight: 180,
-                        reps: 4
-                    }, {
-                        weight: 180,
-                        reps: 5
-                    }, {
-                        weight: 180,
-                        reps: 6
-                    }]
-                },
-                tricepPullDown: {
-                    fullName: 'Tricep Pull Down',
-                    sets: 3,
-                    data: [{
-                        weight: 80,
-                        reps: 4
-                    }]
-                }
-            },
-            back: {
-                cockPushUps: {
-                    fullName: 'Cock Push Ups',
-                    sets: 2,
-                    data: [{
-                        weight: 280,
-                        reps: 1
-                    }, {
-                        weight: 280,
-                        reps: 2
-                    }]
-                }
-            }
-        },
-        11: {
-            arms: {
-                pullUps: {
-                    fullName: 'Pull Ups',
-                    sets: 3,
-                    data: [{
-                        weight: 185,
-                        reps: 4
-                    }, {
-                        weight: 185,
-                        reps: 5
-                    }, {
-                        weight: 185,
-                        reps: 6
-                    }]
-                },
-                tricepPullDown: {
-                    fullName: 'Tricep Pull Down',
-                    sets: 3,
-                    data: [{
-                        weight: 85,
-                        reps: 4
-                    }]
-                }
-            },
-            back: {
-                cockPushUps: {
-                    fullName: 'Cock Push Ups',
-                    sets: 2,
-                    data: [{
-                        weight: 280,
-                        reps: 1
-                    }, {
-                        weight: 280,
-                        reps: 2
-                    }]
-                }
-            }
-        },
-        12: {
-            arms: {
-                pullUps: {
-                    fullName: 'Pull Ups',
-                    sets: 3,
-                    data: [{
-                        weight: 190,
-                        reps: 4
-                    }, {
-                        weight: 190,
-                        reps: 5
-                    }, {
-                        weight: 190,
-                        reps: 6
-                    }]
-                },
-                tricepPullDown: {
-                    fullName: 'Tricep Pull Down',
-                    sets: 3,
-                    data: [{
-                        weight: 90,
-                        reps: 4
-                    }]
-                }
-            },
-            back: {
-                cockPushUps: {
-                    fullName: 'Cock Push Ups',
-                    sets: 2,
-                    data: [{
-                        weight: 290,
-                        reps: 1
-                    }, {
-                        weight: 290,
-                        reps: 2
-                    }]
-                }
-            }
-        },
-        13: {
-            arms: {
-                pullUps: {
-                    fullName: 'Pull Ups',
-                    sets: 3,
-                    data: [{
-                        weight: 200,
-                        reps: 5
-                    }, {
-                        weight: 200,
-                        reps: 4
-                    }, {
-                        weight: 200,
-                        reps: 4
-                    }]
-                },
-                tricepPullDown: {
-                    fullName: 'Tricep Pull Down',
-                    sets: 3,
-                    data: [{
-                        weight: 100,
-                        reps: 4
-                    }]
-                }
-            },
-            back: {
-                cockPushUps: {
-                    fullName: 'Cock Push Ups',
-                    sets: 2,
-                    data: [{
-                        weight: 310,
-                        reps: 1
-                    }, {
-                        weight: 300,
-                        reps: 2
-                    }]
-                }
-            }
-        }
-    }
+UserSchema.methods.apiRepr = function apiRepr() {
+    return {
+        fbId: this.fbId,
+        user: this.user,
+        profileImage: this.profileImage,
+        friends: this.friends
+    };
 };
 
-var fakePeople = [{
-    name: 'Bubba Jones',
-    avatar: 'http://lorempixel.com/400/200',
-    data: mockData
-}, {
-    name: 'Jesus Christ',
-    avatar: 'http://lorempixel.com/400/200',
-    data: mockData
-}, {
-    name: 'Milford WaxPaddy',
-    avatar: 'http://lorempixel.com/400/200',
-    data: mockData
-}, {
-    name: 'Who Bo Fo Ducky',
-    avatar: 'http://lorempixel.com/400/200',
-    data: mockData
-}];
+var User = mongoose.model('user_data', UserSchema);
 
-exports.default = mockData;
+module.exports = { User: User };
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = require("lodash");
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("rxjs");
-
-/***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -324,7 +142,7 @@ exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongo
 exports.PORT = process.env.PORT || 8081;
 
 /***/ }),
-/* 11 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -332,17 +150,19 @@ exports.PORT = process.env.PORT || 8081;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _moment = __webpack_require__(24);
+var _moment = __webpack_require__(20);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _lodash = __webpack_require__(8);
+var _lodash = __webpack_require__(19);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ex_model = __webpack_require__(22);
+var _ex_model = __webpack_require__(18);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
+
+var _user_model = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -362,116 +182,16 @@ router.use(eJwt({ secret: 'super stank',
     requestProperty: 'auth'
 }));
 
-router.post('/', function (req, res) {
-    var requiredFields = ['user', 'exerciseData'];
-    requiredFields.forEach(function (field) {
-        if (!(field in req.body)) {
-            console.log(field);
-            console.log(req.body);
-            res.status(400).json({
-                error: 'Missing "' + field + '" in request body'
-            });
-        }
-    });
-
-    console.log(req.body);
-
-    _ex_model2.default.create({
-        userId: req.body.user,
-        exerciseData: JSON.parse(req.body.exerciseData)
-    }).then(function (data) {
-        console.log(data);
-        res.status(200).json(data);
-    }).catch(function (err) {
-        res.status(500).json({
-            error: 'something went wrong',
-            errData: err
-        });
-    });
-});
-
-router.put('/', function (req, res) {
-    console.log(req.body);
-    var requiredFields = ['user', 'dataToSave'];
-    requiredFields.forEach(function (field) {
-        if (!(field in req.body)) {
-            res.status(400).json({
-                error: 'Missing "' + field + '" in request body'
-            });
-        }
-    });
-
-    _ex_model2.default.findOne(req.body.user.fbId).exec().then(function (prevData) {
-        var newData = _lodash2.default.cloneDeep(prevData);
-        var year = void 0;
-        var week = void 0;
-
-        if (req.body.year === 'undefined') {
-            year = (0, _moment2.default)().year().toString();
-        } else {
-            year = req.body.year;
-        }
-
-        if (req.body.week === 'undefined') {
-            week = (0, _moment2.default)().week().toString();
-        } else {
-            week = req.body.week;
-        }
-
-        var exercisesInDataToSave = [];
-        req.body.dataToSave.forEach(function (data) {
-            var i = req.body.dataToSave.indexOf(data);
-            var exSets = req.body.dataToSave[i].exerciseData;
-            var exName = req.body.dataToSave[i].exercise;
-            var camelName = _lodash2.default.camelCase(req.body.dataToSave[i].exercise);
-            var exGroup = req.body.dataToSave[i].exerciseGroup;
-            exercisesInDataToSave.push(camelName);
-
-            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.data', exSets);
-            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', exSets.length);
-            newData = _lodash2.default.set(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName);
-        });
-
-        var exercisesInDatabase = _lodash2.default.uniq(_lodash2.default.flatten(Object.keys(newData.exerciseData[year][week]).map(function (exGroup) {
-            return Object.keys(newData.exerciseData[year][week][exGroup]).map(function (exercise) {
-                return exercise;
-            });
-        })));
-        var exercisesToDelete = _lodash2.default.difference(exercisesInDatabase, exercisesInDataToSave);
-        Object.keys(newData.exerciseData[year][week]).filter(function (exGroup) {
-            var groupsInDataToSave = Object.keys(req.body.dataToSave).map(function (data) {
-                return req.body.dataToSave[data].exerciseGroup;
-            });
-            return groupsInDataToSave.includes(exGroup);
-        }).forEach(function (exGroup) {
-            return Object.keys(newData.exerciseData[year][week][exGroup]).forEach(function (exercise) {
-                if (exercisesToDelete.includes(exercise)) {
-                    delete newData.exerciseData[year][week][exGroup][exercise];
-                }
-            });
-        });
-
-        _ex_model2.default.findOneAndUpdate({
-            fbId: req.body.user.fbId
-        }, {
-            $set: {
-                exerciseData: newData.exerciseData
-            }
-        }, {
-            new: true
-        }).exec().then(function (profile) {
-            return res.status(201).json(profile);
-        }).catch(function (err) {
-            console.log(err);
-            res.status(500).json(err);
-        });
-    });
-});
-
-router.post('/get_data', function (req, res) {
+function getExerciseData(req, res) {
+    var user = void 0;
+    if (req.body.friendFbId) {
+        user = req.body.friendFbId;
+    } else {
+        user = req.body.user;
+    }
     var allUserData = void 0;
     _ex_model2.default.findOne({
-        userId: req.body.user
+        userId: user
     }).then(function (data) {
         allUserData = data;
         if (_lodash2.default.isEmpty(allUserData)) {
@@ -517,7 +237,115 @@ router.post('/get_data', function (req, res) {
             });
         }
     });
+}
+
+router.put('/', function (req, res) {
+    console.log(req.body);
+    var requiredFields = ['user', 'dataToSave'];
+    requiredFields.forEach(function (field) {
+        if (!(field in req.body)) {
+            res.status(400).json({
+                error: 'Missing "' + field + '" in request body'
+            });
+        }
+    });
+
+    _ex_model2.default.findOne({
+        userId: req.body.user
+    }).exec().then(function (prevData) {
+        console.log(prevData);
+        console.log('222222222222222222222222222');
+        var newData = _lodash2.default.cloneDeep(prevData);
+        var year = void 0;
+        var week = void 0;
+
+        if (req.body.year === 'undefined') {
+            year = (0, _moment2.default)().year().toString();
+        } else {
+            year = req.body.year;
+        }
+
+        if (req.body.week === 'undefined') {
+            week = (0, _moment2.default)().week().toString();
+        } else {
+            week = req.body.week;
+        }
+
+        var exercisesInDataToSave = [];
+        req.body.dataToSave.forEach(function (data) {
+            var i = req.body.dataToSave.indexOf(data);
+            var exSets = req.body.dataToSave[i].exerciseData;
+            var exName = req.body.dataToSave[i].exercise;
+            var camelName = _lodash2.default.camelCase(req.body.dataToSave[i].exercise);
+            var exGroup = req.body.dataToSave[i].exerciseGroup;
+            exercisesInDataToSave.push(camelName);
+
+            newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.data', exSets, Object);
+            newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', exSets.length, Object);
+            newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName, Object);
+        });
+
+        var exercisesInDatabase = _lodash2.default.uniq(_lodash2.default.flatten(Object.keys(newData.exerciseData[year][week]).map(function (exGroup) {
+            return Object.keys(newData.exerciseData[year][week][exGroup]).map(function (exercise) {
+                return exercise;
+            });
+        })));
+        var exercisesToDelete = _lodash2.default.difference(exercisesInDatabase, exercisesInDataToSave);
+        Object.keys(newData.exerciseData[year][week]).filter(function (exGroup) {
+            var groupsInDataToSave = Object.keys(req.body.dataToSave).map(function (data) {
+                return req.body.dataToSave[data].exerciseGroup;
+            });
+            return groupsInDataToSave.includes(exGroup);
+        }).forEach(function (exGroup) {
+            return Object.keys(newData.exerciseData[year][week][exGroup]).forEach(function (exercise) {
+                if (exercisesToDelete.includes(exercise)) {
+                    delete newData.exerciseData[year][week][exGroup][exercise];
+                }
+            });
+        });
+
+        _ex_model2.default.findOneAndUpdate({
+            userId: req.body.user
+        }, {
+            $set: {
+                exerciseData: newData.exerciseData
+            }
+        }, {
+            new: true
+        }).exec().then(function (profile) {
+            return res.status(201).json(profile);
+        }).catch(function (err) {
+            console.log(err);
+            res.status(500).json(err);
+        });
+    });
 });
+
+router.post('/get_friend_data', function (req, res) {
+    var _req$body = req.body,
+        user = _req$body.user,
+        friendFbId = _req$body.friendFbId;
+
+    _user_model.User.findOne({
+        fbId: user
+    }).then(function (userProfile) {
+        _user_model.User.findOne({
+            fbId: friendFbId
+        }).then(function (friendProfile) {
+            var userStatusOfFriend = _lodash2.default.find(userProfile.friends, function (friend) {
+                return friend.fbId === friendFbId;
+            }).status;
+            var friendStatusOfUser = _lodash2.default.find(friendProfile.friends, function (friend) {
+                return friend.fbId === user;
+            }).status;
+            if (userStatusOfFriend === 'active' && friendStatusOfUser === 'active') {
+                getExerciseData(req, res);
+            }
+        });
+    });
+});
+
+router.post('/get_data', getExerciseData);
 
 router.put('/get_weeks', function (req, res) {
     _ex_model2.default.findOne({
@@ -538,28 +366,29 @@ router.put('/get_weeks', function (req, res) {
 module.exports = { router: router };
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _user_model = __webpack_require__(23);
+var _rxjs = __webpack_require__(21);
 
-var _mockData = __webpack_require__(7);
+var _user_model = __webpack_require__(6);
 
-var _mockData2 = _interopRequireDefault(_mockData);
+var _ex_model = __webpack_require__(18);
 
-var _rxjs = __webpack_require__(9);
+var _ex_model2 = _interopRequireDefault(_ex_model);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var passport = __webpack_require__(6);
+var passport = __webpack_require__(5);
+
 var O = _rxjs.Observable;
 var jsonParser = __webpack_require__(0).json();
 var express = __webpack_require__(1);
 var eJwt = __webpack_require__(2);
-var jwt = __webpack_require__(5);
+var jwt = __webpack_require__(4);
 
 var router = express.Router();
 
@@ -579,28 +408,40 @@ router.get('/', function (req, res) {
     });
 });
 
+// TODO: trying to send the token from req.user into the params for /init_token
+
 router.get('/init_profile', passport.authenticate('facebook', {
     failureRedirect: '/user/failed_auth'
 }), function (req, res) {
     _user_model.User.findOne({
         fbId: req.user.id
     }).exec().then(function (user) {
-        console.log('this is first', user);
         if (!user) {
+            console.log('this works');
             _user_model.User.create({
                 user: req.user.name.givenName + ' ' + req.user.name.familyName,
                 friends: [],
                 profileImage: req.user.photos[0].value,
                 fbId: req.user.id
-            }).then().catch(function (err) {
-                console.log(err);
-                res.status(500).json({ err: err });
+            }).then(function () {
+                _ex_model2.default.create({
+                    userId: req.user.id,
+                    exerciseData: {}
+                }).then(function (profile) {
+                    console.log('ExerciseData created: ', profile);
+                }).catch(function (err) {
+                    res.status(500).json({});
+                });
+            }).catch(function (err) {
+                res.status(500);
             });
+            console.log('but does this?');
         }
     }).catch(function (err) {
-        console.log(err);
+        res.status(500);
     });
-    res.redirect('/init_token');
+
+    res.redirect('/init_token?token=' + req.user.token);
 });
 
 router.get('/failed_auth', function (req, res) {
@@ -609,11 +450,13 @@ router.get('/failed_auth', function (req, res) {
 
 router.get('/profile', function (req, res) {
     var userId = jwt.verify(req.headers.token, 'super stank').user;
-    _user_model.User.find(userId).exec().then(function (profile) {
-        res.status(201).json(profile[0].apiRepr());
+    _user_model.User.findOne({
+        fbId: userId
+    }).exec().then(function (profile) {
+        res.status(201).json(profile);
     }).catch(function (err) {
         console.log(err);
-        res.send(501, { err: err });
+        res.send(401, { err: err });
     });
 });
 
@@ -721,7 +564,7 @@ router.put('/delete_friend', function (req, res) {
 module.exports = { router: router };
 
 /***/ }),
-/* 13 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -749,50 +592,49 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 14 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = require("cookie-parser");
 
 /***/ }),
-/* 15 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("cors");
 
 /***/ }),
-/* 16 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("express-session");
 
 /***/ }),
-/* 17 */,
-/* 18 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("morgan");
 
 /***/ }),
-/* 19 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("node-codein");
 
 /***/ }),
-/* 20 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-facebook");
 
 /***/ }),
-/* 21 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("shortid");
 
 /***/ }),
-/* 22 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -803,7 +645,7 @@ var mongoose = __webpack_require__(3);
 var exerciseDataSchema = mongoose.Schema({
     userId: { type: String, required: true },
     exerciseData: { type: Object, required: true }
-});
+}, { minimize: false });
 
 exerciseDataSchema.methods.apiRepr = function () {
     return {
@@ -818,67 +660,50 @@ var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 module.exports = ExerciseData;
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 19 */
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-var mongoose = __webpack_require__(3);
-
-var UserSchema = mongoose.Schema({
-    user: { type: String, required: true },
-    friends: { type: Array },
-    profileImage: { type: String },
-    fbId: { type: String, rqeuired: true }
-});
-
-UserSchema.methods.apiRepr = function apiRepr() {
-    return {
-        fbId: this.fbId,
-        user: this.user,
-        profileImage: this.profileImage,
-        friends: this.friends
-    };
-};
-
-var User = mongoose.model('user_data', UserSchema);
-
-module.exports = { User: User };
+module.exports = require("lodash");
 
 /***/ }),
-/* 24 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = require("moment");
 
 /***/ }),
-/* 25 */
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = require("rxjs");
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
 
-var passport = __webpack_require__(6);
+var passport = __webpack_require__(5);
 var bodyParser = __webpack_require__(0);
-var cookieParser = __webpack_require__(14);
+var cookieParser = __webpack_require__(11);
 var mongoose = __webpack_require__(3);
 var express = __webpack_require__(1);
-var Strategy = __webpack_require__(20).Strategy;
-var morgan = __webpack_require__(18)('combined');
-var expressSession = __webpack_require__(16);
-var jwt = __webpack_require__(5);
-var cors = __webpack_require__(15);
+var Strategy = __webpack_require__(16).Strategy;
+var morgan = __webpack_require__(14)('combined');
+var expressSession = __webpack_require__(13);
+var jwt = __webpack_require__(4);
+var cors = __webpack_require__(12);
 var eJwt = __webpack_require__(2);
-var shortid = __webpack_require__(21);
+var shortid = __webpack_require__(17);
 
-var _require = __webpack_require__(11),
+var _require = __webpack_require__(8),
     exerciseDataRouter = _require.router;
 
-var _require2 = __webpack_require__(12),
+var _require2 = __webpack_require__(9),
     userRouter = _require2.router;
 
-var codein = __webpack_require__(19);
+var codein = __webpack_require__(15);
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -914,7 +739,7 @@ mongoose.Promise = global.Promise;
 
 var app = express();
 
-var _require3 = __webpack_require__(10),
+var _require3 = __webpack_require__(7),
     PORT = _require3.PORT,
     DATABASE_URL = _require3.DATABASE_URL;
 
@@ -950,14 +775,14 @@ passport.deserializeUser(function (obj, cb) {
 // };
 
 // app.use(morgan('combined'));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+// app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
 app.use(cors());
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use('/exercise_data', exerciseDataRouter);
 app.use('/user', userRouter);
@@ -976,6 +801,7 @@ app.get('/new_token', eJwt({ secret: 'funky smell',
     },
     isRevoked: isRevokedCallback
 }), function (req, res) {
+    console.log('req.user.id: ', req.user.id);
     var newToken = jwt.sign({ user: req.user.id }, 'super stank', { expiresIn: '7 days' });
     res.json({ newToken: newToken });
 });
@@ -983,7 +809,8 @@ app.get('/new_token', eJwt({ secret: 'funky smell',
 app.get('/login/facebook', passport.authenticate('facebook', { scope: 'public_profile' }));
 
 app.get('/init_token', function (req, res) {
-    res.redirect('/auth/' + req.user.token);
+    console.log(req.params);
+    res.redirect('/auth/' + req.query.token);
 });
 
 app.get('/verify_auth', eJwt({ secret: 'super stank',
@@ -1039,7 +866,7 @@ if (__webpack_require__.c[__webpack_require__.s] === module) {
 }
 
 module.exports = { app: app, runServer: runServer, closeServer: closeServer };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
 
 /***/ })
 /******/ ]);

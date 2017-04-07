@@ -110,6 +110,7 @@ export const setUserProfile = () => (dispatch) => {
         .map(tkn => profileFetch(tkn))
         .concatAll()
         .subscribe((profile) => {
+            console.log(profile);
             if (profile.status === 201) {
                 dispatch(profileFetchSuccess(profile.response));
             }
@@ -142,6 +143,7 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
 };
 
 export const saveExerciseData = (token, user, dataToSave, year, week) => (dispatch) => {
+    console.log(user);
     O.ajax({
         url: '/exercise_data',
         body: qs.stringify({ user, dataToSave, year, week }),

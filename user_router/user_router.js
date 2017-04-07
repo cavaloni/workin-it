@@ -1,8 +1,9 @@
-import { User } from './user_model';
-import mockData from '../js/components/mock-data';
 import { Observable } from 'rxjs';
+import { User } from './user_model';
+import ExerciseData from '../exercise_router/ex_model';
 
 const passport = require('passport');
+
 const O = Observable;
 const jsonParser = require('body-parser').json();
 const express = require('express');
@@ -28,6 +29,8 @@ router.get('/', (req, res) => {
         });
 });
 
+// TODO: trying to send the token from req.user into the params for /init_token
+
 router.get('/init_profile',
     passport.authenticate('facebook', {
         failureRedirect: '/user/failed_auth',
@@ -39,8 +42,8 @@ router.get('/init_profile',
             })
             .exec()
             .then((user) => {
-                console.log('this is first', user);
                 if (!user) {
+                    console.log('this works');
                     User
                         .create({
                             user: `${req.user.name.givenName} ${req.user.name.familyName}`,
@@ -48,18 +51,35 @@ router.get('/init_profile',
                             profileImage: req.user.photos[0].value,
                             fbId: req.user.id,
                         })
-                    .then()
-                    .catch((err) => {
-                        console.log(err);
-                        res.status(500).json({ err });
-                    });
+                        .then(() => {
+                            ExerciseData
+                                .create({
+                                    userId: req.user.id,
+                                    exerciseData: {},
+                                })
+                                .then((profile) => {
+                                    console.log('ExerciseData created: ', profile);
+                                })
+                                .catch((err) => {
+                                    res.status(500)
+                                        .json({});
+                                });
+                        })
+                        .catch((err) => {
+                            res.status(500);
+                        });
+                    console.log('but does this?');
                 }
+
             })
             .catch((err) => {
-                console.log(err);
+                res.status(500);
             });
-        res.redirect('/init_token');
+
+        res.redirect(`/init_token?token=${req.user.token}`);
     });
+
+
 
 router.get('/failed_auth', (req, res) => {
     res.json({ failed: 'failed' });
@@ -68,14 +88,16 @@ router.get('/failed_auth', (req, res) => {
 router.get('/profile', (req, res) => {
     const userId = jwt.verify(req.headers.token, 'super stank').user;
     User
-        .find(userId)
+        .findOne({
+            fbId: userId,
+        })
         .exec()
         .then((profile) => {
-            res.status(201).json(profile[0].apiRepr());
+            res.status(201).json(profile);
         })
         .catch((err) => {
             console.log(err);
-            res.send(501, { err });
+            res.send(401, { err });
         });
 });
 
@@ -182,7 +204,6 @@ router.put('/accept_friend', (req, res) => {
                 err,
             }));
 });
-
 
 router.put('/delete_friend', (req, res) => {
     const userId = req.body.user;

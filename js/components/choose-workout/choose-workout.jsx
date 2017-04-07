@@ -68,6 +68,7 @@ export default class ChooseWorkout extends React.Component {
     }
 
     handleSelect(event, menuObj, index) {
+        event.preventDefault();
         const newArry = exercisesList[this.type].map(() => false);
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });

@@ -11,6 +11,9 @@ class Login extends Component {
         super(props);
         this.login = this.login.bind(this);
         this.justGetIn = this.justGetIn.bind(this);
+        this.state = {
+            token: false,
+        }
     }
 
     componentWillMount() {
@@ -35,7 +38,7 @@ class Login extends Component {
                 }
             },
         ((err) => {
-            console.log(err);
+            this.setState({ token: false });
         }));
     }
 

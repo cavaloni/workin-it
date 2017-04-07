@@ -30,6 +30,21 @@ class SetListItem extends Component {
         this.onNumberChange = this.onNumberChange.bind(this);
     }
 
+    componentWillMount() {
+        if(this.props.populateValue) {
+            const { reps, weight } = this.props.populateValue;
+            this.setState({ reps, weight });
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
+        if (nextProps.populateValue !== this.props.populateValue) {
+            const { reps, weight } = nextProps.populateValue;
+            this.setState({ reps, weight });
+        }
+    }
+
     onNumberChange(e, value) {
         this.setState({ [e.target.id]: value });
         this.props.getData({

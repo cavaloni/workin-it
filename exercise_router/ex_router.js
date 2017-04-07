@@ -1,6 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 import ExerciseData from './ex_model';
+import { User } from '../user_router/user_model';
 
 const jsonParser = require('body-parser')
     .json();
@@ -15,131 +16,15 @@ router.use(eJwt({ secret: 'super stank',
     requestProperty: 'auth',
 }));
 
-
-router.post('/', (req, res) => {
-    const requiredFields = ['user', 'exerciseData'];
-    requiredFields.forEach((field) => {
-        if (!(field in req.body)) {
-            console.log(field);
-            console.log(req.body);
-            res.status(400)
-                .json({
-                    error: `Missing "${field}" in request body`,
-                });
-        }
-    });
-
-    console.log(req.body);
-
-    ExerciseData
-        .create({
-            userId: req.body.user,
-            exerciseData: JSON.parse(req.body.exerciseData),
-        })
-        .then((data) => {
-            console.log(data);
-            res.status(200)
-                .json(data);
-        })
-        .catch((err) => {
-            res.status(500)
-                .json({
-                    error: 'something went wrong',
-                    errData: err,
-                });
-        });
-});
-
-router.put('/', (req, res) => {
-    console.log(req.body);
-    const requiredFields = ['user', 'dataToSave'];
-    requiredFields.forEach((field) => {
-        if (!(field in req.body)) {
-            res.status(400)
-                .json({
-                    error: `Missing "${field}" in request body`,
-                });
-        }
-    });
-
-    ExerciseData
-        .findOne(req.body.user.fbId)
-        .exec()
-        .then((prevData) => {
-            let newData = _.cloneDeep(prevData);
-            let year;
-            let week;
-
-            if (req.body.year === 'undefined') {
-                year = moment().year().toString();
-            } else {
-                year = req.body.year;
-            }
-
-            if (req.body.week === 'undefined') {
-                week = moment().week().toString();
-            } else {
-                week = req.body.week;
-            }
-
-            const exercisesInDataToSave = [];
-            req.body.dataToSave.forEach((data) => {
-                const i = req.body.dataToSave.indexOf(data);
-                const exSets = req.body.dataToSave[i].exerciseData;
-                const exName = req.body.dataToSave[i].exercise;
-                const camelName = _.camelCase(req.body.dataToSave[i].exercise);
-                const exGroup = req.body.dataToSave[i].exerciseGroup;
-                exercisesInDataToSave.push(camelName);
-
-                newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets);
-                newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, exSets.length);
-                newData = _.set(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName);
-            });
-
-            const exercisesInDatabase = _.uniq(
-                _.flatten(Object.keys(newData.exerciseData[year][week])
-                .map(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
-                    .map(exercise => exercise),
-                )));
-            const exercisesToDelete = _.difference(exercisesInDatabase, exercisesInDataToSave);
-            Object.keys(newData.exerciseData[year][week])
-                .filter((exGroup) => {
-                    const groupsInDataToSave = Object.keys(req.body.dataToSave)
-                        .map(data => req.body.dataToSave[data].exerciseGroup);
-                    return groupsInDataToSave.includes(exGroup);
-                })
-                .forEach(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
-                    .forEach((exercise) => {
-                        if (exercisesToDelete.includes(exercise)) {
-                            delete newData.exerciseData[year][week][exGroup][exercise];
-                        }
-                    }),
-                );
-
-            ExerciseData
-                .findOneAndUpdate({
-                    fbId: req.body.user.fbId,
-                }, {
-                    $set: {
-                        exerciseData: newData.exerciseData,
-                    },
-                }, {
-                    new: true,
-                })
-                .exec()
-                .then(profile => res.status(201).json(profile))
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500).json(err);
-                });
-        });
-});
-
-router.post('/get_data', (req, res) => {
+function getExerciseData(req, res) {
+    let user;
+    if (req.body.friendFbId) {
+        user = req.body.friendFbId;
+    } else { user = req.body.user; }
     let allUserData;
     ExerciseData
         .findOne({
-            userId: req.body.user,
+            userId: user,
         })
         .then((data) => {
             allUserData = data;
@@ -190,7 +75,127 @@ router.post('/get_data', (req, res) => {
                     });
             }
         });
+}
+
+router.put('/', (req, res) => {
+    console.log(req.body);
+    const requiredFields = ['user', 'dataToSave'];
+    requiredFields.forEach((field) => {
+        if (!(field in req.body)) {
+            res.status(400)
+                .json({
+                    error: `Missing "${field}" in request body`,
+                });
+        }
+    });
+
+    ExerciseData
+        .findOne({
+            userId: req.body.user,
+        })
+        .exec()
+        .then((prevData) => {
+            console.log(prevData);
+            console.log('222222222222222222222222222');
+            let newData = _.cloneDeep(prevData);
+            let year;
+            let week;
+
+            if (req.body.year === 'undefined') {
+                year = moment().year().toString();
+            } else {
+                year = req.body.year;
+            }
+
+            if (req.body.week === 'undefined') {
+                week = moment().week().toString();
+            } else {
+                week = req.body.week;
+            }
+
+            const exercisesInDataToSave = [];
+            req.body.dataToSave.forEach((data) => {
+                const i = req.body.dataToSave.indexOf(data);
+                const exSets = req.body.dataToSave[i].exerciseData;
+                const exName = req.body.dataToSave[i].exercise;
+                const camelName = _.camelCase(req.body.dataToSave[i].exercise);
+                const exGroup = req.body.dataToSave[i].exerciseGroup;
+                exercisesInDataToSave.push(camelName);
+
+                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets, Object);
+                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, exSets.length, Object);
+                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName, Object);
+            });
+
+            const exercisesInDatabase = _.uniq(
+                _.flatten(Object.keys(newData.exerciseData[year][week])
+                .map(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
+                    .map(exercise => exercise),
+                )));
+            const exercisesToDelete = _.difference(exercisesInDatabase, exercisesInDataToSave);
+            Object.keys(newData.exerciseData[year][week])
+                .filter((exGroup) => {
+                    const groupsInDataToSave = Object.keys(req.body.dataToSave)
+                        .map(data => req.body.dataToSave[data].exerciseGroup);
+                    return groupsInDataToSave.includes(exGroup);
+                })
+                .forEach(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
+                    .forEach((exercise) => {
+                        if (exercisesToDelete.includes(exercise)) {
+                            delete newData.exerciseData[year][week][exGroup][exercise];
+                        }
+                    }),
+                );
+
+            ExerciseData
+                .findOneAndUpdate({
+                    userId: req.body.user,
+                }, {
+                    $set: {
+                        exerciseData: newData.exerciseData,
+                    },
+                }, {
+                    new: true,
+                })
+                .exec()
+                .then(profile => res.status(201).json(profile))
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json(err);
+                });
+        });
 });
+
+router.post('/get_friend_data', (req, res) => {
+    const { user, friendFbId } = req.body;
+    User
+        .findOne({
+            fbId: user,
+        })
+        .then((userProfile) => {
+            User
+                .findOne({
+                    fbId: friendFbId,
+                })
+                .then((friendProfile) => {
+                    const userStatusOfFriend = _.find(
+                        userProfile.friends,
+                        friend => friend.fbId === friendFbId,
+                    ).status;
+                    const friendStatusOfUser = _.find(
+                        friendProfile.friends,
+                        friend => friend.fbId === user,
+                    ).status;
+                    if (userStatusOfFriend === 'active' &&
+                        friendStatusOfUser === 'active') {
+                        getExerciseData(req, res);
+                    }
+                });
+        });
+});
+
+
+router.post('/get_data', getExerciseData);
 
 router.put('/get_weeks', (req, res) => {
     ExerciseData

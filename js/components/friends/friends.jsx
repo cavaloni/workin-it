@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import moment from 'moment';
+import qs from 'qs';
 import _ from 'lodash';
 import { List, ListItem, makeSelectable } from 'material-ui/List';
 import IconMenu from 'material-ui/IconMenu';
@@ -18,7 +20,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Observable } from 'rxjs/Rx';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
-import mockData from '../mock-data';
 
 import * as actions from '../../actions/index';
 
@@ -42,6 +43,7 @@ class Friends extends Component {
         super(props);
         this.state = {
             selectedFriend: undefined,
+            friendData: {},
             deleteVerifyOpen: false,
             friendToDeleteIndex: undefined,
             snackBarOpen: false,
@@ -71,8 +73,27 @@ class Friends extends Component {
         .subscribe(allUsers => this.setState({ allUsers }));
     }
 
-    handleFriendSelect(event) {
-        this.setState({ selectedFriend: event.target.innerHTML });
+    handleFriendSelect(e, fbId, name) {
+        const friendFbId = fbId;
+        const user = this.props.profileData.fbId;
+        const oneWeek = false;
+        const week = moment().week().toString();
+        const year = moment().year().toString();
+        const token = this.props.token;
+        O.ajax({
+            url: '/exercise_data/get_friend_data',
+            method: 'POST',
+            headers: { token },
+            body: qs.stringify({ user, year, week, oneWeek, friendFbId }),
+        }).subscribe((response) => {
+            this.setState({
+                selectedFriend: {
+                    fbId,
+                    name,
+                },
+                friendData: response.response.data,
+            });
+        });
     }
 
     handleModalClose() {
@@ -146,8 +167,6 @@ class Friends extends Component {
     }
 
     render() {
-        console.log(this.props.friends);
-
         const autocompleteUserNames = this.state.allUsers.map(user => user.user);
 
         autocompleteUserNames.push('Milford WaxPaddy');
@@ -181,8 +200,8 @@ class Friends extends Component {
             progress = (
                 <Progress
                   friends
-                  selectedFriend={this.state.selectedFriend}
-                  data={mockData}
+                  selectedFriend={this.state.selectedFriend.name}
+                  data={this.state.friendData}
                 />);
         } else { progress = <div />; }
 
@@ -191,10 +210,12 @@ class Friends extends Component {
             .map((friend) => {
                 const num = this.props.friends.indexOf(friend);
                 return (<ListItem
+                  onTouchTap={this.example}
+                  id={friend.fbId}
                   value={friend.name}
                   primaryText={friend.name}
                   leftAvatar={<Avatar src={friend.avatar} />}
-                  onClick={this.handleFriendSelect}
+                  onClick={() => this.handleFriendSelect(null, friend.fbId, friend.name)}
                   rightIconButton={
                       <IconMenu
                         onItemTouchTap={this.deleteFriendModal}
@@ -291,7 +312,7 @@ class Friends extends Component {
                 <Paper style={style.paper}>
                     <SelectableList
                       value={this.state.selectedFriend}
-                      onChange={this.handleFriendSelect}
+                    //   onChange={this.handleFriendSelect}
                     >
                         <Subheader>Friends</Subheader>
                         {friendsList}
