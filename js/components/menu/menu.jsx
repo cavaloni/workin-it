@@ -33,12 +33,17 @@ class Menu extends Component {
     }
 
     handleRoute(event, menuObj, index) {
-        let route;
-        if (index === 0) {
-            route = '';
-        } else (route = index);
-        browserHistory.push(`/app/${route}`);
-        this.setState({ open: false });
+        if (index === 4) {
+            localStorage.removeItem('wi_id_token');
+            browserHistory.push('/');
+        } else {
+            let route;
+            if (index === 0) {
+                route = '';
+            } else (route = index);
+            browserHistory.push(`/app/${route}`);
+            this.setState({ open: false });
+        }
     }
 
     render() {
@@ -55,7 +60,7 @@ class Menu extends Component {
                         <MenuItem>Workouts</MenuItem>
                         <MenuItem>Progress</MenuItem>
                         <MenuItem>Friends</MenuItem>
-                        <MenuItem>Help</MenuItem>
+                        <MenuItem>Logout</MenuItem>
                     </Menus>
                 </Drawer>
             </div>

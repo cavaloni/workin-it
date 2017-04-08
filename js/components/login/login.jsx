@@ -14,10 +14,14 @@ class Login extends Component {
         this.justGetIn = this.justGetIn.bind(this);
         this.state = {
             token: false,
+            loginFail: false,
         };
     }
 
     componentWillMount() {
+        if (this.props.loginFail) {
+            this.setState({ loginFail: true });
+        }
         const getToken = O.of(localStorage.getItem('wi_id_token'));
         const verifyAuth = tk => O.ajax({
             headers: {
@@ -52,6 +56,7 @@ class Login extends Component {
     }
 
     render() {
+        // TODO: a login fail message
         return (
             <div>
                 <h1>Yep</h1>

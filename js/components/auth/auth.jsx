@@ -13,7 +13,8 @@ class Auth extends Component {
             localStorage.setItem('wi_id_token', response.response.newToken);
             this.props.dispatch(actions.setUserToken(response.response.newToken));
             browserHistory.push('/app');
-        });
+        },
+        () => this.props.dispatch(actions.loginFail()));
     }
 
     render() {

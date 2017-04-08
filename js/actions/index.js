@@ -12,6 +12,15 @@ export const setUserToken = token => ({ type: SET_USER_TOKEN, token });
 export const PROFILE_FETCH_SUCCESS = 'PROFILE_FETCH_SUCCESS';
 export const profileFetchSuccess = profile => ({ type: PROFILE_FETCH_SUCCESS, profile });
 
+export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const loginFail = () => ({ type: LOGIN_FAIL });
+
+export const FETCH_FAILURE = 'FETCH_FAILURE';
+export const fetchFailure = err => ({ type: FETCH_FAILURE, err });
+
+export const RESET_FETCH_FAILURE = 'RESET_FETCH_FAILURE';
+export const resetFetchFailure = () => ({ type: RESET_FETCH_FAILURE });
+
 export const EXERCISE_DATA_FETCH_SUCCESS = 'EXERCISE_DATA_FETCH_SUCCESS';
 export const exerciseDataFetchSuccess = data => ({ type: EXERCISE_DATA_FETCH_SUCCESS, data });
 
@@ -40,7 +49,10 @@ export const deleteFriend = (index, friend, user, token) => (dispatch) => {
         }),
     }).subscribe((response) => {
         dispatch(profileFetchSuccess(response.response));
-    });
+    },
+    ((err) => {
+        dispatch(fetchFailure(err));
+    }));
 };
 
 export const addFriend = (user, friend, token) => (dispatch) => {
@@ -62,8 +74,9 @@ export const addFriend = (user, friend, token) => (dispatch) => {
     }).subscribe((response) => {
         dispatch(profileFetchSuccess(response.response));
     },
-    err => console.log(err),
-    );
+    ((err) => {
+        dispatch(fetchFailure(err));
+    }));
 };
 
 export const acceptFriend = (friendFbId, userFbId, token) => (dispatch) => {
@@ -79,20 +92,20 @@ export const acceptFriend = (friendFbId, userFbId, token) => (dispatch) => {
     }).subscribe((response) => {
         dispatch(profileFetchSuccess(response.response));
     },
-    err => console.log(err),
-    );
+    ((err) => {
+        dispatch(fetchFailure(err));
+    }));
 };
 
-export const getNewToken = (initToken) => {
+export const sendToken = initToken => (dispatch) => {
     O.ajax(`/new_token?initToken=${initToken}`)
-        .subscribe(response => localStorage.setItem('id_token', response.getNewToken));
+        .subscribe((response) => {
+            localStorage.setItem('id_token', response.getNewToken);
+        },
+        ((err) => {
+            dispatch(fetchFailure(err));
+        }));
 };
-
-export const sendToken = (token) => {
-    O.ajax(`/new_token?initToken=${token}`)
-        .subscribe(response => localStorage.setItem('id_token', response.getNewToken));
-};
-
 
 export const setUserProfile = () => (dispatch) => {
     const getToken = O.of(localStorage.getItem('wi_id_token'));
@@ -112,7 +125,7 @@ export const setUserProfile = () => (dispatch) => {
             }
         },
         ((err) => {
-            console.log(err);
+            dispatch(fetchFailure(err));
         }));
 };
 
@@ -134,7 +147,10 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
                 dispatch(exerciseDataNoData());
             }
             dispatch(exerciseDataFetchSuccess(response.response));
-        });
+        },
+        ((err) => {
+            dispatch(fetchFailure(err));
+        }));
 };
 
 export const saveExerciseData = (token, user, dataToSave, year, week) => (dispatch) => {
@@ -146,5 +162,10 @@ export const saveExerciseData = (token, user, dataToSave, year, week) => (dispat
         },
         method: 'PUT',
     })
-        .subscribe(response => dispatch(exerciseDataFetchSuccess(response.response)));
+        .subscribe((response) => {
+            dispatch(exerciseDataFetchSuccess(response.response));
+        },
+        ((err) => {
+            dispatch(fetchFailure(err));
+        }));
 };

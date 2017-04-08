@@ -74,11 +74,13 @@ function getExerciseData(req, res) {
                         data: userRangeData,
                     });
             }
+        })
+        .catch(() => {
+            res.status(500);
         });
 }
 
 router.put('/', (req, res) => {
-    console.log(req.body.user);
     const requiredFields = ['user', 'dataToSave'];
     requiredFields.forEach((field) => {
         if (!(field in req.body)) {
@@ -96,20 +98,8 @@ router.put('/', (req, res) => {
         .exec()
         .then((prevData) => {
             let newData = _.cloneDeep(prevData);
-            let year;
-            let week;
-
-            if (req.body.year === 'undefined') {
-                year = moment().year().toString();
-            } else {
-                year = req.body.year;
-            }
-
-            if (req.body.week === 'undefined') {
-                week = moment().week().toString();
-            } else {
-                week = req.body.week;
-            }
+            const year = req.body.year;
+            const week = req.body.week;
 
             const exercisesInDataToSave = [];
             req.body.dataToSave.forEach((data) => {
@@ -157,9 +147,8 @@ router.put('/', (req, res) => {
                 })
                 .exec()
                 .then(profile => res.status(201).json(profile))
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500).json(err);
+                .catch(() => {
+                    res.status(500);
                 });
         });
 });
@@ -189,6 +178,9 @@ router.post('/get_friend_data', (req, res) => {
                         getExerciseData(req, res);
                     }
                 });
+        })
+        .catch(() => {
+            res.status(500);
         });
 });
 
@@ -210,6 +202,9 @@ router.put('/get_weeks', (req, res) => {
                 }),
             }));
             res.status(200).json({ weekRanges });
+        })
+        .catch(() => {
+            res.status(500);
         });
 });
 

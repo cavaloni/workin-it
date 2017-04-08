@@ -4,21 +4,16 @@ import { User } from '../user_router/user_model';
 import ExerciseData from '../exercise_router/ex_model';
 
 const chai = require('chai');
-// const chaiHttp = require('chai-http');
 
 const expect = chai.expect;
 const mongoose = require('mongoose');
-// const faker = require('faker');
 const tester = require('supertest');
 const { app, runServer, closeServer } = require('../server');
 const jwt = require('jsonwebtoken');
 const qs = require('qs');
 const _ = require('lodash');
-// chai.use(chaiHttp);
 
 /* eslint-env node, jest */
-
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
 const token = jwt.sign({ user: '10210391595884532' },
                         'super stank',
@@ -239,11 +234,6 @@ describe('Workin It API resource', () => {
                     year,
                 }))
                 .then((response) => {
-                    console.log('1');
-                    console.log('1');
-                    console.log('1');
-                    console.log('1');
-                    console.log('1');
                     expect(response.body).to.have.key('data');
                     const oneWeekData = Object.keys(response.body.data);
                     expect(oneWeekData).to.have.length.of.at.least(1);

@@ -262,6 +262,8 @@ function getExerciseData(req, res) {
                 data: userRangeData
             });
         }
+    }).catch(function () {
+        res.status(500);
     });
 }
 
@@ -279,20 +281,8 @@ router.put('/', function (req, res) {
         userId: req.body.user
     }).exec().then(function (prevData) {
         var newData = _lodash2.default.cloneDeep(prevData);
-        var year = void 0;
-        var week = void 0;
-
-        if (req.body.year === 'undefined') {
-            year = (0, _moment2.default)().year().toString();
-        } else {
-            year = req.body.year;
-        }
-
-        if (req.body.week === 'undefined') {
-            week = (0, _moment2.default)().week().toString();
-        } else {
-            week = req.body.week;
-        }
+        var year = req.body.year;
+        var week = req.body.week;
 
         var exercisesInDataToSave = [];
         req.body.dataToSave.forEach(function (data) {
@@ -337,9 +327,8 @@ router.put('/', function (req, res) {
             new: true
         }).exec().then(function (profile) {
             return res.status(201).json(profile);
-        }).catch(function (err) {
-            console.log(err);
-            res.status(500).json(err);
+        }).catch(function () {
+            res.status(500);
         });
     });
 });
@@ -365,6 +354,8 @@ router.post('/get_friend_data', function (req, res) {
                 getExerciseData(req, res);
             }
         });
+    }).catch(function () {
+        res.status(500);
     });
 });
 
@@ -383,6 +374,8 @@ router.put('/get_weeks', function (req, res) {
             }));
         });
         res.status(200).json({ weekRanges: weekRanges });
+    }).catch(function () {
+        res.status(500);
     });
 });
 
@@ -427,6 +420,8 @@ router.get('/', function (req, res) {
             return { user: user.user, fbId: user.fbId };
         });
         res.status(201).json({ allUsers: allUsers });
+    }).catch(function () {
+        res.status(500);
     });
 });
 
@@ -456,7 +451,6 @@ router.get('/init_profile', passport.authenticate('facebook', {
             }).catch(function (err) {
                 res.status(500);
             });
-            console.log('but does this?');
         }
     }).catch(function (err) {
         res.status(500);
@@ -477,7 +471,7 @@ router.get('/profile', function (req, res) {
         res.status(201).json(profile);
     }).catch(function (err) {
         console.log(err);
-        res.send(401, { err: err });
+        res.send(500, { err: err });
     });
 });
 
@@ -515,7 +509,7 @@ router.put('/add_friend', function (req, res) {
     }).concatAll().subscribe(function (profile) {
         res.status(201).json(profile);
     }, function (err) {
-        console.log(err);
+        res.status(500);
     });
 });
 
@@ -536,7 +530,6 @@ router.put('/accept_friend', function (req, res) {
     }).exec().then(function (profile) {
         console.log('at least this happened');
     }).catch(function (err) {
-        console.log(err);
         res.status(500).json({
             err: err
         });

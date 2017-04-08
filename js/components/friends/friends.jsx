@@ -51,6 +51,8 @@ class Friends extends Component {
             newFriendSelected: '',
             newFriendSelectedIndex: undefined,
             autoComErrTxt: '',
+            fetchSent: false,
+            snackBarMessage: '',
         };
         this.handleFriendSelect = this.handleFriendSelect.bind(this);
         this.deleteFriendModal = this.deleteFriendModal.bind(this);
@@ -70,7 +72,28 @@ class Friends extends Component {
         .flatMap(response => O.of(response.response.allUsers)
                         .filter(user => user !== this.props.profileData)
                         .map(user => user))
-        .subscribe(allUsers => this.setState({ allUsers }));
+        .subscribe(allUsers => this.setState({ allUsers },
+        () => this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' }),
+        ));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.state.fetchSent && nextProps.fetchFailed) {
+            this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' });
+        } else if (this.state.fetchSent && nextProps.fetchFailed === false) {
+            this.setState({ snackBarOpen: true, snackBarMessage: 'Deleted' });
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.snackbarOpen) {
+            O.interval(4000)
+                .take(1)
+                .subscribe(() => {
+                    this.setState({ snackbarOpen: false });
+                    this.props.dispatch(actions.resetFetchFailure());
+                });
+        }
     }
 
     handleFriendSelect(e, fbId, name) {
@@ -93,7 +116,8 @@ class Friends extends Component {
                 },
                 friendData: response.response.data,
             });
-        });
+        },
+        () => this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' }));
     }
 
     handleModalClose() {
@@ -105,10 +129,7 @@ class Friends extends Component {
     }
 
     deleteFriend() {
-        this.setState({ deleteVerifyOpen: false, snackBarOpen: true });
-        O.interval(3000)
-            .take(1)
-            .subscribe(() => this.setState({ snackBarOpen: false }));
+        this.setState({ deleteVerifyOpen: false, fetchSent: true });
         this.props.dispatch(
             actions.deleteFriend(
                 this.state.friendToDeleteIndex,
@@ -330,7 +351,7 @@ class Friends extends Component {
                 {progress}
                 <Snackbar
                   open={this.state.snackBarOpen}
-                  message="Deleted"
+                  message={this.state.snackBarMessage}
                   autoHideDuration={4000}
                   onRequestClose={this.handleRequestClose}
                 />
@@ -349,6 +370,8 @@ Friends.propTypes = {
         profileImage: React.PropTypes.string,
         friends: React.PropTypes.array,
     }).isRequired,
+    // error handling prop on bad server fetches
+    fetchFailed: React.PropTypes.bool.isRequired,
     // the users JWT
     token: React.PropTypes.string.isRequired,
     // redux dispatch
@@ -356,6 +379,7 @@ Friends.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
+    fetchFailed: state.fetchFailed,
     profileData: state.userData,
     token: state.userToken,
     friends: state.userData.friends,

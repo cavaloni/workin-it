@@ -25,6 +25,9 @@ router.get('/', (req, res) => {
         .then((users) => {
             const allUsers = users.map(user => ({ user: user.user, fbId: user.fbId }));
             res.status(201).json({ allUsers });
+        })
+        .catch(() => {
+            res.status(500);
         });
 });
 
@@ -92,7 +95,7 @@ router.get('/profile', (req, res) => {
         })
         .catch((err) => {
             console.log(err);
-            res.send(401, { err });
+            res.send(500, { err });
         });
 });
 
@@ -141,7 +144,7 @@ router.put('/add_friend', (req, res) => {
                 res.status(201).json(profile);
             },
             ((err) => {
-                console.log(err);
+                res.status(500)
             }));
 });
 
@@ -166,7 +169,6 @@ router.put('/accept_friend', (req, res) => {
             console.log('at least this happened');
         })
         .catch((err) => {
-            console.log(err);
             res.status(500)
                 .json({
                     err,

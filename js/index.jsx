@@ -17,8 +17,6 @@ import Auth from './components/auth/auth';
 
 require('babel-polyfill');
 
-// TODO: implment onEnter to protect all endpoints
-
 function requireAuth(nextState, replace) {
     const token = localStorage.getItem('wi_id_token');
     Rx.Observable.ajax({

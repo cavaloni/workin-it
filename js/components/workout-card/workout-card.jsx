@@ -55,6 +55,8 @@ class WorkoutCard extends Component {
             tiggerSave: false,
             populateWeek: false,
             dataToSave: [],
+            fetchSent: false,
+            snackbarMessage: '',
         };
         this.tempDataToSave = [];
         this.workoutItem = (<WorkoutItem />);
@@ -67,13 +69,32 @@ class WorkoutCard extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (this.state.fetchSent && nextProps.fetchFailed) {
+            this.setState({ snackbarOpen: true, snackbarMessage: 'Something went wrong' });
+        } else if (this.state.fetchSent && !nextProps.fetchFailed) {
+            this.setState({ snackbarOpen: true, snackbarMessage: 'Saved' });
+        }
+    }
+
     componentWillUpdate(nextProps) {
         const type = this.props.cardType.toLowerCase();
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
         }
     }
-
+    
+    componentDidUpdate() {
+        if (this.state.snackbarOpen) {
+            O.interval(4000)
+                .take(1)
+                .subscribe(() => {
+                    this.setState({ snackbarOpen: false });
+                    this.props.dispatch(actions.resetFetchFailure());
+                });
+        }        
+    }
+    
     setComponentPopulated(props) {
         const type = this.props.cardType.toLowerCase();
         let itemList;
@@ -104,10 +125,6 @@ class WorkoutCard extends Component {
             saveSuggested: false,
         },
                 () => this.setState({ populateWeek: false }));
-        if (this.state.snackbarOpen) {
-            O.timer(500)
-                .subscribe(() => this.setState({ snackbarOpen: false }));
-        }
     }
 
     getExDataFromComponentsAndSave(exerciseData, exercise) {
@@ -134,7 +151,7 @@ class WorkoutCard extends Component {
                 year,
                 week,
                 ));
-            this.setState({ dataToSave, triggerSave: false });
+            this.setState({ dataToSave, triggerSave: false, fetchSent: true });
         }
     }
 
@@ -154,7 +171,6 @@ class WorkoutCard extends Component {
     }
 
     saveData() {
-        this.setState({ snackbarOpen: true });
         this.setState({ triggerSave: true }, () => {
             this.setState({
                 triggerSave: false,
@@ -245,7 +261,7 @@ class WorkoutCard extends Component {
                     />
                     <Snackbar
                       open={this.state.snackbarOpen}
-                      message="Saved"
+                      message={this.state.snackbarMessage}
                       autoHideDuration={4000}
                       onRequestClose={this.handleRequestClose}
                     />
@@ -262,6 +278,8 @@ WorkoutCard.propTypes = {
     selectedWeek: React.PropTypes.string.isRequired,
     // redux store data for the user selected week, or default current week
     weekData: React.PropTypes.shape({}).isRequired,
+    // error handling prop on bad server fetches
+    fetchFailed: React.PropTypes.bool.isRequired,
     // user JWT
     token: React.PropTypes.string.isRequired,
     // the users profile information
@@ -276,6 +294,7 @@ WorkoutCard.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
+    fetchFailed: state.fetchFailed,
     exerciseData: state.exerciseData,
     profileData: state.userData,
     token: state.userToken,
