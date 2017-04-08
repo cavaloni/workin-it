@@ -1,11 +1,8 @@
 const passport = require('passport');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const express = require('express');
 const Strategy = require('passport-facebook').Strategy;
-const morgan = require('morgan')('combined');
-const expressSession = require('express-session');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const eJwt = require('express-jwt');
@@ -104,7 +101,6 @@ app.get('/new_token',
         isRevoked: isRevokedCallback,
     }),
     (req, res) => {
-        console.log('req.user.id: ', req.user.id);
         const newToken = jwt.sign(
             { user: req.user.id },
             'super stank',
@@ -117,7 +113,6 @@ app.get('/login/facebook',
 );
 
 app.get('/init_token', (req, res) => {
-    console.log(req.params);
     res.redirect(`/auth/${req.query.token}`);
 });
 

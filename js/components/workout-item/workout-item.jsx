@@ -78,7 +78,6 @@ class WorkoutItem extends Component {
         if (nextProps.triggerSave) {
             this.saveAll();
         }
-        console.log(nextProps.populateWeek);
         if (nextProps.populateWeek) {
             this.populateWeek();
         }
@@ -190,8 +189,6 @@ class WorkoutItem extends Component {
         const setList = [];
         if (this.state.showSets) {
             for (let i = 1; i < Number(this.state.sets); i++) {
-                console.log(this.state.setsData);
-                console.log(this.state.setsData[i - 1]);
                 setList.push(<SetListItem
                   populateValue={this.state.setsData[i - 1]}
                   set={i}

@@ -6,9 +6,6 @@ import * as actions from '../../actions';
 
 
 class Auth extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     componentWillMount() {
         Rx.Observable.ajax(`/new_token?initToken=${this.props.params.initToken}`)

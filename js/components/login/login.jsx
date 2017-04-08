@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../../actions/index';
 import { browserHistory } from 'react-router';
 import { Observable } from 'rxjs';
+import * as actions from '../../actions/index';
+
 
 const O = Observable;
 
@@ -13,7 +14,7 @@ class Login extends Component {
         this.justGetIn = this.justGetIn.bind(this);
         this.state = {
             token: false,
-        }
+        };
     }
 
     componentWillMount() {
@@ -37,7 +38,7 @@ class Login extends Component {
                     browserHistory.push('/app');
                 }
             },
-        ((err) => {
+        (() => {
             this.setState({ token: false });
         }));
     }
@@ -47,7 +48,6 @@ class Login extends Component {
     }
 
     login() {
-        console.log(actions);
         this.props.dispatch(actions.login('Michal'));
     }
 
@@ -62,6 +62,11 @@ class Login extends Component {
         );
     }
 }
+
+Login.propTypes = {
+     // redux dispatch
+    dispatch: React.PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state, props) => ({
     loginSuccess: state.loginSuccess,

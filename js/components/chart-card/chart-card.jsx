@@ -26,9 +26,6 @@ function processChartData(type, pData) {
 }
 
 class ExerciseChart extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     componentDidMount() {
         this.drawCharts();
@@ -97,7 +94,7 @@ class ExerciseChart extends Component {
             },
         };
         const data = new google.visualization.arrayToDataTable(chartData);
-        const chart = new google.visualization.LineChart(ReactDom.findDOMNode(this));
+        const chart = new google.visualization.SteppedAreaChart(ReactDom.findDOMNode(this));
         chart.draw(data, options);
     }
 

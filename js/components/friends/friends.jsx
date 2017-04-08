@@ -101,12 +101,10 @@ class Friends extends Component {
     }
 
     deleteFriendModal(e, i) {
-        console.log(i);
         this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id });
     }
 
     deleteFriend() {
-        console.log('it will delete: ', this.state.friendToDeleteIndex);
         this.setState({ deleteVerifyOpen: false, snackBarOpen: true });
         O.interval(3000)
             .take(1)

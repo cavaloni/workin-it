@@ -63,32 +63,32 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("body-parser");
+module.exports = require("express");
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("express");
+module.exports = require("express-jwt");
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("express-jwt");
+module.exports = require("mongoose");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("mongoose");
+module.exports = require("body-parser");
 
 /***/ }),
 /* 4 */
@@ -109,7 +109,33 @@ module.exports = require("passport");
 "use strict";
 
 
-var mongoose = __webpack_require__(3);
+var mongoose = __webpack_require__(2);
+
+var exerciseDataSchema = mongoose.Schema({
+    userId: { type: String, required: true },
+    exerciseData: { type: Object, required: true }
+}, { minimize: false });
+
+exerciseDataSchema.methods.apiRepr = function () {
+    return {
+        id: undefined.id,
+        userId: undefined.projectName,
+        exerciseData: undefined.exerciseData
+    };
+};
+
+var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
+
+module.exports = ExerciseData;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var mongoose = __webpack_require__(2);
 
 var UserSchema = mongoose.Schema({
     user: { type: String, required: true },
@@ -132,7 +158,7 @@ var User = mongoose.model('user_data', UserSchema);
 module.exports = { User: User };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -142,7 +168,7 @@ exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongo
 exports.PORT = process.env.PORT || 8081;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -150,27 +176,27 @@ exports.PORT = process.env.PORT || 8081;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _moment = __webpack_require__(20);
+var _moment = __webpack_require__(17);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _lodash = __webpack_require__(19);
+var _lodash = __webpack_require__(16);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ex_model = __webpack_require__(18);
+var _ex_model = __webpack_require__(6);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
 
-var _user_model = __webpack_require__(6);
+var _user_model = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var jsonParser = __webpack_require__(0).json();
-var express = __webpack_require__(1);
-var eJwt = __webpack_require__(2);
+var jsonParser = __webpack_require__(3).json();
+var express = __webpack_require__(0);
+var eJwt = __webpack_require__(1);
 
 var router = express.Router();
 
@@ -215,7 +241,7 @@ function getExerciseData(req, res) {
                 weekQuery = (0, _moment2.default)().week().toString();
             } else {
                 weekQuery = req.body.week;
-            }
+            };
 
             var userRangeData = Object.keys(exerciseData).filter(function (years) {
                 return years === yearQuery;
@@ -240,7 +266,6 @@ function getExerciseData(req, res) {
 }
 
 router.put('/', function (req, res) {
-    console.log(req.body);
     var requiredFields = ['user', 'dataToSave'];
     requiredFields.forEach(function (field) {
         if (!(field in req.body)) {
@@ -253,8 +278,6 @@ router.put('/', function (req, res) {
     _ex_model2.default.findOne({
         userId: req.body.user
     }).exec().then(function (prevData) {
-        console.log(prevData);
-        console.log('222222222222222222222222222');
         var newData = _lodash2.default.cloneDeep(prevData);
         var year = void 0;
         var week = void 0;
@@ -366,17 +389,17 @@ router.put('/get_weeks', function (req, res) {
 module.exports = { router: router };
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _rxjs = __webpack_require__(21);
+var _rxjs = __webpack_require__(18);
 
-var _user_model = __webpack_require__(6);
+var _user_model = __webpack_require__(7);
 
-var _ex_model = __webpack_require__(18);
+var _ex_model = __webpack_require__(6);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
 
@@ -385,9 +408,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var passport = __webpack_require__(5);
 
 var O = _rxjs.Observable;
-var jsonParser = __webpack_require__(0).json();
-var express = __webpack_require__(1);
-var eJwt = __webpack_require__(2);
+var express = __webpack_require__(0);
+var eJwt = __webpack_require__(1);
 var jwt = __webpack_require__(4);
 
 var router = express.Router();
@@ -417,7 +439,6 @@ router.get('/init_profile', passport.authenticate('facebook', {
         fbId: req.user.id
     }).exec().then(function (user) {
         if (!user) {
-            console.log('this works');
             _user_model.User.create({
                 user: req.user.name.givenName + ' ' + req.user.name.familyName,
                 friends: [],
@@ -430,7 +451,7 @@ router.get('/init_profile', passport.authenticate('facebook', {
                 }).then(function (profile) {
                     console.log('ExerciseData created: ', profile);
                 }).catch(function (err) {
-                    res.status(500).json({});
+                    res.status(500);
                 });
             }).catch(function (err) {
                 res.status(500);
@@ -564,7 +585,7 @@ router.put('/delete_friend', function (req, res) {
 module.exports = { router: router };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -592,12 +613,6 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("cookie-parser");
-
-/***/ }),
 /* 12 */
 /***/ (function(module, exports) {
 
@@ -607,103 +622,62 @@ module.exports = require("cors");
 /* 13 */
 /***/ (function(module, exports) {
 
-module.exports = require("express-session");
+module.exports = require("node-codein");
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = require("morgan");
+module.exports = require("passport-facebook");
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports) {
 
-module.exports = require("node-codein");
+module.exports = require("shortid");
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
-module.exports = require("passport-facebook");
+module.exports = require("lodash");
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = require("shortid");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var mongoose = __webpack_require__(3);
-
-var exerciseDataSchema = mongoose.Schema({
-    userId: { type: String, required: true },
-    exerciseData: { type: Object, required: true }
-}, { minimize: false });
-
-exerciseDataSchema.methods.apiRepr = function () {
-    return {
-        id: undefined.id,
-        userId: undefined.projectName,
-        exerciseData: undefined.exerciseData
-    };
-};
-
-var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
-
-module.exports = ExerciseData;
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = require("lodash");
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
 module.exports = require("moment");
 
 /***/ }),
-/* 21 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs");
 
 /***/ }),
-/* 22 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
 
 var passport = __webpack_require__(5);
-var bodyParser = __webpack_require__(0);
-var cookieParser = __webpack_require__(11);
-var mongoose = __webpack_require__(3);
-var express = __webpack_require__(1);
-var Strategy = __webpack_require__(16).Strategy;
-var morgan = __webpack_require__(14)('combined');
-var expressSession = __webpack_require__(13);
+var bodyParser = __webpack_require__(3);
+var mongoose = __webpack_require__(2);
+var express = __webpack_require__(0);
+var Strategy = __webpack_require__(14).Strategy;
 var jwt = __webpack_require__(4);
 var cors = __webpack_require__(12);
-var eJwt = __webpack_require__(2);
-var shortid = __webpack_require__(17);
+var eJwt = __webpack_require__(1);
+var shortid = __webpack_require__(15);
 
-var _require = __webpack_require__(8),
+var _require = __webpack_require__(9),
     exerciseDataRouter = _require.router;
 
-var _require2 = __webpack_require__(9),
+var _require2 = __webpack_require__(10),
     userRouter = _require2.router;
 
-var codein = __webpack_require__(15);
+var codein = __webpack_require__(13);
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -739,7 +713,7 @@ mongoose.Promise = global.Promise;
 
 var app = express();
 
-var _require3 = __webpack_require__(7),
+var _require3 = __webpack_require__(8),
     PORT = _require3.PORT,
     DATABASE_URL = _require3.DATABASE_URL;
 
@@ -801,7 +775,6 @@ app.get('/new_token', eJwt({ secret: 'funky smell',
     },
     isRevoked: isRevokedCallback
 }), function (req, res) {
-    console.log('req.user.id: ', req.user.id);
     var newToken = jwt.sign({ user: req.user.id }, 'super stank', { expiresIn: '7 days' });
     res.json({ newToken: newToken });
 });
@@ -809,7 +782,6 @@ app.get('/new_token', eJwt({ secret: 'funky smell',
 app.get('/login/facebook', passport.authenticate('facebook', { scope: 'public_profile' }));
 
 app.get('/init_token', function (req, res) {
-    console.log(req.params);
     res.redirect('/auth/' + req.query.token);
 });
 
@@ -866,7 +838,7 @@ if (__webpack_require__.c[__webpack_require__.s] === module) {
 }
 
 module.exports = { app: app, runServer: runServer, closeServer: closeServer };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module)))
 
 /***/ })
 /******/ ]);

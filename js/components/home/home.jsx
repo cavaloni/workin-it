@@ -54,11 +54,15 @@ const style = {
 };
 
 class Home extends Component {
-    constructor(props, context) {
-        super(props, context);
+
+    componentWillMount() {
+        if (this.props.params.jwToken) {
+            this.props.dispatch(actions.setUserToken());
+        }
+        this.props.dispatch(actions.setUserProfile());
     }
 
-     workoutRoute(e) {
+    workoutRoute(e) {
         e.preventDefault();
         browserHistory.push('/app/1');
     }
@@ -66,13 +70,6 @@ class Home extends Component {
     progressRoute(e) {
         e.preventDefault();
         browserHistory.push('/app/2');
-    }
-
-    componentWillMount() {
-        if (this.props.params.jwToken) {
-            this.props.dispatch(actions.setUserToken());
-        }
-        this.props.dispatch(actions.setUserProfile());
     }
 
     render() {

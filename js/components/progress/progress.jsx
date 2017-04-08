@@ -195,7 +195,9 @@ class Progress extends Component {
                                                 <MenuItem
                                                   onTouchTap={this.exerciseValueChange}
                                                   value={exercise}
-                                                  primaryText={this.state.data[week][curGroup][exercise].fullName}
+                                                  primaryText={
+                                                      this.state.data[week][curGroup][exercise].fullName
+                                                  }
                                                 />);
                                         return _.set(accObj, `${curGroup}`, menuItems);
                                     }, {});

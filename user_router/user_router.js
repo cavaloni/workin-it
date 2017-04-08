@@ -5,7 +5,6 @@ import ExerciseData from '../exercise_router/ex_model';
 const passport = require('passport');
 
 const O = Observable;
-const jsonParser = require('body-parser').json();
 const express = require('express');
 const eJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
@@ -43,7 +42,6 @@ router.get('/init_profile',
             .exec()
             .then((user) => {
                 if (!user) {
-                    console.log('this works');
                     User
                         .create({
                             user: `${req.user.name.givenName} ${req.user.name.familyName}`,
@@ -62,13 +60,11 @@ router.get('/init_profile',
                                 })
                                 .catch((err) => {
                                     res.status(500)
-                                        .json({});
                                 });
                         })
                         .catch((err) => {
                             res.status(500);
                         });
-                    console.log('but does this?');
                 }
 
             })
@@ -78,7 +74,6 @@ router.get('/init_profile',
 
         res.redirect(`/init_token?token=${req.user.token}`);
     });
-
 
 
 router.get('/failed_auth', (req, res) => {

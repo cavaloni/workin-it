@@ -51,7 +51,7 @@ function getExerciseData(req, res) {
                         .week().toString();
                 } else {
                     weekQuery = req.body.week;
-                }
+                };
 
                 const userRangeData = Object.keys(exerciseData)
                     .filter(years => years === yearQuery)
@@ -68,7 +68,7 @@ function getExerciseData(req, res) {
                         ...weekSet,
                         [week]: exerciseData[2017][week],
                     }), {});
-
+                
                 res.status(200)
                     .json({
                         data: userRangeData,
@@ -78,7 +78,7 @@ function getExerciseData(req, res) {
 }
 
 router.put('/', (req, res) => {
-    console.log(req.body);
+    console.log(req.body.user);
     const requiredFields = ['user', 'dataToSave'];
     requiredFields.forEach((field) => {
         if (!(field in req.body)) {
@@ -95,8 +95,6 @@ router.put('/', (req, res) => {
         })
         .exec()
         .then((prevData) => {
-            console.log(prevData);
-            console.log('222222222222222222222222222');
             let newData = _.cloneDeep(prevData);
             let year;
             let week;

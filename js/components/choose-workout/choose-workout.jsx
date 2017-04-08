@@ -21,7 +21,6 @@ const styles = {
 };
 
 
-
 export default class ChooseWorkout extends React.Component {
     constructor(props, context) {
         super(props, context);

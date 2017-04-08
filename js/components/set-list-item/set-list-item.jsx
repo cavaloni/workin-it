@@ -31,7 +31,7 @@ class SetListItem extends Component {
     }
 
     componentWillMount() {
-        if(this.props.populateValue) {
+        if (this.props.populateValue) {
             const { reps, weight } = this.props.populateValue;
             this.setState({ reps, weight });
         }
@@ -86,11 +86,26 @@ class SetListItem extends Component {
 }
 
 SetListItem.propTypes = {
+    // the values to populate if week is being populated
+    populateValue: React.PropTypes.shape({
+        reps: React.PropTypes.oneOfType(
+            React.PropTypes.string,
+            React.PropTypes.number),
+        weight: React.PropTypes.oneOfType(
+            React.PropTypes.string,
+            React.PropTypes.number),
+    }),
     // the number of the set
     set: React.PropTypes.number.isRequired,
     // callback to send data to parent element
     getData: React.PropTypes.func.isRequired,
 };
 
+SetListItem.defaultProps = {
+    populateValue: {
+        reps: 0,
+        weight: 0,
+    },
+};
 
 export default SetListItem;

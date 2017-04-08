@@ -1,18 +1,24 @@
+import moment from 'moment';
+import faker from 'faker';
+import { User } from '../user_router/user_model';
+import ExerciseData from '../exercise_router/ex_model';
+
 const chai = require('chai');
 // const chaiHttp = require('chai-http');
 
-const should = chai.should();
 const expect = chai.expect;
 const mongoose = require('mongoose');
 // const faker = require('faker');
 const tester = require('supertest');
 const { app, runServer, closeServer } = require('../server');
-const { ExerciseData } = require('../exercise_router/ex_model');
-const { User } = require('../user_router/user_model');
 const jwt = require('jsonwebtoken');
 const qs = require('qs');
 const _ = require('lodash');
 // chai.use(chaiHttp);
+
+/* eslint-env node, jest */
+
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
 const token = jwt.sign({ user: '10210391595884532' },
                         'super stank',
@@ -28,11 +34,40 @@ function tearDownDB() {
 }
 
 describe('Workin It API resource', () => {
+    const year = moment().year().toString();
+    const week = moment().week().toString();
+    const fakeName = faker.name.firstName();
+    const fakeId = faker.random.number(100).toString();
+    const fakeImage = faker.image.avatar();
     let testProfile;
 
-    beforeAll(() => runServer());
+    beforeAll(() => runServer()
+        .then(() => User
+            .create({
+                user: fakeName,
+                fbId: fakeId,
+                profileImage: fakeImage,
+                friends: [],
+            })
+        .then(() => ExerciseData
+            .create({
+                userId: fakeId,
+                exerciseData: {},
+            }),
+        ),
+        ));
 
-    afterAll(() => closeServer());
+    afterAll(() => User
+            .findOneAndRemove({
+                fbId: fakeId,
+            })
+            .then(() => ExerciseData
+            .findOneAndRemove({
+                userId: fakeId,
+                exerciseData: {},
+            }),
+            )
+            .then(() => closeServer()));
 
     it('should verify the auth token', () => tester(app)
             .get('/verify_auth')
@@ -45,7 +80,6 @@ describe('Workin It API resource', () => {
             .set('token', token)
             .expect(201)
             .then((response) => {
-                console.log(response.body);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.key('allUsers');
                 expect(response.body.allUsers).to.have.length.of.at.least(1);
@@ -57,7 +91,7 @@ describe('Workin It API resource', () => {
             .expect(201)
             .then((response) => {
                 expect(response.body).to.be.an('object');
-                expect(response.body).to.have.keys('fbId', 'user', 'profileImage', 'friends');
+                expect(response.body).to.have.keys('fbId', 'user', 'profileImage', 'friends', '_id', '__v');
                 testProfile = response.body;
             }),
         );
@@ -71,8 +105,8 @@ describe('Workin It API resource', () => {
                     name: 'Chad Avalon',
                 },
                 friend: {
-                    fbId: '1',
-                    name: 'Milford WaxPaddidle',
+                    fbId: fakeId,
+                    name: fakeName,
                 },
             }))
             .expect(201)
@@ -89,14 +123,14 @@ describe('Workin It API resource', () => {
             .set('token', token)
             .send(qs.stringify({
                 userFbId: '10210391595884532',
-                friendFbId: '1',
+                friendFbId: fakeId,
             }))
             .expect(200)
             .then((response) => {
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.keys('fbId', 'user', 'profileImage', 'friends', '_id', '__v');
                 expect(response.body.friends).to.have.length.of.at.least(1);
-                const friend = _.find(response.body.friends, ['fbId', '1']);
+                const friend = _.find(response.body.friends, ['fbId', fakeId]);
                 expect(friend.status).to.equal('active');
             }),
             );
@@ -107,8 +141,8 @@ describe('Workin It API resource', () => {
             .send(qs.stringify({
                 user: '10210391595884532',
                 friend: {
-                    fbId: '1',
-                    name: 'Milford WaxPaddidle',
+                    fbId: fakeId,
+                    name: fakeName,
                 },
             }))
             .expect(200)
@@ -121,18 +155,114 @@ describe('Workin It API resource', () => {
     });
 
     describe('Exercise data endpoints', () => {
+        it('should save exercise data', () => {
+            const exerciseData = [{
+                exercise: 'Dummy squats',
+                exerciseData: [
+                    {
+                        reps: 5,
+                        weight: 10,
+                    },
+                    {
+                        reps: 5,
+                        weight: 20,
+                    },
+                ],
+                exerciseGroup: 'legs',
+            }];
+
+            return tester(app)
+                .put('/exercise_data')
+                .set('token', token)
+                .send({
+                    user: fakeId,
+                    dataToSave: exerciseData,
+                    year,
+                    week,
+                })
+                .expect(201)
+                .then((response) => {
+                    console.log('2222222222222222222222222222222222222');
+                    console.log(response.body);
+                    expect(response.body).to.have.keys('_id', 'userId', 'exerciseData', '__v');
+                    const data = response.body.exerciseData;
+                    expect(Object.keys(data)).to.have.length.of.at.least(1);
+                    expect(Object.keys(data[year])).to.have.length.of.at.least(1);
+                    console.log(data[year][week]);
+                    const exercise = data[year][week].legs.dummySquats;
+                    console.log(exercise.data);
+                    console.log(exerciseData[0].exerciseData);
+                    expect(exercise.data).to.deep.equal(exerciseData[0].exerciseData);
+                });
+        });
+
         it('should retrieve user exercise data', () => tester(app)
             .post('/exercise_data/get_data')
             .set('token', token)
-            .send({ user: '10210391595884532' })
+            .send({ user: fakeId, year, week })
             .expect(200)
             .then((response) => {
                 expect(response.body).to.have.key('data');
                 const oneWeekData = Object.keys(response.body.data);
                 expect(oneWeekData).to.have.length.of.at.least(1);
-                expect(response.body.data[oneWeekData[0]]).to.have.keys('arms', 'back');
+                expect(response.body.data[oneWeekData[0]]).to.have.key('legs');
             }),
         );
+
+        it('should get friends exercise data', () => tester(app)
+                .put('/user/add_friend')
+                .set('token', token)
+                .send(qs.stringify({
+                    user: {
+                        fbId: fakeId,
+                        name: fakeName,
+                    },
+                    friend: {
+                        fbId: '10210391595884532',
+                        name: 'Chad Avalon',
+                    },
+                }))
+                .then(() => tester(app)
+                .put('/user/accept_friend')
+                .set('token', token)
+                .send(qs.stringify({
+                    userFbId: fakeId,
+                    friendFbId: '10210391595884532',
+                }))
+                .then(() => tester(app)
+                .post('/exercise_data/get_friend_data')
+                .set('token', token)
+                .send(qs.stringify({
+                    user: '10210391595884532',
+                    friendFbId: fakeId,
+                    week,
+                    year,
+                }))
+                .then((response) => {
+                    console.log('1');
+                    console.log('1');
+                    console.log('1');
+                    console.log('1');
+                    console.log('1');
+                    expect(response.body).to.have.key('data');
+                    const oneWeekData = Object.keys(response.body.data);
+                    expect(oneWeekData).to.have.length.of.at.least(1);
+                }))));
+
+
+        it('should get the weeks ranges of stored exercises', () => tester(app)
+            .put('/exercise_data/get_weeks')
+            .set('token', token)
+            .send(qs.stringify({ user: '10210391595884532' }))
+            .expect(200)
+            .then((response) => {
+                expect(response.body.weekRanges).to.be.an('array');
+                response.body.weekRanges.forEach((yearData) => {
+                    yearData[year].forEach((weekRange) => {
+                        expect(weekRange).to.be.a('string');
+                    });
+                });
+            }));
     });
 });
 

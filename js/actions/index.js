@@ -1,4 +1,3 @@
-import fetch from 'isomorphic-fetch';
 import { Observable } from 'rxjs/Rx';
 import qs from 'qs';
 
@@ -68,8 +67,6 @@ export const addFriend = (user, friend, token) => (dispatch) => {
 };
 
 export const acceptFriend = (friendFbId, userFbId, token) => (dispatch) => {
-    console.log(friendFbId);
-    console.log(userFbId);
     O.ajax({
         url: '/user/accept_friend',
         method: 'PUT',
@@ -110,7 +107,6 @@ export const setUserProfile = () => (dispatch) => {
         .map(tkn => profileFetch(tkn))
         .concatAll()
         .subscribe((profile) => {
-            console.log(profile);
             if (profile.status === 201) {
                 dispatch(profileFetchSuccess(profile.response));
             }
@@ -121,7 +117,6 @@ export const setUserProfile = () => (dispatch) => {
 };
 
 export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) => {
-    console.log(user);
     O.ajax({
         url: '/exercise_data/get_data',
         body: { user, year, week, oneWeek },
@@ -143,7 +138,6 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
 };
 
 export const saveExerciseData = (token, user, dataToSave, year, week) => (dispatch) => {
-    console.log(user);
     O.ajax({
         url: '/exercise_data',
         body: qs.stringify({ user, dataToSave, year, week }),

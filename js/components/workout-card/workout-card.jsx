@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs';
 import _ from 'lodash';
-import qs from 'qs';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -63,7 +62,6 @@ class WorkoutCard extends Component {
 
     componentDidMount() {
         const type = this.props.cardType.toLowerCase();
-        console.log(this.props.weekData[type]);
         if (this.props.weekData[type] && this.props.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(this.props);
         }
@@ -71,14 +69,12 @@ class WorkoutCard extends Component {
 
     componentWillUpdate(nextProps) {
         const type = this.props.cardType.toLowerCase();
-        console.log(nextProps.weekData[type]);
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
         }
     }
 
     setComponentPopulated(props) {
-        console.count();
         const type = this.props.cardType.toLowerCase();
         let itemList;
         let listNotEmpty;
@@ -86,7 +82,6 @@ class WorkoutCard extends Component {
         let sameSets = true;
         if (!_.isEmpty(props.weekData) && props.weekData[type]) {
             itemList = Object.keys(props.weekData[type]).map((exercise) => {
-                console.log(props.weekData[type][exercise].data.length);
                 if (props.weekData[type][exercise].data.length >= 1) {
                     listNotEmpty = true;
                 }
@@ -109,6 +104,10 @@ class WorkoutCard extends Component {
             saveSuggested: false,
         },
                 () => this.setState({ populateWeek: false }));
+        if (this.state.snackbarOpen) {
+            O.timer(500)
+                .subscribe(() => this.setState({ snackbarOpen: false }));
+        }
     }
 
     getExDataFromComponentsAndSave(exerciseData, exercise) {
@@ -127,8 +126,7 @@ class WorkoutCard extends Component {
             } else { oneDayInWeek = this.props.selectedWeek.slice(0, 9); }
             const week = moment(oneDayInWeek, 'MMM DD YY').week();
             const year = moment(oneDayInWeek, 'MMM DD YY').year();
-            this.tempDataToSave = [];
-            console.log(this.props.profileData.fbId);
+            this.tempDataToSave = []; // reset instance variable
             this.props.dispatch(actions.saveExerciseData(
                 this.props.token,
                 this.props.profileData.fbId,
@@ -136,7 +134,7 @@ class WorkoutCard extends Component {
                 year,
                 week,
                 ));
-            this.setState({ dataToSave, triggerSave: false, snackbarOpen: false });
+            this.setState({ dataToSave, triggerSave: false });
         }
     }
 
@@ -198,8 +196,6 @@ class WorkoutCard extends Component {
                   sets={this.state.sameSets}
                   saved={this.getExDataFromComponentsAndSave}
                 />);
-
-        console.log(this.props.cardType);
 
         return (
             <MuiThemeProvider>
