@@ -8,8 +8,9 @@
     "npm": "4.0.5"
   },
   "scripts": {
-    "prestart": "webpack:dev",
-    "start": "nodemon server.bundle.js",
+    "prestart": "npm run webpack:dev",
+    "start": "node server.bundle.js",
+    "start-dev": "nodemon server.bundle.js",
     "dev-build": "run-p start webpack:dev webpack:client",
     "clean": "rmraf build",
     "webpack:dev": "webpack --watch --progress --colors --config webpack.dev.js",
