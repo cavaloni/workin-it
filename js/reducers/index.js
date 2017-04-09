@@ -70,6 +70,7 @@ export const appReducer = (state = initialState, action) => {
             };
         }
         case 'EXERCISE_ONE_WEEK_NO_DATA': {
+            console.log('this happened');
             return {
                 ...state,
                 oneWeekData: {},

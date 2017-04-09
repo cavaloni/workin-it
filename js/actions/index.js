@@ -138,15 +138,19 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
     })
         .subscribe((response) => {
             if (oneWeek) {
-                dispatch(exerciseDataOneWeek(response.response));
-                if (response.response.data === 'no data') {
+                if (response.response.data === 'no data' ||
+                    Object.keys(response.response.data).length === 0) {
                     dispatch(exerciseOneWeekDataNoData());
+                } else {
+                    dispatch(exerciseDataOneWeek(response.response));
                 }
             }
-            if (response.response.data === 'no data') {
+            if (response.response.data === 'no data' ||
+                Object.keys(response.response.data).length === 0) {
                 dispatch(exerciseDataNoData());
+            } else {
+                dispatch(exerciseDataFetchSuccess(response.response));
             }
-            dispatch(exerciseDataFetchSuccess(response.response));
         },
         ((err) => {
             dispatch(fetchFailure(err));

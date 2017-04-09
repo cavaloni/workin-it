@@ -36,6 +36,7 @@ class Progress extends Component {
         this.closePopover = this.closePopover.bind(this);
         this.groupSelect = this.groupSelect.bind(this);
         this.getExerciseAverages = this.getExerciseAverages.bind(this);
+        this.weekSet = this.weekSet.bind(this);
 
         this.trackMenuChanges = { // track changes so that does not re-render wrong from state.group
             group: '',
@@ -49,9 +50,7 @@ class Progress extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.exerciseData) {
-            this.setState({ data: nextProps.exerciseData });
-        }
+        this.weekSet(nextProps.exerciseData);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -95,6 +94,16 @@ class Progress extends Component {
                     });
             });
         return parsedAvgs;
+    }
+
+    weekSet(eData) {
+        if (eData) {
+            let week;
+            if (!eData[this.state.week]) {
+                week = moment().subtract(1, 'w').week();
+            } else { week = moment().week(); }
+            this.setState({ data: eData, week });
+        }
     }
 
     groupSelect(e) {
@@ -144,6 +153,17 @@ class Progress extends Component {
                     <h1>No Data</h1>
                 </div>
             );
+        }
+
+        if (this.props.exerciseData) {
+            if (!this.props.exerciseData[this.state.week]) {
+                this.weekSet(this.props.exerciseData);
+                return (
+                    <div>
+                        <h1>No Data</h1>
+                    </div>
+                );
+            }
         }
 
         const parsedAvgs = this.getExerciseAverages();

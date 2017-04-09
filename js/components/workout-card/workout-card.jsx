@@ -85,6 +85,7 @@ class WorkoutCard extends Component {
     }
 
     componentWillUpdate(nextProps) {
+        console.log(nextProps);
         const type = this.props.cardType.toLowerCase();
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);

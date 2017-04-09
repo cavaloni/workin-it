@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -176,11 +176,11 @@ exports.PORT = process.env.PORT || 8081;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _moment = __webpack_require__(17);
+var _moment = __webpack_require__(16);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _lodash = __webpack_require__(16);
+var _lodash = __webpack_require__(15);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -388,7 +388,7 @@ module.exports = { router: router };
 "use strict";
 
 
-var _rxjs = __webpack_require__(18);
+var _rxjs = __webpack_require__(17);
 
 var _user_model = __webpack_require__(7);
 
@@ -615,40 +615,34 @@ module.exports = require("cors");
 /* 13 */
 /***/ (function(module, exports) {
 
-module.exports = require("node-codein");
+module.exports = require("passport-facebook");
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = require("passport-facebook");
+module.exports = require("shortid");
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports) {
 
-module.exports = require("shortid");
+module.exports = require("lodash");
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
-module.exports = require("lodash");
+module.exports = require("moment");
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = require("moment");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
 module.exports = require("rxjs");
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -658,19 +652,19 @@ var passport = __webpack_require__(5);
 var bodyParser = __webpack_require__(3);
 var mongoose = __webpack_require__(2);
 var express = __webpack_require__(0);
-var Strategy = __webpack_require__(14).Strategy;
+var Strategy = __webpack_require__(13).Strategy;
 var jwt = __webpack_require__(4);
 var cors = __webpack_require__(12);
 var eJwt = __webpack_require__(1);
-var shortid = __webpack_require__(15);
+var shortid = __webpack_require__(14);
 
 var _require = __webpack_require__(9),
     exerciseDataRouter = _require.router;
 
 var _require2 = __webpack_require__(10),
     userRouter = _require2.router;
+// const codein = require("node-codein");
 
-var codein = __webpack_require__(13);
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -715,7 +709,7 @@ app.use(express.static(process.env.PWD + '/build'));
 passport.use(new Strategy({
     clientID: '266134167169182',
     clientSecret: '636f0c825d31af79085033dc03a58a43',
-    callbackURL: 'http://localhost:8081/user/init_profile',
+    callbackURL: '/user/init_profile',
     profileFields: ['picture', 'first_name', 'last_name']
 }, function (accessToken, refreshToken, profile, cb) {
     profile.token = jwt.sign(profile, 'funky smell', {
