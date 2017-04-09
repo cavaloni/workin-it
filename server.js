@@ -47,7 +47,7 @@ app.use(express.static(`${process.env.PWD}/build`));
 passport.use(new Strategy({
     clientID: '266134167169182',
     clientSecret: '636f0c825d31af79085033dc03a58a43',
-    callbackURL: 'http://localhost:8081/user/init_profile',
+    callbackURL: '/user/init_profile',
     profileFields: ['picture', 'first_name', 'last_name'],
 },
   (accessToken, refreshToken, profile, cb) => {
