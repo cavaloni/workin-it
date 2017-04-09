@@ -44,7 +44,10 @@ export const appReducer = (state = initialState, action) => {
             };
         }
         case 'EXERCISE_DATA_NO_DATA': {
-            return state;
+            return {
+                ...state,
+                exerciseData: {},
+            };
         }
         case 'DELETE_FRIEND': {
             const friendsListCopy = Array.from(state.userData.friends);
@@ -69,7 +72,7 @@ export const appReducer = (state = initialState, action) => {
                 oneWeekData: action.data.data[Object.keys(action.data.data)[0]],
             };
         }
-        case 'EXERCISE_ONE_WEEK_NO_DATA': {
+        case 'EXERCISE_ONE_WEEK_DATA_NO_DATA': {
             console.log('this happened');
             return {
                 ...state,

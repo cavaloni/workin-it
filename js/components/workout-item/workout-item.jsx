@@ -125,10 +125,11 @@ class WorkoutItem extends Component {
         };
         const setsDataCopy = Array.from(this.state.setsData);
         setsDataCopy.unshift(firstSet);
-        this.props.saved(setsDataCopy, this.props.item);
+        this.props.saved(setsDataCopy, this.props.item, this.state.sets);
     }
 
     populateWeek() {
+        console.log(weekData);
         const weekData = this.props.weekData;
         const dbWrktName = _.camelCase(this.props.item);
         const grpName = this.props.exerciseGroup.toLowerCase();
@@ -138,7 +139,7 @@ class WorkoutItem extends Component {
         const { sets } = weekData[grpName][dbWrktName];
         const { weight, reps } = weekData[grpName][dbWrktName].data[0];
         const setsData = weekData[grpName][dbWrktName].data.slice(1);
-        const setsVal = setsData.length + 1;
+        const setsVal = Number(sets);
         this.setState({ sets, weight, reps, setsData, setsVal });
         this.props.populatedCallback(true);
     }

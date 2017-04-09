@@ -85,7 +85,9 @@ class WorkoutCard extends Component {
     }
 
     componentWillUpdate(nextProps) {
-        console.log(nextProps);
+        if (!_.isEmpty(this.props.weekData) && _.isEmpty(nextProps.weekData)) {
+            this.setComponentPopulated(nextProps);
+        }
         const type = this.props.cardType.toLowerCase();
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
@@ -135,12 +137,13 @@ class WorkoutCard extends Component {
                 () => this.setState({ populateWeek: false }));
     }
 
-    getExDataFromComponentsAndSave(exerciseData, exercise) {
+    getExDataFromComponentsAndSave(exerciseData, exercise, sets) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
         dataToSaveCopy.push({
             exerciseData,
             exercise,
             exerciseGroup: this.props.cardType.toLowerCase(),
+            sets,
         });
         this.tempDataToSave = dataToSaveCopy;
         if (this.tempDataToSave.length === this.state.itemList.length) {

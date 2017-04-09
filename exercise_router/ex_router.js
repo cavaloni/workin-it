@@ -105,13 +105,14 @@ router.put('/', (req, res) => {
             req.body.dataToSave.forEach((data) => {
                 const i = req.body.dataToSave.indexOf(data);
                 const exSets = req.body.dataToSave[i].exerciseData;
+                const numSets = req.body.dataToSave[i].sets;
                 const exName = req.body.dataToSave[i].exercise;
                 const camelName = _.camelCase(req.body.dataToSave[i].exercise);
                 const exGroup = req.body.dataToSave[i].exerciseGroup;
                 exercisesInDataToSave.push(camelName);
 
                 newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets, Object);
-                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, exSets.length, Object);
+                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, numSets, Object);
                 newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName, Object);
             });
 

@@ -153,6 +153,7 @@ describe('Workin It API resource', () => {
         it('should save exercise data', () => {
             const exerciseData = [{
                 exercise: 'Dummy squats',
+                sets: 3,
                 exerciseData: [
                     {
                         reps: 5,

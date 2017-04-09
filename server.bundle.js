@@ -288,13 +288,14 @@ router.put('/', function (req, res) {
         req.body.dataToSave.forEach(function (data) {
             var i = req.body.dataToSave.indexOf(data);
             var exSets = req.body.dataToSave[i].exerciseData;
+            var numSets = req.body.dataToSave[i].sets;
             var exName = req.body.dataToSave[i].exercise;
             var camelName = _lodash2.default.camelCase(req.body.dataToSave[i].exercise);
             var exGroup = req.body.dataToSave[i].exerciseGroup;
             exercisesInDataToSave.push(camelName);
 
             newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.data', exSets, Object);
-            newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', exSets.length, Object);
+            newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', numSets, Object);
             newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName, Object);
         });
 
