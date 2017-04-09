@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { Menu as Menus } from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
+import AutoComplete from 'material-ui/AutoComplete';
 import { orange500, blue500 } from 'material-ui/styles/colors';
 
 import exercisesList from '../exercise-list';
@@ -29,11 +30,15 @@ export default class ChooseWorkout extends React.Component {
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.customWorkoutHandler = this.customWorkoutHandler.bind(this);
+        this.handleAutoComSelect = this.handleAutoComSelect.bind(this);
+        this.addButton = this.addButton.bind(this);
         this.state = {
             selected: undefined,
             open: this.props.opener,
             worksList: exercisesList[this.type].map(() => false),
             customWorkout: '',
+            autoComSelected: '',
+            autoComErrTxt: '',
         };
         this.customWorkout = '';
     }
@@ -54,7 +59,11 @@ export default class ChooseWorkout extends React.Component {
     }
 
     handleClose() {
+        this.props.closer();
         this.setState({ open: false });
+    }
+
+    addButton() {
         if (this.customWorkout !== '') {
             this.props.clicker(this.customWorkout);
             this.customWorkout = '';
@@ -64,20 +73,29 @@ export default class ChooseWorkout extends React.Component {
         this.props.clicker(this.state.selected);
         const newArry = exercisesList[this.type].map(() => false); // reset checked state
         this.setState({ worksList: newArry });
+        this.handleClose();
     }
 
     handleSelect(event, menuObj, index) {
-        event.preventDefault();
+        if (event !== null) {
+            event.preventDefault();
+        }
         const newArry = exercisesList[this.type].map(() => false);
         newArry[index] = true;
+        console.log(newArry);
         this.setState({ selected: index, worksList: newArry });
+    }
+
+    handleAutoComSelect(selected, selectedIndex) {
+        console.log(selectedIndex);
+        this.handleSelect(null, null, selectedIndex);
     }
 
     render() {
         const actions = [<FlatButton
           label="Cancel" primary onTouchTap={this.handleClose}
         />, <FlatButton
-          label="Add" primary keyboardFocused onTouchTap={this.handleClose}
+          label="Add" primary keyboardFocused onTouchTap={this.addButton}
         />,
         ];
 
@@ -106,9 +124,14 @@ export default class ChooseWorkout extends React.Component {
               open={this.state.open}
               onRequestClose={this.handleClose}
             >
-                <Menus onItemTouchTap={this.handleSelect}>
-                    {menuItems}
-                </Menus>
+                <AutoComplete
+                  errorText={this.state.autoComErrTxt}
+                  floatingLabelText="Search Workouts"
+                  filter={AutoComplete.fuzzyFilter}
+                  dataSource={exercisesList[this.type]}
+                  maxSearchResults={5}
+                  onNewRequest={this.handleAutoComSelect}
+                />
                 <TextField
                   key={2}
                   onChange={this.customWorkoutHandler}
@@ -117,6 +140,9 @@ export default class ChooseWorkout extends React.Component {
                   floatingLabelStyle={styles.floatingLabelStyle}
                   floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
                 />
+                <Menus onItemTouchTap={this.handleSelect}>
+                    {menuItems}
+                </Menus>
             </Dialog>
 
         );
@@ -126,6 +152,8 @@ export default class ChooseWorkout extends React.Component {
 ChooseWorkout.propTypes = {
     // opens this selector component
     opener: React.PropTypes.bool.isRequired,
+    // closes this selector component in the parent
+    closer: React.PropTypes.func.isRequired,
     // callback to send clicked workout back to parent component
     clicker: React.PropTypes.func.isRequired,
     // the type of the exercise (arms, back, etc)

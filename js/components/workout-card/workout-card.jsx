@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs';
+import Radium from 'radium';
+import { compose } from 'redux';
 import _ from 'lodash';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
@@ -22,20 +24,25 @@ import styles from './styles.css';
 
 const O = Observable;
 
+const style = {
+    card: {
+        height: '20%',
+        width: '90%',
+        margin: 20,
+        textAlign: 'center',
+        display: 'inline-block',
+        verticalAlign: 'top',
+        paddingBottom: 10,
+        '@media (min-width: 500px)': {
+            width: '41%',
+        },
+    },
+};
+
 class WorkoutCard extends Component {
     constructor(props) {
         super(props);
-        this.style = {
-            card: {
-                height: '20%',
-                width: '41%',
-                margin: 20,
-                textAlign: 'center',
-                display: 'inline-block',
-                verticalAlign: 'top',
-                paddingBottom: 10,
-            },
-        };
+
         this.openWorkoutChooser = this.openWorkoutChooser.bind(this);
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
@@ -83,7 +90,7 @@ class WorkoutCard extends Component {
             this.setComponentPopulated(nextProps);
         }
     }
-    
+
     componentDidUpdate() {
         if (this.state.snackbarOpen) {
             O.interval(4000)
@@ -92,9 +99,9 @@ class WorkoutCard extends Component {
                     this.setState({ snackbarOpen: false });
                     this.props.dispatch(actions.resetFetchFailure());
                 });
-        }        
+        }
     }
-    
+
     setComponentPopulated(props) {
         const type = this.props.cardType.toLowerCase();
         let itemList;
@@ -160,6 +167,10 @@ class WorkoutCard extends Component {
         this.setState({ sameSets: !this.state.sameSets, isChecked: !this.state.isChecked });
     }
 
+    closeChooser() {
+        this.setState({ chooseWorkout: false });
+    }
+
     addWorkouts(value) {
         let exName;
         if (typeof (value) === 'string') {
@@ -215,8 +226,9 @@ class WorkoutCard extends Component {
 
         return (
             <MuiThemeProvider>
-                <Card style={this.style.card}>
+                <Card style={style.card}>
                     <WorkoutChooser
+                      closer={this.closeChooser}
                       opener={this.state.chooseWorkout}
                       clicker={this.addWorkouts}
                       type={this.props.cardType}
@@ -301,4 +313,9 @@ const mapStateToProps = (state, props) => ({
     weekData: state.oneWeekData,
 });
 
-export default connect(mapStateToProps)(WorkoutCard);
+const enhance = compose(
+  connect(mapStateToProps),
+  Radium(),
+);
+
+export default enhance(WorkoutCard);

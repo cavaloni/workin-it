@@ -7,10 +7,13 @@ import ReactDom from 'react-dom';
 const styles = {
     container: {
         display: 'inline-block',
-        width: '45%',
+        width: '90%',
         overflow: 'hidden',
         margin: 15,
         padding: 10,
+        '@media (min-width: 500px)': {
+            width: '45%',
+        },
     },
 };
 
