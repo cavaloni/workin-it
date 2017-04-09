@@ -8,11 +8,12 @@
     "npm": "4.0.5"
   },
   "scripts": {
-    "prestart": "npm run webpack:dev",
+    "prestart": "npm run server-build",
     "start": "node server.bundle.js",
     "start-dev": "nodemon server.bundle.js",
-    "dev-build": "run-p start webpack:dev webpack:client",
+    "dev-build": "run-p start-dev webpack:dev webpack:client",
     "clean": "rmraf build",
+    "server-build": "webpack --config webpack.dev.js",
     "webpack:dev": "webpack --watch --progress --colors --config webpack.dev.js",
     "webpack:client": "webpack --watch",
     "prod": "run-p start build-prod",
@@ -22,7 +23,7 @@
     "jest": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build-prod": "webpack -p --progress --colors --config webpack.config.js",
+    "build-prod": "webpack -p --config webpack.config.js",
     "lint": "eslint --fix js/"
   },
   "quokka": {
