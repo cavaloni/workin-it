@@ -4,6 +4,7 @@
   "description": "A workout tracker app",
   "main": "server.js",
   "scripts": {
+    "prestart": "webpack:dev",
     "start": "nodemon server.bundle.js",
     "dev-build": "run-p start webpack:dev webpack:client",
     "clean": "rmraf build",

@@ -11,7 +11,7 @@ require('babel-core/register')({
 require.extensions['.scss'] = () => {};
 require.extensions['.css'] = () => {};
 
-const VENDOR_LIBS = ['react', 'react-dom', 'react-redux', 'redux', 'rxjs'];
+const VENDOR_LIBS = ['react', 'react-dom', 'react-redux', 'redux', 'rxjs', 'lodash'];
 
 module.exports = {
     context,
@@ -23,7 +23,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: '[name].[hash].js',
+        filename: '[name].[chunkhash].js',
         publicPath: '/',
     },
     plugins: [
