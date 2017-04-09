@@ -2,7 +2,7 @@
   "name": "working-it",
   "version": "0.5.0",
   "description": "A workout tracker app",
-  "main": "server.js",
+  "main": "server.bundle.js",
   "engines": {
     "node": "7.3.0",
     "npm": "4.0.5"
