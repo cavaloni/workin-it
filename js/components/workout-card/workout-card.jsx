@@ -6,11 +6,13 @@ import { compose } from 'redux';
 import _ from 'lodash';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
+import { redA200 } from 'material-ui/styles/colors';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Card, CardHeader } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
 
@@ -238,11 +240,15 @@ class WorkoutCard extends Component {
                       type={this.props.cardType}
                     />
                     <CardHeader
+                      style={{
+                          backgroundColor: redA200,
+                      }}
                       title={this.props.cardType}
                       titleStyle={{
                           fontSize: '20px',
                       }}
                     />
+                    <Divider style={{ margin: 0 }} />
                     <Checkbox
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}

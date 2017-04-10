@@ -73,7 +73,6 @@ class Friends extends Component {
                         .filter(user => user !== this.props.profileData)
                         .map(user => user))
         .subscribe(allUsers => this.setState({ allUsers },
-        () => this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' }),
         ));
     }
 

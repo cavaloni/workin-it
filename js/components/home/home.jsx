@@ -15,10 +15,10 @@ import barbellImg from '../../../assets/barbell.png';
 const style = {
     workouts: {
         height: '49%',
-        width: '43%',
+        width: '53%',
         maxWidth: '300px',
         maxHeight: '300px',
-        margin: 20,
+        margin: '20 auto',
         textAlign: 'center',
         display: 'inline-block',
         backgroundColor: '#00BCD4',
@@ -27,10 +27,10 @@ const style = {
     },
     progress: {
         height: '49%',
-        width: '43%',
+        width: '53%',
         maxWidth: '300px',
         maxHeight: '300px',
-        margin: 20,
+        margin: '20 auto',
         textAlign: 'center',
         display: 'inline-block',
         backgroundColor: '#F44336',
@@ -74,7 +74,8 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ textAlign: 'center', width: '95%', margin: '0 auto' }}>
+                <Paper style={{ marginBottom: 10, marginTop: 10 }}>
                 <List>
                     <ListItem
                       disabled
@@ -85,6 +86,7 @@ class Home extends Component {
                     Hello {this.props.profileData.user}!
                     </ListItem>
                 </List>
+                </Paper>
                 <Paper
                   style={style.workouts}
                   key="1"
