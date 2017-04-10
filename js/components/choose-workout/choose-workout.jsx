@@ -59,8 +59,8 @@ export default class ChooseWorkout extends React.Component {
     }
 
     handleClose() {
-        this.props.closer();
         this.setState({ open: false });
+        this.props.closer();
     }
 
     addButton() {
@@ -152,7 +152,7 @@ export default class ChooseWorkout extends React.Component {
 ChooseWorkout.propTypes = {
     // opens this selector component
     opener: React.PropTypes.bool.isRequired,
-    // closes this selector component in the parent
+    // callback that closes this selector component in the parent
     closer: React.PropTypes.func.isRequired,
     // callback to send clicked workout back to parent component
     clicker: React.PropTypes.func.isRequired,

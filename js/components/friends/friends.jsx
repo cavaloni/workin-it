@@ -72,8 +72,12 @@ class Friends extends Component {
         .flatMap(response => O.of(response.response.allUsers)
                         .filter(user => user !== this.props.profileData)
                         .map(user => user))
-        .subscribe(allUsers => this.setState({ allUsers },
-        ));
+        .subscribe((allUsers) => {
+            const userIndexInAllUsers = _.findIndex(allUsers, user => user.fbId === this.props.profileData.fbId);
+            const indecesOfAllUsersToFilter = this.props.friends.map(friend => _.findIndex(allUsers, user => user.fbId === friend.fbId));
+            this.setState({ allUsers, userIndexInAllUsers, indecesOfAllUsersToFilter });
+        },
+        );
     }
 
     componentWillReceiveProps(nextProps) {
@@ -124,7 +128,7 @@ class Friends extends Component {
     }
 
     deleteFriendModal(e, i) {
-        this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id });
+        this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id - 1 });
     }
 
     deleteFriend() {
@@ -141,7 +145,8 @@ class Friends extends Component {
 
     acceptFriend(e, i) {
         e.preventDefault();
-        const friendData = this.state.allUsers[i.props.id].fbId;
+        console.log(i);
+        const friendData = this.state.allUsers[i.props.id - 1].fbId;
         const userData = this.props.profileData.fbId;
         const token = this.props.token;
         const objToDispatch = actions.acceptFriend(
@@ -185,9 +190,15 @@ class Friends extends Component {
     }
 
     render() {
-        const autocompleteUserNames = this.state.allUsers.map(user => user.user);
+        const autocompleteUserNames = this.state.allUsers.map((user) => {
+            if (this.state.indecesOfAllUsersToFilter.includes(this.state.allUsers.indexOf(user))) {
+                return undefined;
+            }
+            return user.user;
+        });
 
-        autocompleteUserNames.push('Milford WaxPaddy');
+        autocompleteUserNames[this.state.userIndexInAllUsers] = undefined;
+
 
         const iconButtonElement = (
             <IconButton
@@ -375,6 +386,10 @@ Friends.propTypes = {
     token: React.PropTypes.string.isRequired,
     // redux dispatch
     dispatch: React.PropTypes.func.isRequired,
+};
+
+Friends.defaultProps = {
+    friends: [],
 };
 
 const mapStateToProps = (state, props) => ({

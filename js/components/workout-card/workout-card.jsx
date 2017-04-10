@@ -54,6 +54,7 @@ class WorkoutCard extends Component {
         this.deleteItem = this.deleteItem.bind(this);
         this.changed = this.changed.bind(this);
         this.setComponentPopulated = this.setComponentPopulated.bind(this);
+        this.closeChooser = this.closeChooser.bind(this);
         this.state = {
             itemList: [],
             chooseWorkout: false,
