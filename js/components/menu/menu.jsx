@@ -39,7 +39,7 @@ class Menu extends Component {
     }
 
     handleRoute(event, menuObj, i) {
-        const index = i;
+        const index = i / 2;
         if (index === 4) {
             localStorage.removeItem('wi_id_token');
             browserHistory.push('/');
