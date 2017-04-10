@@ -38,7 +38,8 @@ class Menu extends Component {
         this.setState({ open: false });
     }
 
-    handleRoute(event, menuObj, index) {
+    handleRoute(event, menuObj, i) {
+        const index = i;
         if (index === 4) {
             localStorage.removeItem('wi_id_token');
             browserHistory.push('/');
