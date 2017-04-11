@@ -112,6 +112,7 @@ class Friends extends Component {
         const week = moment().week().toString();
         const year = moment().year().toString();
         const token = this.props.token;
+        console.log(user, year, week, oneWeek, friendFbId);
         O.ajax({
             url: '/exercise_data/get_friend_data',
             method: 'POST',
@@ -134,7 +135,7 @@ class Friends extends Component {
     }
 
     deleteFriendModal(e, i) {
-        this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id - 1 });
+        this.setState({ deleteVerifyOpen: true, friendToDeleteIndex: i.props.id });
     }
 
     deleteFriend() {

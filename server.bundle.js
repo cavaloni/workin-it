@@ -216,6 +216,7 @@ function getExerciseData(req, res) {
         user = req.body.user;
     }
     var allUserData = void 0;
+    console.log(user);
     _ex_model2.default.findOne({
         userId: user
     }).then(function (data) {
@@ -241,22 +242,28 @@ function getExerciseData(req, res) {
                 weekQuery = (0, _moment2.default)().week().toString();
             } else {
                 weekQuery = req.body.week;
-            };
+            }
 
-            var userRangeData = Object.keys(exerciseData).filter(function (years) {
-                return years === yearQuery;
-            }).map(function (year) {
-                return Object.keys(exerciseData[year]);
-            })[0].filter(function (weeks) {
-                if (req.body.oneWeek === 'true') {
-                    return weeks === weekQuery;
-                }
-                var weekRangeMax = weekQuery + 1;
-                var weekRangeMin = weekQuery - 4;
-                return _lodash2.default.inRange(weeks, weekRangeMin, weekRangeMax);
-            }).reduce(function (weekSet, week) {
-                return _extends({}, weekSet, _defineProperty({}, week, exerciseData[2017][week]));
-            }, {});
+            var userRangeData = void 0;
+
+            if (_lodash2.default.isEmpty(exerciseData)) {
+                userRangeData = 'no data';
+            } else {
+                userRangeData = Object.keys(exerciseData).filter(function (years) {
+                    return years === yearQuery;
+                }).map(function (year) {
+                    return Object.keys(exerciseData[year]);
+                })[0].filter(function (weeks) {
+                    if (req.body.oneWeek === 'true') {
+                        return weeks === weekQuery;
+                    }
+                    var weekRangeMax = weekQuery + 1;
+                    var weekRangeMin = weekQuery - 4;
+                    return _lodash2.default.inRange(weeks, weekRangeMin, weekRangeMax);
+                }).reduce(function (weekSet, week) {
+                    return _extends({}, weekSet, _defineProperty({}, week, exerciseData[2017][week]));
+                }, {});
+            }
 
             res.status(200).json({
                 data: userRangeData
@@ -339,6 +346,7 @@ router.post('/get_friend_data', function (req, res) {
         user = _req$body.user,
         friendFbId = _req$body.friendFbId;
 
+    console.log(user, friendFbId);
     _user_model.User.findOne({
         fbId: user
     }).then(function (userProfile) {
@@ -351,6 +359,7 @@ router.post('/get_friend_data', function (req, res) {
             var friendStatusOfUser = _lodash2.default.find(friendProfile.friends, function (friend) {
                 return friend.fbId === user;
             }).status;
+            console.log(userStatusOfFriend, friendStatusOfUser);
             if (userStatusOfFriend === 'active' && friendStatusOfUser === 'active') {
                 getExerciseData(req, res);
             }

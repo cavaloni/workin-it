@@ -22,6 +22,7 @@ function getExerciseData(req, res) {
         user = req.body.friendFbId;
     } else { user = req.body.user; }
     let allUserData;
+    console.log(user);
     ExerciseData
         .findOne({
             userId: user,
@@ -38,7 +39,6 @@ function getExerciseData(req, res) {
                 let weekQuery;
                 const { exerciseData } = allUserData;
 
-
                 if (req.body.year === 'undefined') {
                     yearQuery = moment()
                         .year().toString();
@@ -51,24 +51,30 @@ function getExerciseData(req, res) {
                         .week().toString();
                 } else {
                     weekQuery = req.body.week;
-                };
+                }
 
-                const userRangeData = Object.keys(exerciseData)
-                    .filter(years => years === yearQuery)
-                    .map(year => Object.keys(exerciseData[year]))[0]
-                    .filter((weeks) => {
-                        if (req.body.oneWeek === 'true') {
-                            return weeks === weekQuery;
-                        }
-                        const weekRangeMax = weekQuery + 1;
-                        const weekRangeMin = weekQuery - 4;
-                        return _.inRange(weeks, weekRangeMin, weekRangeMax);
-                    })
-                    .reduce((weekSet, week) => ({
-                        ...weekSet,
-                        [week]: exerciseData[2017][week],
-                    }), {});
-                
+                let userRangeData;
+
+                if (_.isEmpty(exerciseData)) {
+                    userRangeData = 'no data';
+                } else {
+                    userRangeData = Object.keys(exerciseData)
+                        .filter(years => years === yearQuery)
+                        .map(year => Object.keys(exerciseData[year]))[0]
+                        .filter((weeks) => {
+                            if (req.body.oneWeek === 'true') {
+                                return weeks === weekQuery;
+                            }
+                            const weekRangeMax = weekQuery + 1;
+                            const weekRangeMin = weekQuery - 4;
+                            return _.inRange(weeks, weekRangeMin, weekRangeMax);
+                        })
+                        .reduce((weekSet, week) => ({
+                            ...weekSet,
+                            [week]: exerciseData[2017][week],
+                        }), {});
+                }
+
                 res.status(200)
                     .json({
                         data: userRangeData,
@@ -156,6 +162,7 @@ router.put('/', (req, res) => {
 
 router.post('/get_friend_data', (req, res) => {
     const { user, friendFbId } = req.body;
+    console.log(user, friendFbId);
     User
         .findOne({
             fbId: user,
@@ -174,6 +181,7 @@ router.post('/get_friend_data', (req, res) => {
                         friendProfile.friends,
                         friend => friend.fbId === user,
                     ).status;
+                    console.log(userStatusOfFriend, friendStatusOfUser);
                     if (userStatusOfFriend === 'active' &&
                         friendStatusOfUser === 'active') {
                         getExerciseData(req, res);

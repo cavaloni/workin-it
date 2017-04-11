@@ -82,12 +82,10 @@ export default class ChooseWorkout extends React.Component {
         }
         const newArry = exercisesList[this.type].map(() => false);
         newArry[index] = true;
-        console.log(newArry);
         this.setState({ selected: index, worksList: newArry });
     }
 
     handleAutoComSelect(selected, selectedIndex) {
-        console.log(selectedIndex);
         this.handleSelect(null, null, selectedIndex);
     }
 
