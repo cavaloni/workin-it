@@ -109,6 +109,7 @@ class Progress extends Component {
     groupSelect(e) {
         e.preventDefault();
         const group = e.target.innerHTML.toLowerCase();
+        console.log(group);
         this.setState({ group, popoverOpen: false, groupRender: true });
     }
 
@@ -188,7 +189,7 @@ class Progress extends Component {
 
         let filteredCharts;
 
-        if (this.state.group === 'all' || this.state.value === '') {
+        if (this.state.group === 'all' || (this.state.value === '' && !this.state.groupRender)) {
             filteredCharts = undefined;
         } else if (this.state.groupRender) {
             filteredCharts = Object.keys(this.state.data[week][group])

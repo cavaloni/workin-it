@@ -242,7 +242,7 @@ class WorkoutCard extends Component {
                     />
                     <CardHeader
                       style={{
-                          backgroundColor: redA200,
+                          backgroundColor: '#4FC3F7',
                       }}
                       title={this.props.cardType}
                       titleStyle={{
@@ -256,7 +256,7 @@ class WorkoutCard extends Component {
                       label="Same reps in sets"
                       labelStyle={{ right: '13%' }}
                       checked={this.state.isChecked}
-                      style={styles.checkbox}
+                      style={{ display: this.state.listNotEmpty ? 'block' : 'none' }}
                     /> {workoutItemsList}
                     <FloatingActionButton
                       style={{

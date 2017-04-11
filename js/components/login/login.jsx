@@ -9,6 +9,7 @@ import facebookImg from '../../../assets/facebook-icon-white.png';
 import prog from '../../../assets/prog.png';
 import track from '../../../assets/track.png';
 import friends from '../../../assets/friends.png';
+import Logo from '../logo/logo';
 
 const O = Observable;
 
@@ -191,7 +192,7 @@ class Login extends Component {
             <div>
             <div style={style.container}>
                 <h1 style={style.heading}>Workin It</h1>
-                <Paper style={style.logoLetter} circle zDepth={0}>WI</Paper>
+                <Logo size={1} />
                 <a href="/login/facebook" style={style.button}>
                     <img src={facebookImg} style={style.fbImage} />
                     <div style={style.login}>Login With Facebook</div>

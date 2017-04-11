@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Observable } from 'rxjs';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
@@ -10,7 +11,9 @@ import _ from 'lodash';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import SetListItem from '../set-list-item/set-list-item';
+import RaisedButton from 'material-ui/RaisedButton';
 
+const O = Observable;
 
 class WorkoutItem extends Component {
     constructor(props, context) {
@@ -21,7 +24,7 @@ class WorkoutItem extends Component {
             },
             name: {
                 margin: '13px',
-                width: '100px',
+                width: '140px',
                 display: 'inline-block',
                 height: '100%',
             },
@@ -58,6 +61,7 @@ class WorkoutItem extends Component {
             triggerSave: props.triggerSave,
             setsData: [],
             modalDeleteOpen: false,
+            buttonColor: '#80DEEA',
         };
 
         this.onNumberChange = this.onNumberChange.bind(this);
@@ -82,6 +86,23 @@ class WorkoutItem extends Component {
             this.populateWeek();
         }
     }
+
+    componentWillUpdate(nextProps) {
+        if (!nextProps.sets && (nextProps.sets !== this.props.sets)) {
+            O.interval(800)
+                .take(1)
+                .subscribe(() => this.setState({ buttonColor: 'white' }));
+        }
+        if (nextProps.sets && (nextProps.sets !== this.props.sets)) {
+            this.setState({ buttonColor: '#80DEEA' });
+        }
+    }
+
+    componentDidMount() {
+        console.log(this.selectFieldElement);
+        this.selectFieldElement.onclick();
+    }
+    
 
     onNumberChange(e) {
         this.props.changed();
@@ -183,10 +204,6 @@ class WorkoutItem extends Component {
             items.push(<MenuItem value={i} key={i} primaryText={`${i} Sets`} />);
         }
 
-        if (this.props.sets) {
-            _.set(this.styles, 'name.color', 'black');
-        } else { _.unset(this.styles, 'name.color'); }
-
         const setList = [];
         if (this.state.showSets) {
             for (let i = 1; i < Number(this.state.sets); i++) {
@@ -207,15 +224,15 @@ class WorkoutItem extends Component {
                   open={this.state.modalDeleteOpen}
                 />
                 <div>
-                    <FlatButton
+                    <RaisedButton
+                      disabledBackgroundColor={'white'}
+                      backgroundColor={this.state.buttonColor}
                       style={this.styles.name}
                       disabled={this.props.sets}
-                      primary={!this.props.sets}
-                      secondary={this.props.sets}
                       onClick={this.setsButton}
                     >
                         {this.props.item}
-                    </FlatButton>
+                    </RaisedButton>
                     <TextField
                       id="reps"
                       strategy="ignore"
@@ -237,6 +254,7 @@ class WorkoutItem extends Component {
                       max={900}
                     />
                     <SelectField
+                      ref={elem => this.selectFieldElement = elem}
                       value={this.state.setsVal}
                       onChange={this.setSelectField}
                       maxHeight={200}
@@ -261,8 +279,8 @@ class WorkoutItem extends Component {
 }
 
 WorkoutItem.propTypes = {
-    // how many sets the user selects
-    sets: React.PropTypes.number.isRequired,
+    // indicates if the sets are the same throughout the workout
+    sets: React.PropTypes.bool.isRequired,
     // the name of the exercise
     item: React.PropTypes.string.isRequired,
     // boolean to start the saving process in this component and its

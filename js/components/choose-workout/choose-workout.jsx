@@ -72,8 +72,8 @@ export default class ChooseWorkout extends React.Component {
         if (this.state.selected === undefined) { return; }
         this.props.clicker(this.state.selected);
         const newArry = exercisesList[this.type].map(() => false); // reset checked state
-        this.setState({ worksList: newArry });
-        this.handleClose();
+        this.setState({ worksList: newArry, open: false });
+        this.props.closer();
     }
 
     handleSelect(event, menuObj, index) {

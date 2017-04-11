@@ -7,6 +7,12 @@ import Menu from '../menu/menu';
 
 injectTapEventPlugin();
 
+// const muiTheme = {
+//     pallete: {
+//         primary1Color: '#78909C',
+//     }
+// }
+
 class App extends Component {
 
     componentWillMount() {
@@ -16,7 +22,7 @@ class App extends Component {
 
     render() {
         return (
-            <MuiThemeProvider>
+            <MuiThemeProvider >
                 <div>
                     <Menu /> {this.props.children}
                 </div>
