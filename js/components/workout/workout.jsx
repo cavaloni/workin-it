@@ -35,7 +35,7 @@ class Workout extends Component {
             import: false,
         };
         this.handleWeekChange = this.handleWeekChange.bind(this);
-        this.confirm = this.confirm.bind(this);
+        this.confirmImport = this.confirmImport.bind(this);
         this.handleModalClose = this.handleModalClose.bind(this);
         this.importToThisWeek = this.importToThisWeek.bind(this);
     }
@@ -86,6 +86,9 @@ class Workout extends Component {
                     true,
             ));
         }
+        if (this.state.import) {
+            this.setState({ import: false, selectedWeek: 'This Week' });
+        }
     }
 
     handleWeekChange(event, index, value) {
@@ -93,7 +96,7 @@ class Workout extends Component {
         this.setState({ selectDialogOpen: true });
     }
 
-    confirm() {
+    confirmImport() {
         if (this.state.import) {
             const curWeek = this.props.oneWeekData;
             const dataToSave = _.flatten(Object.keys(curWeek)
@@ -116,7 +119,7 @@ class Workout extends Component {
                 year,
                 week,
             ));
-            this.setState({ selectDialogOpen: false, import: false, selectedWeek: 'This Week' });
+            this.setState({ selectDialogOpen: false });
         } else { this.setState({ selectedWeek: this.selectedWeek, selectDialogOpen: false }); }
     }
 
@@ -136,9 +139,9 @@ class Workout extends Component {
               onTouchTap={this.handleModalClose}
             />,
             <FlatButton
-              label="Confirm"
+              label="ConfirmImport"
               primary
-              onTouchTap={this.confirm}
+              onTouchTap={this.confirmImport}
             />,
         ];
 
@@ -160,6 +163,19 @@ class Workout extends Component {
             modalInfo.content = 'Changing the week you will lose any unsaved data. Continue?';
         }
 
+        let dropDownMenu;
+
+        if (this.state.weekRanges.length > 0) {
+            dropDownMenu = (<DropDownMenu
+              style={this.style.weekSelector}
+              maxHeight={300}
+              value={this.state.selectedWeek}
+              onChange={this.handleWeekChange}
+            >
+                {this.state.weekRanges}
+            </DropDownMenu>);
+        } else { dropDownMenu = <div />; }
+
         return (
             <div>
                 <Dialog
@@ -172,14 +188,7 @@ class Workout extends Component {
                 >
                     {modalInfo.content}
                 </Dialog>
-                <DropDownMenu
-                  style={this.style.weekSelector}
-                  maxHeight={300}
-                  value={this.state.selectedWeek}
-                  onChange={this.handleWeekChange}
-                >
-                    {this.state.weekRanges}
-                </DropDownMenu>
+                {dropDownMenu}
                 {importButton}
                 <WorkoutCard cardType="Back" selectedWeek={this.state.selectedWeek} />
                 <WorkoutCard cardType="Arms" selectedWeek={this.state.selectedWeek} />
