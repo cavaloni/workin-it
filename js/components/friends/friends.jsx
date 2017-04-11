@@ -29,12 +29,18 @@ const SelectableList = makeSelectable(List);
 
 const style = {
     paper: {
-        width: '45%',
+        width: '40%',
         maxHeight: 500,
         overflow: 'auto',
         display: 'inline-block',
         marginLeft: 20,
         verticalAlign: 'top',
+    },
+    heading: {
+        fontFamily: 'Poiret One',
+        lineHeight: '80px',
+        height: '80px',
+        background: 'linear-gradient(135deg, #FFEBEE, #FFCDD2)',
     },
 };
 
@@ -145,7 +151,6 @@ class Friends extends Component {
 
     acceptFriend(e, i) {
         e.preventDefault();
-        console.log(i);
         const friendData = this.state.allUsers[i.props.id - 1].fbId;
         const userData = this.props.profileData.fbId;
         const token = this.props.token;
@@ -154,8 +159,6 @@ class Friends extends Component {
             userData,
             token,
         );
-
-        console.log(objToDispatch);
         this.props.dispatch(objToDispatch);
     }
 
@@ -320,11 +323,11 @@ class Friends extends Component {
                 >
                 Are you sure you want to delete this friend?
                 </Dialog>
-                <h3>View Freinds Progress</h3>
-                <Paper style={{ marginBottom: 30 }}>
+                <h3 style={style.heading}>View Freinds Progress</h3>
+                <Paper style={{ marginBottom: 30, minHeight: '120px' }}>
                     <AutoComplete
                       errorText={this.state.autoComErrTxt}
-                      floatingLabelText="Send New Friend Request"
+                      floatingLabelText="Search Friends Name"
                       filter={AutoComplete.fuzzyFilter}
                       dataSource={autocompleteUserNames}
                       maxSearchResults={5}
