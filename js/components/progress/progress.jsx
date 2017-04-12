@@ -46,6 +46,7 @@ class Progress extends Component {
     }
 
     componentWillMount() {
+        if (this.props.friends !== undefined) { return; }
         this.props.dispatch(actions.getExerciseData(this.props.token, this.props.profileData.fbId));
     }
 
@@ -147,16 +148,19 @@ class Progress extends Component {
     }
 
     render() {
-        if (_.isEmpty(this.state.data || this.state.data === 'no data')) {
+        const week = this.state.week;
+
+        if (_.isEmpty(this.state.data) || this.state.data === 'no data' ||
+            !_.has(this.state.data, week)) {
             return (
                 <div>
-                    <h1>No Data</h1>
+                    <h1>No Data For This Week</h1>
                 </div>
             );
         }
 
         if (this.props.exerciseData) {
-            if (!this.props.exerciseData[this.state.week]) {
+            if (!this.props.exerciseData[week]) {
                 this.weekSet(this.props.exerciseData);
                 return (
                     <div>
@@ -167,9 +171,6 @@ class Progress extends Component {
         }
 
         const parsedAvgs = this.getExerciseAverages();
-
-
-        const week = this.state.week;
 
         const allCharts = _.flatten(Object.keys(parsedAvgs)
                     .map(group => Object.keys(parsedAvgs[group])
@@ -207,6 +208,9 @@ class Progress extends Component {
                 <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
             </div>);
         }
+
+        console.log(this.state.data);
+        console.log(week);
 
         const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {

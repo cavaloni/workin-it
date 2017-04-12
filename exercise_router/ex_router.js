@@ -21,7 +21,7 @@ function getExerciseData(req, res) {
     if (req.body.friendFbId) {
         user = req.body.friendFbId;
     } else { user = req.body.user; }
-
+    console.log(user);
     let allUserData;
     ExerciseData
         .findOne({
@@ -172,6 +172,10 @@ router.post('/get_friend_data', (req, res) => {
                     fbId: friendFbId,
                 })
                 .then((friendProfile) => {
+                    console.log(friendFbId);
+                    console.log(user);
+                    console.log(userProfile);
+                    console.log(friendProfile);
                     const userStatusOfFriend = _.find(
                         userProfile.friends,
                         friend => friend.fbId === friendFbId,
@@ -183,7 +187,7 @@ router.post('/get_friend_data', (req, res) => {
                     if (userStatusOfFriend === 'active' &&
                         friendStatusOfUser === 'active') {
                         getExerciseData(req, res);
-                    }
+                    } else { (res.status(202).json({ reason: 'friend not accepted' })); }
                 });
         })
         .catch(() => {

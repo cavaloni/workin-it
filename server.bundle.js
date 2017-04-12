@@ -215,7 +215,7 @@ function getExerciseData(req, res) {
     } else {
         user = req.body.user;
     }
-
+    console.log(user);
     var allUserData = void 0;
     _ex_model2.default.findOne({
         userId: user
@@ -352,6 +352,10 @@ router.post('/get_friend_data', function (req, res) {
         _user_model.User.findOne({
             fbId: friendFbId
         }).then(function (friendProfile) {
+            console.log(friendFbId);
+            console.log(user);
+            console.log(userProfile);
+            console.log(friendProfile);
             var userStatusOfFriend = _lodash2.default.find(userProfile.friends, function (friend) {
                 return friend.fbId === friendFbId;
             }).status;
@@ -360,6 +364,8 @@ router.post('/get_friend_data', function (req, res) {
             }).status;
             if (userStatusOfFriend === 'active' && friendStatusOfUser === 'active') {
                 getExerciseData(req, res);
+            } else {
+                res.status(202).json({ reason: 'friend not accepted' });
             }
         });
     }).catch(function () {
