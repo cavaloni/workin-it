@@ -76,8 +76,6 @@ const style = {
 class Login extends Component {
     constructor(props) {
         super(props);
-        this.login = this.login.bind(this);
-        this.justGetIn = this.justGetIn.bind(this);
         this.state = {
             token: false,
             loginFail: false,
