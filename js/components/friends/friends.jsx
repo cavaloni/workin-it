@@ -35,7 +35,7 @@ const style = {
         display: 'inline-block',
         marginLeft: 20,
         verticalAlign: 'top',
-        margin: '0 4px 30px 4px',
+        margin: '1px 4px 30px 4px',
     },
     heading: {
         paddingLeft: 10,
@@ -77,9 +77,10 @@ class Friends extends Component {
             url: '/user',
             headers: { token: this.props.token },
         })
-        .flatMap(response => O.of(response.response.allUsers)
-                        .filter(user => user !== this.props.profileData)
-                        .map(user => user))
+        .flatMap(response =>
+            O.of(response.response.allUsers)
+            .filter(user => user !== this.props.profileData)
+            .map(user => user))
         .subscribe((allUsers) => {
             const userIndexInAllUsers = _.findIndex(
                 allUsers,

@@ -7,6 +7,7 @@ import { browserHistory } from 'react-router';
 import { Menu as Menus } from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Home from 'material-ui/svg-icons/action/home';
+import Badge from 'material-ui/Badge';
 import FitnessCenter from 'material-ui/svg-icons/places/fitness-center';
 import ShowChart from 'material-ui/svg-icons/editor/show-chart';
 import Face from 'material-ui/svg-icons/action/face';
@@ -59,6 +60,20 @@ class Menu extends Component {
     }
 
     render() {
+        const pendingFriendsNum = this.props.friends.filter(friend => (friend.status === 'pending') && (friend.sentByUser === false)).length;
+
+        let friends;
+        if (pendingFriendsNum >= 1) {
+            friends = (<MenuItem
+              leftIcon={<Badge
+                badgeContent={pendingFriendsNum}
+                primary
+                style={{ margin: 0, padding: '7px 20px 12px 12px' }}
+              ><Face />
+              </Badge>}
+            >Friends</MenuItem>);
+        } else { friends = <MenuItem leftIcon={<Face />}>Friends</MenuItem>; }
+
         return (
             <div>
                 <AppBar
@@ -79,7 +94,7 @@ class Menu extends Component {
                         <Divider />
                         <MenuItem leftIcon={<ShowChart />}>Progress</MenuItem>
                         <Divider />
-                        <MenuItem leftIcon={<Face />}>Friends</MenuItem>
+                        {friends}
                         <Divider />
                         <MenuItem leftIcon={<ExitToApp />}>Logout</MenuItem>
                     </Menus>
@@ -88,5 +103,18 @@ class Menu extends Component {
         );
     }
 }
-// no
-export default connect()(Menu);
+
+Menu.propTypes = {
+    // list of friends
+    friends: React.PropTypes.arrayOf([]),
+};
+
+Menu.defaultProps = {
+    friends: [],
+};
+
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
+    friends: state.userData.friends,
+});
+
+export default connect(mapStateToProps)(Menu);

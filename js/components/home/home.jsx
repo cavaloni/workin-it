@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Radium from 'radium';
 import Avatar from 'material-ui/Avatar';
+import Divider from 'material-ui/Divider';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import { browserHistory } from 'react-router';
@@ -73,6 +74,19 @@ class Home extends Component {
     }
 
     render() {
+        let newFriends;
+        const pendingFriendsNum = this.props.friends.filter(friend => (friend.status === 'pending') && (friend.sentByUser === false)).length;
+
+        if (pendingFriendsNum <= 1) {
+            newFriends = (
+                <ListItem
+                  disabled
+                >
+                You have {pendingFriendsNum} pending friend requests.
+                </ListItem>
+            );
+        } else { newFriends = <div />; }
+
         return (
             <div style={{ textAlign: 'center', width: '95%', margin: '0 auto' }}>
                 <Paper style={{ marginBottom: 10, marginTop: 10 }}>
@@ -85,6 +99,7 @@ class Home extends Component {
                         >
                     Hello {this.props.profileData.user}!
                     </ListItem>
+                        {newFriends}
                     </List>
                 </Paper>
                 <Paper
@@ -122,6 +137,8 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+    // list of friends
+    friends: React.PropTypes.arrayOf([]),
     profileData: React.PropTypes.shape({
         fbId: React.PropTypes.string.isRequired,
         user: React.PropTypes.string.isRequired,
@@ -136,7 +153,11 @@ Home.propTypes = {
     }).isRequired,
 };
 
-const mapStateToProps = (state, props) => ({ profileData: state.userData }); // eslint-disable-line
+const mapStateToProps = (state, props) => ({ profileData: state.userData, friends: state.userData.friends }); // eslint-disable-line
+
+Home.defaultProps = {
+    friends: [],
+};
 
 const enhance = compose(
   connect(mapStateToProps),
