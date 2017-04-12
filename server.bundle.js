@@ -493,10 +493,10 @@ router.put('/add_friend', function (req, res) {
                 name: user.name,
                 fbId: user.fbId,
                 status: 'pending',
-                sentByUser: false
+                sentByUser: false,
+                avatar: user.profileImage
             }
         } }).exec().then(function (profile) {
-        console.log(profile);
         friendProfile = profile;
     }));
     var userProfileUpdate = function userProfileUpdate(fProfile) {
@@ -505,7 +505,8 @@ router.put('/add_friend', function (req, res) {
                     name: fProfile.user,
                     fbId: fProfile.fbId,
                     status: 'pending',
-                    sentByUser: true
+                    sentByUser: true,
+                    avatar: fProfile.profileImage
                 }
             } }, { new: true }).exec().then(function (profile) {
             return profile;

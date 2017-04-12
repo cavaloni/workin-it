@@ -67,6 +67,7 @@ export default class ChooseWorkout extends React.Component {
         if (this.customWorkout !== '') {
             this.props.clicker(this.customWorkout);
             this.customWorkout = '';
+            this.setState({ open: false });
             return;
         }
         if (this.state.selected === undefined) { return; }

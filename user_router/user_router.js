@@ -113,11 +113,11 @@ router.put('/add_friend', (req, res) => {
                     fbId: user.fbId,
                     status: 'pending',
                     sentByUser: false,
+                    avatar: user.profileImage,
                 },
             } })
             .exec()
             .then((profile) => {
-                console.log(profile);
                 friendProfile = profile;
             }),
     );
@@ -130,6 +130,7 @@ router.put('/add_friend', (req, res) => {
                     fbId: fProfile.fbId,
                     status: 'pending',
                     sentByUser: true,
+                    avatar: fProfile.profileImage,
                 },
             } },
             { new: true })

@@ -62,12 +62,12 @@ class Home extends Component {
         this.props.dispatch(actions.setUserProfile());
     }
 
-    workoutRoute(e) {
+    workoutRoute(e) { // eslint-disable-line
         e.preventDefault();
         browserHistory.push('/app/1');
     }
 
-    progressRoute(e) {
+    progressRoute(e) { // eslint-disable-line
         e.preventDefault();
         browserHistory.push('/app/2');
     }

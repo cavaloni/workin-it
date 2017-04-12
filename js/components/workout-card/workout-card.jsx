@@ -286,6 +286,7 @@ class WorkoutCard extends Component {
                       }}
                     />
                     <Divider style={{ margin: 0 }} />
+                    {workoutItemsList}
                     <Checkbox
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
@@ -293,7 +294,7 @@ class WorkoutCard extends Component {
                       labelStyle={{ right: '13%' }}
                       checked={this.state.isChecked}
                       style={{ display: this.state.listNotEmpty ? 'block' : 'none' }}
-                    /> {workoutItemsList}
+                    />
                     <FloatingActionButton
                       style={{
                           position: 'relative',

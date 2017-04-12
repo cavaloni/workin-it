@@ -29,14 +29,16 @@ const SelectableList = makeSelectable(List);
 
 const style = {
     paper: {
-        width: '40%',
+        width: '90%',
         maxHeight: 500,
         overflow: 'auto',
         display: 'inline-block',
         marginLeft: 20,
         verticalAlign: 'top',
+        margin: '0 4px 30px 4px',
     },
     heading: {
+        paddingLeft: 10,
         fontFamily: 'Poiret One',
         lineHeight: '80px',
         height: '80px',
@@ -205,6 +207,7 @@ class Friends extends Component {
 
         autocompleteUserNames[this.state.userIndexInAllUsers] = undefined;
 
+        const highlightButton = this.state.newFriendSelected !== '';
 
         const iconButtonElement = (
             <IconButton
@@ -339,7 +342,8 @@ class Friends extends Component {
                       fullWidth
                     />
                     <RaisedButton
-                      label="Send Freind Request"
+                      primary={highlightButton}
+                      label="Send Request"
                       style={{ margin: 'auto', display: 'block', width: '50%' }}
                       onTouchTap={this.sendNewFriendRequest}
                     />
