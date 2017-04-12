@@ -3,7 +3,6 @@ import Paper from 'material-ui/Paper';
 
 
 const Logo = (props) => {
-    
     const multiplier = props.size;
 
     const style = {
@@ -74,9 +73,14 @@ const Logo = (props) => {
 
     return (
         <div>
-        <Paper style={style} circle zDepth={0}>WI</Paper>
-    </div>
+            <Paper style={style} circle zDepth={0}>WI</Paper>
+        </div>
     );
+};
+
+Logo.propTypes = {
+    // to determine the size in percentage to original size on login screen
+    size: React.PropTypes.number.isRequired,
 };
 
 export default Logo;

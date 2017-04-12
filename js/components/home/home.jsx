@@ -76,16 +76,16 @@ class Home extends Component {
         return (
             <div style={{ textAlign: 'center', width: '95%', margin: '0 auto' }}>
                 <Paper style={{ marginBottom: 10, marginTop: 10 }}>
-                <List>
-                    <ListItem
-                      disabled
-                      leftAvatar={
-                          <Avatar src={this.props.profileData.profileImage} />
+                    <List>
+                        <ListItem
+                          disabled
+                          leftAvatar={
+                              <Avatar src={this.props.profileData.profileImage} />
                         }
-                    >
+                        >
                     Hello {this.props.profileData.user}!
                     </ListItem>
-                </List>
+                    </List>
                 </Paper>
                 <Paper
                   style={style.workouts}
@@ -136,7 +136,7 @@ Home.propTypes = {
     }).isRequired,
 };
 
-const mapStateToProps = (state, props) => ({ profileData: state.userData });
+const mapStateToProps = (state, props) => ({ profileData: state.userData }); // eslint-disable-line
 
 const enhance = compose(
   connect(mapStateToProps),

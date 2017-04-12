@@ -98,7 +98,6 @@ class WorkoutCard extends Component {
             this.setComponentPopulated(nextProps);
         }
         const type = this.props.cardType.toLowerCase();
-        console.log(nextProps.weekData[type]);
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
         }
@@ -261,9 +260,8 @@ class WorkoutCard extends Component {
             case 'chest':
                 avatar = chestAvatar;
                 break;
+            // no default
         }
-
-        console.log(avatar);
 
         return (
             <MuiThemeProvider>
@@ -275,10 +273,10 @@ class WorkoutCard extends Component {
                       type={this.props.cardType}
                     />
                     <CardHeader
-                      avatar={<Avatar 
-                            src={avatar}
-                            backgroundColor={'none'}
-                          />}
+                      avatar={<Avatar
+                        src={avatar}
+                        backgroundColor={'none'}
+                      />}
                       style={{
                           backgroundColor: '#4FC3F7',
                       }}
@@ -340,7 +338,7 @@ WorkoutCard.propTypes = {
     // redux store data for the user selected week, or default current week
     weekData: React.PropTypes.shape({}).isRequired,
     // error handling prop on bad server fetches
-    fetchFailed: React.PropTypes.bool.isRequired,
+    fetchFailed: React.PropTypes.bool.isRequired, // eslint-disable-line
     // user JWT
     token: React.PropTypes.string.isRequired,
     // the users profile information
@@ -354,7 +352,7 @@ WorkoutCard.propTypes = {
     dispatch: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     fetchFailed: state.fetchFailed,
     exerciseData: state.exerciseData,
     profileData: state.userData,

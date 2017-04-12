@@ -19,9 +19,9 @@ const token = jwt.sign({ user: '10210391595884532' },
                         'super stank',
                         { expiresIn: '7 days' });
 
-function tearDownDB() {
+function tearDownDB() { // eslint-disable-line
     return new Promise((resolve, reject) => {
-        console.warn('delete database');
+        console.warn('delete database'); // eslint-disable-line
         mongoose.connection.dropDatabase()
             .then(result => resolve(result))
             .catch(err => reject(err));
@@ -178,16 +178,11 @@ describe('Workin It API resource', () => {
                 })
                 .expect(201)
                 .then((response) => {
-                    console.log('2222222222222222222222222222222222222');
-                    console.log(response.body);
                     expect(response.body).to.have.keys('_id', 'userId', 'exerciseData', '__v');
                     const data = response.body.exerciseData;
                     expect(Object.keys(data)).to.have.length.of.at.least(1);
                     expect(Object.keys(data[year])).to.have.length.of.at.least(1);
-                    console.log(data[year][week]);
                     const exercise = data[year][week].legs.dummySquats;
-                    console.log(exercise.data);
-                    console.log(exerciseData[0].exerciseData);
                     expect(exercise.data).to.deep.equal(exerciseData[0].exerciseData);
                 });
         });

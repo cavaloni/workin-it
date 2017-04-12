@@ -1,5 +1,7 @@
-let path = require('path');
-let webpack = require('webpack');
+const path = require('path');
+
+const webpack = require('webpack');
+
 const context = path.resolve(__dirname, 'js');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -55,7 +57,7 @@ module.exports = {
             include: path.resolve(__dirname, 'assets'),
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
-                loader: ['css-loader']
+                loader: ['css-loader'],
             }),
             test: /\.css$/,
         }, {
@@ -92,7 +94,7 @@ module.exports = {
                     },
 
                 },
-            }, ],
+            }],
         }, {
             test: /\.(js|jsx)$/,
             include: path.resolve(__dirname, 'js'),
@@ -106,6 +108,6 @@ module.exports = {
                     ],
                 },
             },
-        }, ],
+        }],
     },
 };

@@ -137,7 +137,6 @@ export const getExerciseData = (token, user, year, week, oneWeek) => (dispatch) 
         method: 'POST',
     })
         .subscribe((response) => {
-            console.log(response);
             if (oneWeek) {
                 if (response.response.data === 'no data' ||
                     Object.keys(response.response.data).length === 0) {

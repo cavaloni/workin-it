@@ -53,9 +53,9 @@ class Workout extends Component {
             let key = 0;
             const weekRangesList = _.flatten(Object.keys(weekRanges).map(year =>
                 weekRanges[year].map((week) => {
-                    if (week === currentWeek) { return; }
-                    key++;
-                    return <MenuItem value={week} key={key - 1} primaryText={week} />;
+                    if (week === currentWeek) { return; } // eslint-disable-line
+                    key += 1;
+                    return <MenuItem value={week} key={key - 1} primaryText={week} />; // eslint-disable-line
                 })));
             const orderedWeekRangesList = _.reverse(weekRangesList);
             orderedWeekRangesList.unshift(<MenuItem value={'This Week'} key={key} primaryText={'This Week'} />);
@@ -221,6 +221,8 @@ class Workout extends Component {
 }
 
 Workout.propTypes = {
+    // the users exercise data from redux store
+    exerciseData: React.PropTypes.shape({}).isRequired,
     // redux store data for the user selected week, or default current week
     oneWeekData: React.PropTypes.shape({}).isRequired,
     // the users JWT
@@ -236,7 +238,7 @@ Workout.propTypes = {
     dispatch: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     profileData: state.userData,
     token: state.userToken,
     oneWeekData: state.oneWeekData,

@@ -68,6 +68,7 @@ class ExerciseChart extends Component {
                     chartData.unshift(['Week', 'Reps']);
                     break;
                 }
+            // no default
         }
 
         const options = {
@@ -91,8 +92,10 @@ class ExerciseChart extends Component {
                 viewWindow: { min: range[0], max: range[1] },
             },
         };
+        /*eslint-disable */
         const data = new google.visualization.arrayToDataTable(chartData);
         const chart = new google.visualization.SteppedAreaChart(ReactDom.findDOMNode(this));
+        /*eslint-ensable */
         chart.draw(data, options);
     }
 

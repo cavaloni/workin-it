@@ -8,7 +8,7 @@ const initialState = {
     loginFail: false,
 };
 
-export const appReducer = (state = initialState, action) => {
+export const appReducer = (state = initialState, action) => { // eslint-disable-line
     switch (action.type) {
         case 'PROFILE_FETCH_SUCCESS': {
             return {
@@ -73,7 +73,6 @@ export const appReducer = (state = initialState, action) => {
             };
         }
         case 'EXERCISE_ONE_WEEK_DATA_NO_DATA': {
-            console.log('this happened');
             return {
                 ...state,
                 oneWeekData: {},

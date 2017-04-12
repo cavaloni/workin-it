@@ -21,8 +21,8 @@ function getExerciseData(req, res) {
     if (req.body.friendFbId) {
         user = req.body.friendFbId;
     } else { user = req.body.user; }
+
     let allUserData;
-    console.log(user);
     ExerciseData
         .findOne({
             userId: user,
@@ -162,7 +162,6 @@ router.put('/', (req, res) => {
 
 router.post('/get_friend_data', (req, res) => {
     const { user, friendFbId } = req.body;
-    console.log(user, friendFbId);
     User
         .findOne({
             fbId: user,
@@ -181,7 +180,6 @@ router.post('/get_friend_data', (req, res) => {
                         friendProfile.friends,
                         friend => friend.fbId === user,
                     ).status;
-                    console.log(userStatusOfFriend, friendStatusOfUser);
                     if (userStatusOfFriend === 'active' &&
                         friendStatusOfUser === 'active') {
                         getExerciseData(req, res);

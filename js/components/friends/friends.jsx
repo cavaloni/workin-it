@@ -79,8 +79,11 @@ class Friends extends Component {
                         .filter(user => user !== this.props.profileData)
                         .map(user => user))
         .subscribe((allUsers) => {
-            const userIndexInAllUsers = _.findIndex(allUsers, user => user.fbId === this.props.profileData.fbId);
-            const indecesOfAllUsersToFilter = this.props.friends.map(friend => _.findIndex(allUsers, user => user.fbId === friend.fbId));
+            const userIndexInAllUsers = _.findIndex(
+                allUsers,
+                user => user.fbId === this.props.profileData.fbId);
+            const indecesOfAllUsersToFilter = this.props.friends.map(friend =>
+                _.findIndex(allUsers, user => user.fbId === friend.fbId));
             this.setState({ allUsers, userIndexInAllUsers, indecesOfAllUsersToFilter });
         },
         );
@@ -112,7 +115,6 @@ class Friends extends Component {
         const week = moment().week().toString();
         const year = moment().year().toString();
         const token = this.props.token;
-        console.log(user, year, week, oneWeek, friendFbId);
         O.ajax({
             url: '/exercise_data/get_friend_data',
             method: 'POST',
@@ -376,7 +378,7 @@ class Friends extends Component {
 
 Friends.propTypes = {
     // list of friends
-    friends: React.PropTypes.array.isRequired,
+    friends: React.PropTypes.arrayOf([]).isRequired,
     // user profile info from redux store
     profileData: React.PropTypes.shape({
         fbId: React.PropTypes.string.isRequired,
@@ -385,7 +387,7 @@ Friends.propTypes = {
         friends: React.PropTypes.array,
     }).isRequired,
     // error handling prop on bad server fetches
-    fetchFailed: React.PropTypes.bool.isRequired,
+    fetchFailed: React.PropTypes.bool.isRequired, // eslint-disable-line
     // the users JWT
     token: React.PropTypes.string.isRequired,
     // redux dispatch
@@ -396,7 +398,7 @@ Friends.defaultProps = {
     friends: [],
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     fetchFailed: state.fetchFailed,
     profileData: state.userData,
     token: state.userToken,

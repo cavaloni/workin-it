@@ -12,7 +12,6 @@ import ShowChart from 'material-ui/svg-icons/editor/show-chart';
 import Face from 'material-ui/svg-icons/action/face';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import Logo from '../logo/logo';
-import * as actions from '../../actions/index';
 
 const style = {
     appBar: {
@@ -35,7 +34,6 @@ class Menu extends Component {
     }
 
     menuOpen() {
-        console.log(this.state);
         this.setState({
             open: !this.state.open,
         });
@@ -63,11 +61,11 @@ class Menu extends Component {
     render() {
         return (
             <div>
-                <AppBar 
-                  title="Workin It" 
-                  onLeftIconButtonTouchTap={this.menuOpen} 
-                  style={style.appBar} 
-                  iconElementRight={<Logo size={.27} />}
+                <AppBar
+                  title="Workin It"
+                  onLeftIconButtonTouchTap={this.menuOpen}
+                  style={style.appBar}
+                  iconElementRight={<Logo size={0.27} />}
                 />
                 <Drawer
                   open={this.state.open}

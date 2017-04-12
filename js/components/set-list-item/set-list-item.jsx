@@ -38,7 +38,6 @@ class SetListItem extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
         if (nextProps.populateValue !== this.props.populateValue) {
             const { reps, weight } = nextProps.populateValue;
             this.setState({ reps, weight });

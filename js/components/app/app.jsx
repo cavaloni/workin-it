@@ -16,7 +16,7 @@ injectTapEventPlugin();
 class App extends Component {
 
     componentWillMount() {
-        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.load('current', { packages: ['corechart'] }); // eslint-disable-line
     }
 
 

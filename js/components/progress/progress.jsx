@@ -89,7 +89,7 @@ class Progress extends Component {
                                     reps: sum.reps / thisData.length,
                                 });
                                 parsedAvgs[group][exercise].fullName = fullName;
-                                exerciseIndex++;
+                                exerciseIndex += 1;
                             });
                     });
             });
@@ -109,7 +109,6 @@ class Progress extends Component {
     groupSelect(e) {
         e.preventDefault();
         const group = e.target.innerHTML.toLowerCase();
-        console.log(group);
         this.setState({ group, popoverOpen: false, groupRender: true });
     }
 
@@ -217,7 +216,8 @@ class Progress extends Component {
                                                   onTouchTap={this.exerciseValueChange}
                                                   value={exercise}
                                                   primaryText={
-                                                      this.state.data[week][curGroup][exercise].fullName
+                                                      this.state.data[week][curGroup][exercise]
+                                                        .fullName
                                                   }
                                                 />);
                                         return _.set(accObj, `${curGroup}`, menuItems);
@@ -333,7 +333,7 @@ Progress.propTypes = {
     dispatch: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     profileData: state.userData,
     exerciseData: state.exerciseData.data,
     token: state.userToken,

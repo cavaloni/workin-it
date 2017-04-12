@@ -160,7 +160,6 @@ class WorkoutItem extends Component {
     }
 
     populateWeek() {
-        console.log(weekData);
         const weekData = this.props.weekData;
         const dbWrktName = _.camelCase(this.props.item);
         const grpName = this.props.exerciseGroup.toLowerCase();
@@ -210,13 +209,13 @@ class WorkoutItem extends Component {
         if (this.props.populateWeek) { this.populateWeek(); }
 
         const items = [];
-        for (let i = 1; i < 16; i++) {
+        for (let i = 1; i < 16; i += 1) {
             items.push(<MenuItem value={i} key={i} primaryText={`${i} Sets`} />);
         }
 
         const setList = [];
         if (this.state.showSets) {
-            for (let i = 1; i < Number(this.state.sets); i++) {
+            for (let i = 1; i < Number(this.state.sets); i += 1) {
                 setList.push(<SetListItem
                   populateValue={this.state.setsData[i - 1]}
                   set={i}
@@ -266,7 +265,6 @@ class WorkoutItem extends Component {
                       errorText={this.state.errTxtWeight}
                     />
                     <SelectField
-                      ref={elem => this.selectFieldElement = elem}
                       value={this.state.setsVal}
                       onChange={this.setSelectField}
                       maxHeight={200}
@@ -319,7 +317,7 @@ WorkoutItem.defaultProps = {
     weekData: {},
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     weekData: state.oneWeekData,
 });
 

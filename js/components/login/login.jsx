@@ -113,53 +113,47 @@ class Login extends Component {
         }));
     }
 
-    justGetIn() {
-        browserHistory.push('/app');
-    }
-
-    login() {
-        this.props.dispatch(actions.login('Michal'));
-    }
-
     render() {
         // TODO: a login fail message
         return (
             <MuiThemeProvider>
-            <div>
-            <div style={style.container}>
-                <h1 style={style.heading}>Workin It</h1>
-                <Logo size={1} />
-                <a href="/login/facebook" style={style.button}>
-                    <img src={facebookImg} style={style.fbImage} />
-                    <div style={style.login}>Login With Facebook</div>
-                </a>
-                </div>
-                <div style={style.imageContainer}>
-                    <Paper style={style.icons}>
-                        <img src={track} style={style.images} alt=""  />
+                <div>
+                    <div style={style.container}>
+                        <h1 style={style.heading}>Workin It</h1>
+                        <Logo size={1} />
+                        <a href="/login/facebook" style={style.button}>
+                            <img src={facebookImg} style={style.fbImage} alt="facebook" />
+                            <div style={style.login}>Login With Facebook</div>
+                        </a>
+                    </div>
+                    <div style={style.imageContainer}>
+                        <Paper style={style.icons}>
+                            <img src={track} style={style.images} alt="workouts" />
                         Record Your Workouts
                     </Paper>
-                    <Paper style={style.icons}>
-                        <img src={prog} style={style.images} alt=""  />
+                        <Paper style={style.icons}>
+                            <img src={prog} style={style.images} alt="progress" />
                         Track Your Progress
                     </Paper>
-                    <Paper style={style.icons}>
-                        <img src={friends} style={style.images} alt=""  />
+                        <Paper style={style.icons}>
+                            <img src={friends} style={style.images} alt="friends" />
                         Share + Track Friends
                     </Paper>
+                    </div>
                 </div>
-            </div>
             </MuiThemeProvider>
         );
     }
 }
 
 Login.propTypes = {
+    // boolean if login failed
+    loginFail: React.PropTypes.bool.isRequired,
      // redux dispatch
     dispatch: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, props) => ({ // eslint-disable-line
     loginSuccess: state.loginSuccess,
 });
 
