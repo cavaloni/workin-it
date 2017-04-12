@@ -6,9 +6,9 @@ import { compose } from 'redux';
 import _ from 'lodash';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
-import { redA200 } from 'material-ui/styles/colors';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Card, CardHeader } from 'material-ui/Card';
+import Avatar from 'material-ui/Avatar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
@@ -16,13 +16,19 @@ import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
 
-
 import exercisesList from '../exercise-list';
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
 
 import styles from './styles.css';
+
+import backAvatar from '../../../assets/back.png';
+import absAvatar from '../../../assets/abs.png';
+import armsAvatar from '../../../assets/arms.png';
+import chestAvatar from '../../../assets/chest.png';
+import legsAvatar from '../../../assets/legs.png';
+import shouldersAvatar from '../../../assets/shoulders.png';
 
 const O = Observable;
 
@@ -92,6 +98,7 @@ class WorkoutCard extends Component {
             this.setComponentPopulated(nextProps);
         }
         const type = this.props.cardType.toLowerCase();
+        console.log(nextProps.weekData[type]);
         if (nextProps.weekData[type] && nextProps.weekData[type] !== this.props.weekData[type]) {
             this.setComponentPopulated(nextProps);
         }
@@ -106,6 +113,9 @@ class WorkoutCard extends Component {
                     this.props.dispatch(actions.resetFetchFailure());
                 });
         }
+        // if (this.props.import) {
+
+        // }
     }
 
     setComponentPopulated(props) {
@@ -231,6 +241,30 @@ class WorkoutCard extends Component {
                   saved={this.getExDataFromComponentsAndSave}
                 />);
 
+        let avatar;
+        switch (this.props.cardType.toLowerCase()) {
+            case 'abs':
+                avatar = absAvatar;
+                break;
+            case 'back':
+                avatar = backAvatar;
+                break;
+            case 'shoulders':
+                avatar = shouldersAvatar;
+                break;
+            case 'legs':
+                avatar = legsAvatar;
+                break;
+            case 'arms':
+                avatar = armsAvatar;
+                break;
+            case 'chest':
+                avatar = chestAvatar;
+                break;
+        }
+
+        console.log(avatar);
+
         return (
             <MuiThemeProvider>
                 <Card style={style.card}>
@@ -241,6 +275,10 @@ class WorkoutCard extends Component {
                       type={this.props.cardType}
                     />
                     <CardHeader
+                      avatar={<Avatar 
+                            src={avatar}
+                            backgroundColor={'none'}
+                          />}
                       style={{
                           backgroundColor: '#4FC3F7',
                       }}

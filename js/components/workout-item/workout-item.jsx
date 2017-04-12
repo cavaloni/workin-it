@@ -10,8 +10,9 @@ import Dialog from 'material-ui/Dialog';
 import _ from 'lodash';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
-import SetListItem from '../set-list-item/set-list-item';
 import RaisedButton from 'material-ui/RaisedButton';
+import SetListItem from '../set-list-item/set-list-item';
+
 
 const O = Observable;
 
@@ -42,7 +43,6 @@ class WorkoutItem extends Component {
                 marginBottom: 5,
             },
             select: {
-                width: '120px',
                 display: 'inline-block',
                 marginRight: 10,
                 verticalAlign: 'bottom',
@@ -61,7 +61,9 @@ class WorkoutItem extends Component {
             triggerSave: props.triggerSave,
             setsData: [],
             modalDeleteOpen: false,
-            buttonColor: '#80DEEA',
+            buttonColor: 'white',
+            errTxtReps: '',
+            errTxtWeight: '',
         };
 
         this.onNumberChange = this.onNumberChange.bind(this);
@@ -85,35 +87,43 @@ class WorkoutItem extends Component {
         if (nextProps.populateWeek) {
             this.populateWeek();
         }
-    }
-
-    componentWillUpdate(nextProps) {
-        if (!nextProps.sets && (nextProps.sets !== this.props.sets)) {
-            O.interval(800)
-                .take(1)
-                .subscribe(() => this.setState({ buttonColor: 'white' }));
-        }
-        if (nextProps.sets && (nextProps.sets !== this.props.sets)) {
+        if (!nextProps.sets && (nextProps.sets !== this.props.sets) &&
+            this.state.buttonColor === 'white') {
             this.setState({ buttonColor: '#80DEEA' });
         }
     }
 
-    componentDidMount() {
-        console.log(this.selectFieldElement);
-        this.selectFieldElement.onclick();
+    componentDidUpdate() {
+        if (this.state.buttonColor === '#80DEEA') {
+            O.interval(760)
+                .take(1)
+                .subscribe(() => this.setState({ buttonColor: 'white' }));
+        }
+        if ((this.state.errTxtReps !== '') || (this.state.errTxtWeight !== '')) {
+            O.interval(2000)
+                .take(1)
+                .subscribe(() => this.setState({ errTxtReps: '', errTxtWeight: '' }));
+        }
     }
-    
 
     onNumberChange(e) {
-        this.props.changed();
+        const type = e.target.id === 'reps' ? 'errTxtReps' : 'errTxtWeight';
         let shower = this.state.showSets;
         if (e.target.value === 0) {
             shower = false;
         }
-        this.setState({
-            [e.target.id]: e.target.value,
-            showSets: shower,
-        });
+        if (isNaN(Number(e.target.value))) {
+            this.setState({
+                [type]: 'Invalid Input',
+            });
+        } else {
+            this.props.changed();
+            this.setState({
+                [type]: '',
+                [e.target.id]: e.target.value,
+                showSets: shower,
+            });
+        }
     }
 
     setSelectField(e, idx, value) {
@@ -242,6 +252,7 @@ class WorkoutItem extends Component {
                       floatingLabelText="Reps"
                       min={0}
                       max={100}
+                      errorText={this.state.errTxtReps}
                     />
                     <TextField
                       id="weight"
@@ -252,6 +263,7 @@ class WorkoutItem extends Component {
                       floatingLabelText="Weight"
                       min={0}
                       max={900}
+                      errorText={this.state.errTxtWeight}
                     />
                     <SelectField
                       ref={elem => this.selectFieldElement = elem}

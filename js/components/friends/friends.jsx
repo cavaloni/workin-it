@@ -152,7 +152,7 @@ class Friends extends Component {
 
     acceptFriend(e, i) {
         e.preventDefault();
-        const friendData = this.state.allUsers[i.props.id - 1].fbId;
+        const friendData = this.state.allUsers[i.props.id].fbId;
         const userData = this.props.profileData.fbId;
         const token = this.props.token;
         const objToDispatch = actions.acceptFriend(

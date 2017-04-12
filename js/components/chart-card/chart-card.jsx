@@ -73,11 +73,6 @@ class ExerciseChart extends Component {
         const options = {
             title,
             curveType: 'function',
-            animation: {
-                startup: true,
-                duration: 750,
-                easing: 'out',
-            },
             legend: { position: 'none' },
             fontName: 'Roboto',
             fontSize: 14,

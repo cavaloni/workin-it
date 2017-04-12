@@ -86,8 +86,8 @@ class Workout extends Component {
                     true,
             ));
         }
-        if (this.state.import) {
-            this.setState({ import: false, selectedWeek: 'This Week' });
+        if (this.state.import && this.props.exerciseData !== nextProps.exerciseData) {
+            this.setState({ selectedWeek: 'This Week', import: false });
         }
     }
 
@@ -106,6 +106,7 @@ class Workout extends Component {
                             exercise: curWeek[group][cur].fullName,
                             exerciseGroup: group,
                             exerciseData: curWeek[group][cur].data,
+                            sets: curWeek[group][cur].sets,
                         });
                         return acc;
                     }, []),
@@ -139,7 +140,7 @@ class Workout extends Component {
               onTouchTap={this.handleModalClose}
             />,
             <FlatButton
-              label="ConfirmImport"
+              label="Confirm"
               primary
               onTouchTap={this.confirmImport}
             />,
@@ -190,12 +191,30 @@ class Workout extends Component {
                 </Dialog>
                 {dropDownMenu}
                 {importButton}
-                <WorkoutCard cardType="Back" selectedWeek={this.state.selectedWeek} />
-                <WorkoutCard cardType="Arms" selectedWeek={this.state.selectedWeek} />
-                <WorkoutCard cardType="Shoulders" selectedWeek={this.state.selectedWeek} />
-                <WorkoutCard cardType="Legs" selectedWeek={this.state.selectedWeek} />
-                <WorkoutCard cardType="Chest" selectedWeek={this.state.selectedWeek} />
-                <WorkoutCard cardType="Abs" selectedWeek={this.state.selectedWeek} />
+                <WorkoutCard
+                  cardType="Back"
+                  selectedWeek={this.state.selectedWeek}
+                />
+                <WorkoutCard
+                  cardType="Arms"
+                  selectedWeek={this.state.selectedWeek}
+                />
+                <WorkoutCard
+                  cardType="Shoulders"
+                  selectedWeek={this.state.selectedWeek}
+                />
+                <WorkoutCard
+                  cardType="Legs"
+                  selectedWeek={this.state.selectedWeek}
+                />
+                <WorkoutCard
+                  cardType="Chest"
+                  selectedWeek={this.state.selectedWeek}
+                />
+                <WorkoutCard
+                  cardType="Abs"
+                  selectedWeek={this.state.selectedWeek}
+                />
             </div>
         );
     }
@@ -221,6 +240,7 @@ const mapStateToProps = (state, props) => ({
     profileData: state.userData,
     token: state.userToken,
     oneWeekData: state.oneWeekData,
+    exerciseData: state.exerciseData,
 });
 
 
