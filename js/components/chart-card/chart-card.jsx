@@ -34,7 +34,13 @@ function processChartData(type, pData) {
 class ExerciseChart extends Component {
 
     componentDidMount() {
-        this.drawCharts();
+        if (google.visualization.arrayToDataTable === undefined) { // eslint-disable-line
+            setTimeout(() => {
+                this.drawCharts();
+            }, 1000);
+        } else {
+            this.drawCharts();
+        }
     }
 
     componentDidUpdate() {

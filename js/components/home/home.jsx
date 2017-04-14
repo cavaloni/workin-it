@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Radium from 'radium';
 import Avatar from 'material-ui/Avatar';
-import Divider from 'material-ui/Divider';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import { browserHistory } from 'react-router';

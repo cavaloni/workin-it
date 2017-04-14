@@ -41,6 +41,40 @@ class Workout extends Component {
     }
 
     componentWillMount() {
+        if (this.props.token === '') {
+            this.props.dispatch(actions.setUserProfile());
+        } else { this.getExerciseData(); }
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.selectedWeek !== this.state.selectedWeek) {
+            let oneDayInWeek;
+            if (nextState.selectedWeek === 'This Week') {
+                oneDayInWeek = moment().format('MMM DD YY');
+            } else { oneDayInWeek = nextState.selectedWeek.slice(0, 9); }
+            const week = moment(oneDayInWeek, 'MMM DD YY').week();
+            const year = moment(oneDayInWeek, 'MMM DD YY').year();
+            this.props.dispatch(actions.getExerciseData(
+                    this.props.token,
+                    this.props.profileData.fbId,
+                    year,
+                    week,
+                    true,
+            ));
+        }
+        if (this.state.import && this.props.exerciseData !== nextProps.exerciseData) {
+            this.setState({ selectedWeek: 'This Week', import: false });
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.profileData !== prevProps.profileData) {
+            this.getExerciseData();
+        }
+    }
+
+
+    getExerciseData() {
         O.ajax({
             url: '/exercise_data/get_weeks',
             body: { user: this.props.profileData.fbId },
@@ -68,27 +102,6 @@ class Workout extends Component {
                     moment().week().toString(),
                     true,
             ));
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-        if (nextState.selectedWeek !== this.state.selectedWeek) {
-            let oneDayInWeek;
-            if (nextState.selectedWeek === 'This Week') {
-                oneDayInWeek = moment().format('MMM DD YY');
-            } else { oneDayInWeek = nextState.selectedWeek.slice(0, 9); }
-            const week = moment(oneDayInWeek, 'MMM DD YY').week();
-            const year = moment(oneDayInWeek, 'MMM DD YY').year();
-            this.props.dispatch(actions.getExerciseData(
-                    this.props.token,
-                    this.props.profileData.fbId,
-                    year,
-                    week,
-                    true,
-            ));
-        }
-        if (this.state.import && this.props.exerciseData !== nextProps.exerciseData) {
-            this.setState({ selectedWeek: 'This Week', import: false });
-        }
     }
 
     handleWeekChange(event, index, value) {

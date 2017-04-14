@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs';
-import Radium from 'radium';
 import { compose } from 'redux';
 import _ from 'lodash';
 import moment from 'moment';
@@ -337,6 +336,7 @@ class WorkoutCard extends Component {
 }
 
 WorkoutCard.propTypes = {
+    classes: React.PropTypes.shape({}).isRequired,
     // determines the exercise group card type(arms, chest, etc)
     cardType: React.PropTypes.string.isRequired,
     // the current week the user has selected to dislpay

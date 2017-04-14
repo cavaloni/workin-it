@@ -117,7 +117,10 @@ export const setUserProfile = () => (dispatch) => {
     });
 
     getToken
-        .map(tkn => profileFetch(tkn))
+        .map((tkn) => {
+            dispatch(setUserToken(tkn));
+            return profileFetch(tkn);
+        })
         .concatAll()
         .subscribe((profile) => {
             if (profile.status === 201) {

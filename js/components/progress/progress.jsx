@@ -11,7 +11,6 @@ import _ from 'lodash';
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
 
-
 class Progress extends Component {
     constructor(props) {
         super(props);
@@ -47,7 +46,12 @@ class Progress extends Component {
 
     componentWillMount() {
         if (this.props.friends !== undefined) { return; }
-        this.props.dispatch(actions.getExerciseData(this.props.token, this.props.profileData.fbId));
+        if (this.props.token === '') {
+            this.props.dispatch(actions.setUserProfile());
+        } else {
+            this.props.dispatch(actions.getExerciseData(
+                this.props.token, this.props.profileData.fbId));
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -63,6 +67,13 @@ class Progress extends Component {
             return false;
         }
         return true;
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.profileData !== prevProps.profileData) {
+            this.props.dispatch(actions.getExerciseData(
+                this.props.token, this.props.profileData.fbId));
+        }
     }
 
     getExerciseAverages() {
@@ -208,9 +219,6 @@ class Progress extends Component {
                 <ExerciseChart exercise={name} week={week} name={`${name} Reps`} type="reps" data={parsedAvgs[group][selectedExercise]} />
             </div>);
         }
-
-        console.log(this.state.data);
-        console.log(week);
 
         const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {

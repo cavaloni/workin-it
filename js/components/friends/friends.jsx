@@ -33,9 +33,8 @@ const style = {
         maxHeight: 500,
         overflow: 'auto',
         display: 'inline-block',
-        marginLeft: 20,
         verticalAlign: 'top',
-        margin: '1px 4px 30px 4px',
+        margin: '1px 10px 30px 10px',
     },
     heading: {
         paddingLeft: 10,
@@ -70,9 +69,38 @@ class Friends extends Component {
         this.handleAutoComSelect = this.handleAutoComSelect.bind(this);
         this.sendNewFriendRequest = this.sendNewFriendRequest.bind(this);
         this.acceptFriend = this.acceptFriend.bind(this);
+        this.getAllUsers = this.getAllUsers.bind(this);
     }
 
     componentWillMount() {
+        if (this.props.token === '') {
+            this.props.dispatch(actions.setUserProfile());
+        } else { this.getAllUsers(); }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.state.fetchSent && nextProps.fetchFailed) {
+            this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' });
+        } else if (this.state.fetchSent && nextProps.fetchFailed === false) {
+            this.setState({ snackBarOpen: true, snackBarMessage: 'Deleted' });
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.snackbarOpen) {
+            O.interval(4000)
+                .take(1)
+                .subscribe(() => {
+                    this.setState({ snackbarOpen: false });
+                    this.props.dispatch(actions.resetFetchFailure());
+                });
+        }
+        if (this.state.allUsers !== prevState.allUsers) {
+            this.getExerciseData();
+        }
+    }
+
+    getAllUsers() {
         O.ajax({
             url: '/user',
             headers: { token: this.props.token },
@@ -90,25 +118,6 @@ class Friends extends Component {
             this.setState({ allUsers, userIndexInAllUsers, indecesOfAllUsersToFilter });
         },
         );
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.state.fetchSent && nextProps.fetchFailed) {
-            this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' });
-        } else if (this.state.fetchSent && nextProps.fetchFailed === false) {
-            this.setState({ snackBarOpen: true, snackBarMessage: 'Deleted' });
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.state.snackbarOpen) {
-            O.interval(4000)
-                .take(1)
-                .subscribe(() => {
-                    this.setState({ snackbarOpen: false });
-                    this.props.dispatch(actions.resetFetchFailure());
-                });
-        }
     }
 
     handleFriendSelect(e, fbId, name) {
@@ -312,7 +321,6 @@ class Friends extends Component {
                       >
                           <MenuItem
                             id={num}
-                            // onTouchTap={this.deleteFriendModal}
                           >
                             Cancel Friend Request
                         </MenuItem>
@@ -331,7 +339,7 @@ class Friends extends Component {
                 Are you sure you want to delete this friend?
                 </Dialog>
                 <h3 style={style.heading}>View Freinds Progress</h3>
-                <Paper style={{ marginBottom: 30, minHeight: '120px' }}>
+                <Paper style={style.paper}>
                     <AutoComplete
                       errorText={this.state.autoComErrTxt}
                       floatingLabelText="Search Friends Name"
@@ -352,7 +360,6 @@ class Friends extends Component {
                 <Paper style={style.paper}>
                     <SelectableList
                       value={this.state.selectedFriend}
-                    //   onChange={this.handleFriendSelect}
                     >
                         <Subheader>Friends</Subheader>
                         {friendsList}
