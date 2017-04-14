@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import NumberInput from 'material-ui-number-input';
+import TextField from 'material-ui/TextField';
+import { Observable } from 'rxjs';
+
+const O = Observable;
 
 const styles = {
     container: {
@@ -26,6 +29,8 @@ class SetListItem extends Component {
         this.state = {
             reps: 0,
             weight: 0,
+            errTxtReps: '',
+            errTxtWeight: '',
         };
         this.onNumberChange = this.onNumberChange.bind(this);
     }
@@ -44,12 +49,28 @@ class SetListItem extends Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        if ((this.state.errTxtReps !== '') || (this.state.errTxtWeight !== '')) {
+            O.interval(2000)
+                .take(1)
+                .subscribe(() => this.setState({ errTxtReps: '', errTxtWeight: '' }));
+        }
+    }
+
+
     onNumberChange(e, value) {
-        this.setState({ [e.target.id]: value });
-        this.props.getData({
-            [e.target.id]: value,
-            setNum: this.props.set,
-        });
+        const type = e.target.id === 'reps' ? 'errTxtReps' : 'errTxtWeight';
+        if (isNaN(Number(e.target.value))) {
+            this.setState({
+                [type]: 'Invalid Input',
+            });
+        } else {
+            this.setState({ [e.target.id]: value, [type]: '' });
+            this.props.getData({
+                [e.target.id]: value,
+                setNum: this.props.set - 1,
+            });
+        }
     }
 
     render() {
@@ -58,25 +79,25 @@ class SetListItem extends Component {
             <div style={styles.container}>
                 <div>
                     <span style={styles.name}>{setNum}</span>
-                    <NumberInput
+                    <TextField
                       id="reps"
+                      strategy="ignore"
                       value={this.state.reps}
                       onChange={this.onNumberChange}
                       style={styles.numberFields}
                       inputStyle={styles.input}
+                      errorText={this.state.errTxtReps}
                       floatingLabelText="Reps"
-                      min={0}
-                      max={100}
                     />
-                    <NumberInput
+                    <TextField
                       id="weight"
+                      strategy="ignore"
                       value={this.state.weight}
                       onChange={this.onNumberChange}
                       style={styles.numberFields}
                       inputStyle={styles.input}
+                      errorText={this.state.errTxtWeight}
                       floatingLabelText="Weight"
-                      min={0}
-                      max={900}
                     />
                 </div>
             </div>

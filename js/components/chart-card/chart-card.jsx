@@ -3,15 +3,18 @@ import Paper from 'material-ui/Paper';
 import moment from 'moment';
 import ReactDom from 'react-dom';
 // import GoogleChart from 'react-googlecharts/build/components/GoogleChart';
+import injectSheet from 'react-jss';
 
-const styles = {
+const style = {
     container: {
         display: 'inline-block',
         width: '90%',
         overflow: 'hidden',
         margin: 15,
         padding: 10,
-        '@media (min-width: 500px)': {
+    },
+    '@media (min-width: 700px)': {
+        container: {
             width: '45%',
         },
     },
@@ -100,8 +103,9 @@ class ExerciseChart extends Component {
     }
 
     render() {
+        const {classes, children} = this.props
         return (
-            <Paper style={styles.container} />
+            <Paper className={classes.container}  />
         );
     }
 }
@@ -121,4 +125,4 @@ ExerciseChart.propTypes = {
     exercise: React.PropTypes.string.isRequired,
 };
 
-export default ExerciseChart;
+export default injectSheet(style)(ExerciseChart);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import injectSheet from 'react-jss';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs';
 import Radium from 'radium';
@@ -41,7 +42,9 @@ const style = {
         display: 'inline-block',
         verticalAlign: 'top',
         paddingBottom: 10,
-        '@media (min-width: 500px)': {
+    },
+    '@media (min-width: 700px)': {
+        card: {
             width: '41%',
         },
     },
@@ -225,6 +228,8 @@ class WorkoutCard extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         const workoutItemsList = this.state.itemList
             .map(item =>
                 <WorkoutItem
@@ -265,7 +270,7 @@ class WorkoutCard extends Component {
 
         return (
             <MuiThemeProvider>
-                <Card style={style.card}>
+                <Card className={classes.card}>
                     <WorkoutChooser
                       closer={this.closeChooser}
                       opener={this.state.chooseWorkout}
@@ -363,7 +368,7 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
 
 const enhance = compose(
   connect(mapStateToProps),
-  Radium(),
+  injectSheet(style),
 );
 
 export default enhance(WorkoutCard);

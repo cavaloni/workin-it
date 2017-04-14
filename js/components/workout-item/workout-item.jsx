@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs';
 import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
 import IconButton from 'material-ui/IconButton';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
@@ -217,6 +217,7 @@ class WorkoutItem extends Component {
         if (this.state.showSets) {
             for (let i = 1; i < Number(this.state.sets); i += 1) {
                 setList.push(<SetListItem
+                  key={i}
                   populateValue={this.state.setsData[i - 1]}
                   set={i}
                   getData={this.getSetsData}
@@ -249,8 +250,6 @@ class WorkoutItem extends Component {
                       onChange={this.onNumberChange}
                       style={this.styles.numberFields}
                       floatingLabelText="Reps"
-                      min={0}
-                      max={100}
                       errorText={this.state.errTxtReps}
                     />
                     <TextField
@@ -260,8 +259,6 @@ class WorkoutItem extends Component {
                       onChange={this.onNumberChange}
                       style={this.styles.numberFields}
                       floatingLabelText="Weight"
-                      min={0}
-                      max={900}
                       errorText={this.state.errTxtWeight}
                     />
                     <SelectField

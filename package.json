@@ -118,6 +118,7 @@
     "react-facebook-login-component": "^0.6.0",
     "react-google-charts": "^1.5.3",
     "react-googlecharts": "^1.4.0",
+    "react-jss": "^6.1.0",
     "react-material-ui-number-input": "^1.0.4",
     "react-redux": "^4.4.5",
     "react-router": "^3.0.2",
