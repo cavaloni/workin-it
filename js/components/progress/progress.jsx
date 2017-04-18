@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Observable as O } from 'rxjs';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Divider from 'material-ui/Divider';
 import Menu from 'material-ui/Menu';
@@ -17,14 +16,14 @@ const Loader = require('halogen/BounceLoader');
 
 const style = {
     loader: {
-        width: 100,
-        height: 100,
+        marginTop: 200,
+        width: 120,
+        height: 120,
         textAlign: 'center',
         position: 'relative',
-        left: 'calc(50% - 50px)',
-        top: 'calc(50% - 50px)',
-    }
-}
+        left: 'calc(50% - 60px)',
+    },
+};
 
 class Progress extends Component {
     constructor(props) {
@@ -43,6 +42,8 @@ class Progress extends Component {
             firstMount: true,
             groupRender: false,
             waitedForLoad: false,
+            spinner: true,
+            noDataThisWeek: false,
             data,
         };
         this.exerciseValueChange = this.exerciseValueChange.bind(this);
@@ -52,6 +53,7 @@ class Progress extends Component {
         this.groupSelect = this.groupSelect.bind(this);
         this.getExerciseAverages = this.getExerciseAverages.bind(this);
         this.weekSet = this.weekSet.bind(this);
+        this.loader = this.loader.bind(this);
 
         this.trackMenuChanges = { // track changes so that does not re-render wrong from state.group
             group: '',
@@ -61,7 +63,14 @@ class Progress extends Component {
     }
 
     componentWillMount() {
-        if (this.props.friends !== undefined) { return; }
+        if (this.props.friends !== undefined &&
+            (this.props.data === 'no data' || !_.has(this.props.exerciseData, this.state.week) ||
+            (!_.has(this.props.data, this.state.week)))) {
+            this.loader(this.props);
+        }
+        if (this.props.friends !== undefined) {
+            return;
+        }
         if (this.props.token === '') {
             this.props.dispatch(actions.setUserProfile());
         } else {
@@ -71,10 +80,11 @@ class Progress extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.weekSet(nextProps.exerciseData);
-        if (this.state.waitedForLoad) {
-            this.setState({ waitedForLoad: false });
+        if ((nextProps.exerciseData !== this.props.exerciseData) ||
+            nextProps.data !== this.props.data) {
+            this.loader(nextProps);
         }
+        this.weekSet(nextProps.exerciseData);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -86,17 +96,6 @@ class Progress extends Component {
             return false;
         }
         return true;
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-        if (!(_.isEmpty(nextState.data) || nextState.data === 'no data' ||
-            !_.has(nextState.data, nextState.week))) {
-            O.interval(1000)
-                .take(1)
-                .subscribe(() => {
-                    this.setState({ waitedForLoad: true });
-                });
-        }
     }
 
     componentDidUpdate(prevProps) {
@@ -141,6 +140,16 @@ class Progress extends Component {
                     });
             });
         return parsedAvgs;
+    }
+
+    loader(props) {
+        const objectToCheck = !this.props.friends ? props.exerciseData : props.data;
+        if (_.isEmpty(objectToCheck) || objectToCheck === 'no data' ||
+            !_.has(objectToCheck, this.state.week)) {
+            this.setState({ noDataThisWeek: true, spinner: false });
+        } else {
+            this.setState({ spinner: false });
+        }
     }
 
     weekSet(eData) {
@@ -194,34 +203,24 @@ class Progress extends Component {
     }
 
     render() {
-        const week = this.state.week;
-
-        if (_.isEmpty(this.state.data) || this.state.data === 'no data' ||
-            !_.has(this.state.data, week)) {
-            if (this.state.waitedForLoad) {
-                return (
-                    <div>
-                        <h1>No Data For This Week</h1>
-                    </div>
-                );
-            }
+        if (this.state.spinner) {
             return (
                 <div style={style.loader}>
-                    <Loader color="#FFCDD2" size="20px" margin="4px" />
+                    <Loader color="#FFCDD2" size="120px" margin="120px" />
                 </div>
             );
         }
 
-        if (this.props.exerciseData) {
-            if (!this.props.exerciseData[week]) {
-                this.weekSet(this.props.exerciseData);
-                return (
-                    <div>
-                        <h1>No Data</h1>
-                    </div>
-                );
-            }
+        if (this.state.noDataThisWeek) {
+            return (
+                <div>
+                    <h1>No Data For This Week</h1>
+                </div>
+            );
         }
+
+
+        const week = this.state.week;
 
         const parsedAvgs = this.getExerciseAverages();
 

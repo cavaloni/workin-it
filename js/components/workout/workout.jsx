@@ -25,6 +25,8 @@ class Workout extends Component {
                 width: '200px',
             },
             copy: {
+                marginLeft: 30,
+                marginTop: 20,
                 margin: '10px',
                 display: 'block',
                 width: '190px',
@@ -164,6 +166,7 @@ class Workout extends Component {
         let importButton;
         if (this.state.selectedWeek !== 'This Week') {
             importButton = (<RaisedButton
+              primary
               style={this.style.copy}
               label="Copy To This Week"
               onTouchTap={this.importToThisWeek}

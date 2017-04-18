@@ -34,6 +34,9 @@ const style = {
         verticalAlign: 'top',
         marginBottom: '30px',
     },
+    friendReq: {
+        padding: '20px',
+    },
     heading: {
         textAlign: 'left',
         paddingLeft: 10,
@@ -338,7 +341,7 @@ class Friends extends Component {
                 Are you sure you want to delete this friend?
                 </Dialog>
                 <h3 style={style.heading}>View Freinds Progress</h3>
-                <Paper style={style.paper}>
+                <Paper style={{ ...style.paper, ...style.friendReq }}>
                     <AutoComplete
                       errorText={this.state.autoComErrTxt}
                       floatingLabelText="Search Friends Name"
@@ -361,17 +364,21 @@ class Friends extends Component {
                       value={this.state.selectedFriend}
                     >
                         <Subheader>Friends</Subheader>
+                        <Divider />
                         {friendsList}
                     </SelectableList>
                 </Paper>
                 <Paper style={style.paper}>
                     <SelectableList>
                         <Subheader>Awaiting Your Approval</Subheader>
+                        <Divider />
                         {newFriendsList}
                     </SelectableList>
-                    <Divider />
+                </Paper>
+                <Paper>
                     <SelectableList>
                         <Subheader>Sent Friend Requests</Subheader>
+                        <Divider />
                         {pendingFriendInvites}
                     </SelectableList>
                 </Paper>
