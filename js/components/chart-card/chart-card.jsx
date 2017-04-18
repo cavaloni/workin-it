@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import moment from 'moment';
 import ReactDom from 'react-dom';
-// import GoogleChart from 'react-googlecharts/build/components/GoogleChart';
 import injectSheet from 'react-jss';
 
 const style = {
@@ -37,8 +36,8 @@ class ExerciseChart extends Component {
         if (google.visualization.arrayToDataTable === undefined) { // eslint-disable-line
             setTimeout(() => {
                 this.drawCharts();
-            }, 1000);
-        } else {
+            }, 1000); // when refreshing the page, google does not load fast enough
+        } else { // and throws an error, so we need to wait for it.
             this.drawCharts();
         }
     }

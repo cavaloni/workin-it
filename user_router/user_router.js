@@ -31,8 +31,6 @@ router.get('/', (req, res) => {
         });
 });
 
-// TODO: trying to send the token from req.user into the params for /init_token
-
 router.get('/init_profile',
     passport.authenticate('facebook', {
         failureRedirect: '/user/failed_auth',
@@ -59,19 +57,18 @@ router.get('/init_profile',
                                     exerciseData: {},
                                 })
                                 .then((profile) => {
-                                    console.log('ExerciseData created: ', profile);
+                                    console.log('ExerciseData created: ', profile); // eslint-disable-line
                                 })
-                                .catch((err) => {
-                                    res.status(500)
+                                .catch(() => {
+                                    res.status(500);
                                 });
                         })
-                        .catch((err) => {
+                        .catch(() => {
                             res.status(500);
                         });
                 }
-
             })
-            .catch((err) => {
+            .catch(() => {
                 res.status(500);
             });
 
@@ -94,7 +91,7 @@ router.get('/profile', (req, res) => {
             res.status(201).json(profile);
         })
         .catch((err) => {
-            console.log(err);
+            console.log(err); // eslint-disable-line
             res.send(500, { err });
         });
 });
@@ -144,8 +141,8 @@ router.put('/add_friend', (req, res) => {
             .subscribe((profile) => {
                 res.status(201).json(profile);
             },
-            ((err) => {
-                res.status(500)
+            (() => {
+                res.status(500);
             }));
 });
 
@@ -166,9 +163,7 @@ router.put('/accept_friend', (req, res) => {
             new: true,
         })
         .exec()
-        .then((profile) => {
-            console.log('at least this happened');
-        })
+        .then()
         .catch((err) => {
             res.status(500)
                 .json({
@@ -214,7 +209,6 @@ router.put('/delete_friend', (req, res) => {
         { new: true })
         .exec()
         .then((profile) => {
-            console.log(profile);
             res.status(200).json(profile);
         })
         .catch(err => res.status(500).json({ err }));
@@ -224,9 +218,7 @@ router.put('/delete_friend', (req, res) => {
         { fbId: friendId },
         { $pull: { friends: { fbId: userId } } }, { new: true })
         .exec()
-        .then((profile) => {
-            console.log(profile);
-        })
+        .then()
         .catch(err => res.status(500).json({ err }));
 });
 

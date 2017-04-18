@@ -2,16 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import styles from './styles.css';
 import Menu from '../menu/menu';
 
 injectTapEventPlugin();
-
-// const muiTheme = {
-//     pallete: {
-//         primary1Color: '#78909C',
-//     }
-// }
 
 class App extends Component {
 

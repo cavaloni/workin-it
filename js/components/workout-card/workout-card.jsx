@@ -57,7 +57,7 @@ class WorkoutCard extends Component {
         this.addWorkouts = this.addWorkouts.bind(this);
         this.sameSetsCheck = this.sameSetsCheck.bind(this);
         this.saveData = this.saveData.bind(this);
-        this.getExDataFromComponentsAndSave = this.getExDataFromComponentsAndSave.bind(this);
+        this.getChildrenDataAndSave = this.getChildrenDataAndSave.bind(this);
         this.populatedCallback = this.populatedCallback.bind(this);
         this.deleteItem = this.deleteItem.bind(this);
         this.changed = this.changed.bind(this);
@@ -114,9 +114,6 @@ class WorkoutCard extends Component {
                     this.props.dispatch(actions.resetFetchFailure());
                 });
         }
-        // if (this.props.import) {
-
-        // }
     }
 
     setComponentPopulated(props) {
@@ -148,10 +145,10 @@ class WorkoutCard extends Component {
             sameSets,
             saveSuggested: false,
         },
-                () => this.setState({ populateWeek: false }));
+        () => this.setState({ populateWeek: false }));
     }
 
-    getExDataFromComponentsAndSave(exerciseData, exercise, sets) {
+    getChildrenDataAndSave(exerciseData, exercise, sets) {
         const dataToSaveCopy = Array.from(this.tempDataToSave);
         dataToSaveCopy.push({
             exerciseData,
@@ -241,7 +238,7 @@ class WorkoutCard extends Component {
                   key={item}
                   item={item}
                   sets={this.state.sameSets}
-                  saved={this.getExDataFromComponentsAndSave}
+                  saved={this.getChildrenDataAndSave}
                 />);
 
         let avatar;

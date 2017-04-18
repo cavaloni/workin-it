@@ -46,7 +46,7 @@ const style = {
         height: '50px',
         lineHeight: '50px',
     },
-    button: { // words
+    button: {
         margin: '90px 0 60px',
         display: 'inline-block',
     },
@@ -112,7 +112,6 @@ class Login extends Component {
     }
 
     render() {
-        // TODO: a login fail message
         return (
             <MuiThemeProvider>
                 <div>

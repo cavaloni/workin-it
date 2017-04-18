@@ -76,7 +76,7 @@ class Home extends Component {
         let newFriends;
         const pendingFriendsNum = this.props.friends.filter(friend => (friend.status === 'pending') && (friend.sentByUser === false)).length;
 
-        if (pendingFriendsNum <= 1) {
+        if (pendingFriendsNum >= 1) {
             newFriends = (
                 <ListItem
                   disabled

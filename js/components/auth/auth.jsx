@@ -5,6 +5,11 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
 
+// this component is simply to have a router point on the client end
+// verify the first JWT sent from the server, which is less secure since it is
+// sent through the URL. It then requests a new token which is sent through a
+// standard HTTP request.
+
 class Auth extends Component {
 
     componentWillMount() {

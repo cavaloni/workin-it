@@ -15,7 +15,7 @@ module.exports = {
     externals: fs.readdirSync(path.resolve(__dirname, 'node_modules')).concat([
         'react-dom/server', 'react/addons',
     ]).reduce((ext, mod) => {
-        ext[mod] = `commonjs ${mod}`;
+        ext[mod] = `commonjs ${mod}`;// eslint-disable-line
         return ext;
     }, {}),
 

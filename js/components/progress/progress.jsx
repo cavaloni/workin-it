@@ -76,6 +76,11 @@ class Progress extends Component {
         }
     }
 
+    // getExerciseAverages maps through the depth of the data to get each individual
+    // average for each exercise. Averages are used so that even if the reps or weights
+    // are different through each set, only one value will be displayed, the average,
+    // for each chart to represent data more clearly.
+
     getExerciseAverages() {
         const parsedAvgs = {};
         let exerciseIndex = 0;

@@ -9,7 +9,6 @@ const eJwt = require('express-jwt');
 const shortid = require('shortid');
 const { router: exerciseDataRouter } = require('./exercise_router/ex_router');
 const { router: userRouter } = require('./user_router/user_router');
-// const codein = require("node-codein");
 
 
 const blacklist = { // this object is to keep the inital temporary tokens
@@ -51,7 +50,7 @@ passport.use(new Strategy({
     profileFields: ['picture', 'first_name', 'last_name'],
 },
   (accessToken, refreshToken, profile, cb) => {
-      profile.token = jwt.sign(profile, 'funky smell', {
+      profile.token = jwt.sign(profile, 'funky smell', { // eslint-disable-line
           expiresIn: 10,
           jwtid: shortid.generate(),
       });
@@ -66,23 +65,11 @@ passport.deserializeUser((obj, cb) => {
     cb(null, obj);
 });
 
-// const isAuthenticated = (req, res, next) => {
-//     if (req.isAuthenticated()) {
-//         console.log('***********AUTHORIZED');
-//         return next();
-//     }
-//     console.log('~~~~not authenticated~~~~~');
-// };
-
-// app.use(morgan('combined'));
-// app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
 app.use(cors());
 
 app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use('/exercise_data', exerciseDataRouter);
 app.use('/user', userRouter);
@@ -134,15 +121,15 @@ let server;
 
 function runServer() {
     return new Promise((resolve, reject) => {
-        mongoose.connect(DATABASE_URL, (err) => {
+        mongoose.connect(DATABASE_URL, (err) => { // eslint-disable-line
             if (err) {
                 return reject(err);
             }
             server = app.listen(PORT, () => {
-                console.log(`Your app is listening on port ${PORT}`);
+                console.log(`Your app is listening on port ${PORT}`); // eslint-disable-line
                 resolve();
             })
-            .on('error', (err) => {
+            .on('error', () => {
                 mongoose.disconnect();
                 reject(err);
             });
@@ -152,8 +139,8 @@ function runServer() {
 
 function closeServer() {
     return mongoose.disconnect().then(() => new Promise((resolve, reject) => {
-        console.log('closing server');
-        server.close((err) => {
+        console.log('closing server'); // eslint-disable-line
+        server.close((err) => { // eslint-disable-line
             if (err) {
                 return reject(err);
             }
@@ -163,7 +150,7 @@ function closeServer() {
 }
 
 if (require.main === module) {
-    runServer().catch(err => console.error(err));
+    runServer().catch(err => console.error(err)); // eslint-disable-line
 }
 
 module.exports = { app, runServer, closeServer };

@@ -106,6 +106,8 @@ router.put('/', (req, res) => {
             const year = req.body.year;
             const week = req.body.week;
 
+            // This sequence sets the data on the object copy from the mongoose object
+
             const exercisesInDataToSave = [];
             req.body.dataToSave.forEach((data) => {
                 const i = req.body.dataToSave.indexOf(data);
@@ -120,6 +122,10 @@ router.put('/', (req, res) => {
                 newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, numSets, Object);
                 newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName, Object);
             });
+
+            // The following sequence is to eliminate items that are deleted by the user.
+            // Since whole exercises are saved only on user selecting save, additions and
+            // deletions are done simeltaneously.
 
             const exercisesInDatabase = _.uniq(
                 _.flatten(Object.keys(newData.exerciseData[year][week])

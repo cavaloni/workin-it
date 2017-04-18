@@ -49,7 +49,7 @@ class SetListItem extends Component {
         }
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate() {
         if ((this.state.errTxtReps !== '') || (this.state.errTxtWeight !== '')) {
             O.interval(2000)
                 .take(1)
