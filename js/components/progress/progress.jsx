@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Observable as O } from 'rxjs';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Divider from 'material-ui/Divider';
 import Menu from 'material-ui/Menu';
@@ -10,6 +11,86 @@ import moment from 'moment';
 import _ from 'lodash';
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
+
+const loader = {
+    '&:after': {
+        background: '#ffffff',
+        '-webkit-animation': 'load1 1s infinite ease-in-out',
+        animation: 'load1 1s infinite ease-in-out',
+        width: '1em',
+        height: '4em',
+        position: 'absolute',
+        top: 0,
+        content: '""',
+        left: '1.5em',
+    },
+    '&:before': {
+        background: '#ffffff',
+        '-webkit-animation': 'load1 1s infinite ease-in-out',
+        animation: 'load1 1s infinite ease-in-out',
+        width: '1em',
+        height: '4em',
+        position: 'absolute',
+        top: 0,
+        content: '""',
+        left: '-1.5em',
+        '-webkit-animation-delay': '-0.32s',
+        'animation-delay': '-0.32s',
+    },
+    background: '#ffffff',
+    '-webkit-animation': 'load1 1s infinite ease-in-out',
+    animation: 'load1 1s infinite ease-in-out',
+    width: '1em',
+    height: '4em',
+    color: '#ffffff',
+    'text-indent': '-9999em',
+    margin: '88px auto',
+    position: 'relative',
+    'font-size': '11px',
+    '-webkit-transform': 'translateZ(0)',
+    '-ms-transform': 'translateZ(0)',
+    transform: 'translateZ(0)',
+    '-webkit-animation-delay': '-0.16s',
+    'animation-delay': '-0.16s',
+
+    '@-webkit-keyframes load1': {
+        '0%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '80%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '100%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '40%': {
+            'box-shadow': '0 -2em',
+            height: '5em',
+        },
+    },
+    '@keyframes load1': {
+        '0%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '80%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '100%': {
+            'box-shadow': '0 0',
+            height: '4em',
+        },
+        '40%': {
+            'box-shadow': '0 -2em',
+            height: '5em',
+        },
+    },
+};
+
 
 class Progress extends Component {
     constructor(props) {
@@ -27,6 +108,7 @@ class Progress extends Component {
             popoverEl: '',
             firstMount: true,
             groupRender: false,
+            waitedForLoad: false,
             data,
         };
         this.exerciseValueChange = this.exerciseValueChange.bind(this);
@@ -67,6 +149,20 @@ class Progress extends Component {
             return false;
         }
         return true;
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if (!(_.isEmpty(nextState.data) || nextState.data === 'no data' ||
+            !_.has(nextState.data, nextState.week))) {
+            O.interval(1000)
+                .take(1)
+                .subscribe(() => {
+                    this.setState({ waitedForLoad: true });
+                });
+        }
+        if (this.state.waitedForLoad) {
+            this.setState({ waitedForLoad: false });
+        }
     }
 
     componentDidUpdate(prevProps) {
@@ -168,10 +264,15 @@ class Progress extends Component {
 
         if (_.isEmpty(this.state.data) || this.state.data === 'no data' ||
             !_.has(this.state.data, week)) {
+            if (this.state.waitedForLoad) {
+                return (
+                    <div>
+                        <h1>No Data For This Week</h1>
+                    </div>
+                );
+            }
             return (
-                <div>
-                    <h1>No Data For This Week</h1>
-                </div>
+                <div style={loader}>Loading...</div>
             );
         }
 
@@ -259,7 +360,7 @@ class Progress extends Component {
         if (this.state.group === 'all') {
             charts = allCharts;
         } else { charts = filteredCharts; }
-// word
+
         return (
             <div>
                 <RaisedButton
