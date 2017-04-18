@@ -97,6 +97,8 @@ class Home extends Component {
                         }
                         >
                     Hello {this.props.profileData.user}!
+                    <p>Apologies for any delays in usage. You may require to logout and back in to work properly.
+                    Still working out bugs on the way to version 1.0. Thanks for using!</p>
                     </ListItem>
                         {newFriends}
                     </List>
