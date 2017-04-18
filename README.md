@@ -1,24 +1,24 @@
-#Workin' It
+# Workin' It
 Thinkful (https://www.thinkful.com/) final project.
 
 
 ![Screenshots](https://drive.google.com/uc?export=view&id=0B4WuvBhzCho_X2FVellGTllyUW8)
 
-##Introduction
+## Introduction
 Too many workout apps are just a bit too bloated with features. How about an easy to use, intuitive interface to simply input your data, track your own progress in graphs, and have your friends see your progress and check theirs out as well? Get Workin' It
 
-##Use Case
+## Use Case
 Workin' It is most useful to those gym goers or home weighlifters who are primarily interested in muscle workouts and tracking their progress to make sure they are making some. It also assists in this process of progress by keeping track of friends progress, providing further incentive to push a litte further while working it. 
 
-##UX
+## UX
 
 Wireframes were made prior to any code being written. Some minimal user feedback was obtained through questions about the display and flow, though mostly this kind of feedback was obtained during the release of the minimum viable product useable wireframe. UX research was made with casual gym goers, as well as some of the managers and more consistently attentive long term muscle trainers. 
 
 
-##Live Site
+## Live Site
 You can access the live site at http://floating-wave-76240.herokuapp.com/
 
-##Technical
+## Technical
 - MERN stack app
 - React JS
 - Redux for global state management
