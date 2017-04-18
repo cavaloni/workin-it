@@ -277,7 +277,7 @@ class Progress extends Component {
                 );
             }
             return (
-                <div style={loader}>Loading...</div>
+                <div style={style.loader}>Loading...</div>
             );
         }
 
