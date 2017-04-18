@@ -6,12 +6,6 @@ const exerciseDataSchema = mongoose.Schema({
     exerciseData: { type: Object, required: true },
 }, { minimize: false });
 
-exerciseDataSchema.methods.apiRepr = () => ({
-    id: this.id,
-    userId: this.projectName,
-    exerciseData: this.exerciseData,
-});
-
 const ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 
 module.exports = ExerciseData;

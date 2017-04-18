@@ -259,13 +259,14 @@ class Progress extends Component {
         if (this.state.group === 'all') {
             charts = allCharts;
         } else { charts = filteredCharts; }
-
+// word
         return (
             <div>
                 <RaisedButton
                   style={{
                       margin: '20px',
                   }}
+                  primary
                   onTouchTap={this.openPopover}
                   label="Select Workout(s)"
                 />

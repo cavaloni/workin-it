@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -116,14 +116,6 @@ var exerciseDataSchema = mongoose.Schema({
     exerciseData: { type: Object, required: true }
 }, { minimize: false });
 
-exerciseDataSchema.methods.apiRepr = function () {
-    return {
-        id: undefined.id,
-        userId: undefined.projectName,
-        exerciseData: undefined.exerciseData
-    };
-};
-
 var ExerciseData = mongoose.model('exercise_datas', exerciseDataSchema);
 
 module.exports = ExerciseData;
@@ -143,15 +135,6 @@ var UserSchema = mongoose.Schema({
     profileImage: { type: String },
     fbId: { type: String, rqeuired: true }
 });
-
-UserSchema.methods.apiRepr = function apiRepr() {
-    return {
-        fbId: this.fbId,
-        user: this.user,
-        profileImage: this.profileImage,
-        friends: this.friends
-    };
-};
 
 var User = mongoose.model('user_data', UserSchema);
 
@@ -176,11 +159,11 @@ exports.PORT = process.env.PORT || 8081;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _moment = __webpack_require__(16);
+var _moment = __webpack_require__(15);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _lodash = __webpack_require__(15);
+var _lodash = __webpack_require__(14);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -290,6 +273,8 @@ router.put('/', function (req, res) {
         var year = req.body.year;
         var week = req.body.week;
 
+        // This sequence sets the data on the object copy from the mongoose object
+
         var exercisesInDataToSave = [];
         req.body.dataToSave.forEach(function (data) {
             var i = req.body.dataToSave.indexOf(data);
@@ -304,6 +289,10 @@ router.put('/', function (req, res) {
             newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.sets', numSets, Object);
             newData = _lodash2.default.setWith(newData, 'exerciseData.' + year + '.' + week + '.' + exGroup + '.' + camelName + '.fullName', exName, Object);
         });
+
+        // The following sequence is to eliminate items that are deleted by the user.
+        // Since whole exercises are saved only on user selecting save, additions and
+        // deletions are done simeltaneously.
 
         var exercisesInDatabase = _lodash2.default.uniq(_lodash2.default.flatten(Object.keys(newData.exerciseData[year][week]).map(function (exGroup) {
             return Object.keys(newData.exerciseData[year][week][exGroup]).map(function (exercise) {
@@ -397,7 +386,7 @@ module.exports = { router: router };
 "use strict";
 
 
-var _rxjs = __webpack_require__(17);
+var _rxjs = __webpack_require__(16);
 
 var _user_model = __webpack_require__(7);
 
@@ -409,7 +398,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var passport = __webpack_require__(5);
 
-var O = _rxjs.Observable;
 var express = __webpack_require__(0);
 var eJwt = __webpack_require__(1);
 var jwt = __webpack_require__(4);
@@ -424,7 +412,7 @@ router.use(eJwt({ secret: 'super stank',
 }).unless({ path: ['/user/init_profile'] }));
 
 router.get('/', function (req, res) {
-    _user_model.User.find({}).exec().then(function (users) {
+    _user_model.User.find().exec().then(function (users) {
         var allUsers = users.map(function (user) {
             return { user: user.user, fbId: user.fbId };
         });
@@ -433,8 +421,6 @@ router.get('/', function (req, res) {
         res.status(500);
     });
 });
-
-// TODO: trying to send the token from req.user into the params for /init_token
 
 router.get('/init_profile', passport.authenticate('facebook', {
     failureRedirect: '/user/failed_auth'
@@ -452,16 +438,14 @@ router.get('/init_profile', passport.authenticate('facebook', {
                 _ex_model2.default.create({
                     userId: req.user.id,
                     exerciseData: {}
-                }).then(function (profile) {
-                    console.log('ExerciseData created: ', profile);
-                }).catch(function (err) {
+                }).then().catch(function () {
                     res.status(500);
                 });
-            }).catch(function (err) {
+            }).catch(function () {
                 res.status(500);
             });
         }
-    }).catch(function (err) {
+    }).catch(function () {
         res.status(500);
     });
 
@@ -479,7 +463,6 @@ router.get('/profile', function (req, res) {
     }).exec().then(function (profile) {
         res.status(201).json(profile);
     }).catch(function (err) {
-        console.log(err);
         res.send(500, { err: err });
     });
 });
@@ -489,7 +472,7 @@ router.put('/add_friend', function (req, res) {
     var friend = req.body.friend;
 
     var friendProfile = void 0;
-    var friendProfileUpdate = O.fromPromise(_user_model.User.findOneAndUpdate({ fbId: friend.fbId }, { $push: {
+    var friendProfileUpdate = _rxjs.Observable.fromPromise(_user_model.User.findOneAndUpdate({ fbId: friend.fbId }, { $push: {
             friends: {
                 name: user.name,
                 fbId: user.fbId,
@@ -501,7 +484,7 @@ router.put('/add_friend', function (req, res) {
         friendProfile = profile;
     }));
     var userProfileUpdate = function userProfileUpdate(fProfile) {
-        return O.fromPromise(_user_model.User.findOneAndUpdate({ fbId: user.fbId }, { $push: {
+        return _rxjs.Observable.fromPromise(_user_model.User.findOneAndUpdate({ fbId: user.fbId }, { $push: {
                 friends: {
                     name: fProfile.user,
                     fbId: fProfile.fbId,
@@ -518,7 +501,7 @@ router.put('/add_friend', function (req, res) {
         return userProfileUpdate(friendProfile);
     }).concatAll().subscribe(function (profile) {
         res.status(201).json(profile);
-    }, function (err) {
+    }, function () {
         res.status(500);
     });
 });
@@ -537,9 +520,7 @@ router.put('/accept_friend', function (req, res) {
         }
     }, {
         new: true
-    }).exec().then(function (profile) {
-        console.log('at least this happened');
-    }).catch(function (err) {
+    }).exec().then().catch(function (err) {
         res.status(500).json({
             err: err
         });
@@ -572,15 +553,12 @@ router.put('/delete_friend', function (req, res) {
     var friendId = req.body.friend.fbId;
 
     _user_model.User.findOneAndUpdate({ fbId: userId }, { $pull: { friends: { fbId: friendId } } }, { new: true }).exec().then(function (profile) {
-        console.log(profile);
         res.status(200).json(profile);
     }).catch(function (err) {
         return res.status(500).json({ err: err });
     });
 
-    _user_model.User.findOneAndUpdate({ fbId: friendId }, { $pull: { friends: { fbId: userId } } }, { new: true }).exec().then(function (profile) {
-        console.log(profile);
-    }).catch(function (err) {
+    _user_model.User.findOneAndUpdate({ fbId: friendId }, { $pull: { friends: { fbId: userId } } }, { new: true }).exec().then().catch(function (err) {
         return res.status(500).json({ err: err });
     });
 });
@@ -619,40 +597,34 @@ module.exports = function(module) {
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = require("cors");
+module.exports = require("passport-facebook");
 
 /***/ }),
 /* 13 */
 /***/ (function(module, exports) {
 
-module.exports = require("passport-facebook");
+module.exports = require("shortid");
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = require("shortid");
+module.exports = require("lodash");
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports) {
 
-module.exports = require("lodash");
+module.exports = require("moment");
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
-module.exports = require("moment");
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
 module.exports = require("rxjs");
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -662,19 +634,16 @@ var passport = __webpack_require__(5);
 var bodyParser = __webpack_require__(3);
 var mongoose = __webpack_require__(2);
 var express = __webpack_require__(0);
-var Strategy = __webpack_require__(13).Strategy;
+var Strategy = __webpack_require__(12).Strategy;
 var jwt = __webpack_require__(4);
-var cors = __webpack_require__(12);
 var eJwt = __webpack_require__(1);
-var shortid = __webpack_require__(14);
+var shortid = __webpack_require__(13);
 
 var _require = __webpack_require__(9),
     exerciseDataRouter = _require.router;
 
 var _require2 = __webpack_require__(10),
     userRouter = _require2.router;
-// const codein = require("node-codein");
-
 
 var blacklist = { // this object is to keep the inital temporary tokens
     tokens: [0], // blacklisted, since they are sent in the url.
@@ -722,7 +691,7 @@ passport.use(new Strategy({
     callbackURL: '/user/init_profile',
     profileFields: ['picture', 'first_name', 'last_name']
 }, function (accessToken, refreshToken, profile, cb) {
-    profile.token = jwt.sign(profile, 'funky smell', {
+    profile.token = jwt.sign(profile, 'funky smell', { // eslint-disable-line
         expiresIn: 10,
         jwtid: shortid.generate()
     });
@@ -737,23 +706,9 @@ passport.deserializeUser(function (obj, cb) {
     cb(null, obj);
 });
 
-// const isAuthenticated = (req, res, next) => {
-//     if (req.isAuthenticated()) {
-//         console.log('***********AUTHORIZED');
-//         return next();
-//     }
-//     console.log('~~~~not authenticated~~~~~');
-// };
-
-// app.use(morgan('combined'));
-// app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
-app.use(cors());
 
 app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use('/exercise_data', exerciseDataRouter);
 app.use('/user', userRouter);
@@ -800,13 +755,14 @@ var server = void 0;
 function runServer() {
     return new Promise(function (resolve, reject) {
         mongoose.connect(DATABASE_URL, function (err) {
+            // eslint-disable-line
             if (err) {
                 return reject(err);
             }
             server = app.listen(PORT, function () {
-                console.log('Your app is listening on port ' + PORT);
+                console.log('Your app is listening on port ' + PORT); // eslint-disable-line
                 resolve();
-            }).on('error', function (err) {
+            }).on('error', function () {
                 mongoose.disconnect();
                 reject(err);
             });
@@ -817,8 +773,9 @@ function runServer() {
 function closeServer() {
     return mongoose.disconnect().then(function () {
         return new Promise(function (resolve, reject) {
-            console.log('closing server');
+            console.log('closing server'); // eslint-disable-line
             server.close(function (err) {
+                // eslint-disable-line
                 if (err) {
                     return reject(err);
                 }
@@ -831,7 +788,7 @@ function closeServer() {
 if (__webpack_require__.c[__webpack_require__.s] === module) {
     runServer().catch(function (err) {
         return console.error(err);
-    });
+    }); // eslint-disable-line
 }
 
 module.exports = { app: app, runServer: runServer, closeServer: closeServer };

@@ -8,15 +8,6 @@ const UserSchema = mongoose.Schema({
     fbId: { type: String, rqeuired: true },
 });
 
-UserSchema.methods.apiRepr = function apiRepr() {
-    return {
-        fbId: this.fbId,
-        user: this.user,
-        profileImage: this.profileImage,
-        friends: this.friends,
-    };
-};
-
 const User = mongoose.model('user_data', UserSchema);
 
 module.exports = { User };

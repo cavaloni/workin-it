@@ -1,7 +1,5 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable as O } from 'rxjs/Rx';
 import qs from 'qs';
-
-const O = Observable;
 
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 export const fetchSuccess = results => ({ type: FETCH_SUCCESS, results });

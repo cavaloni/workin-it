@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Observable } from 'rxjs';
+import { Observable as O } from 'rxjs';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -13,8 +13,6 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import SetListItem from '../set-list-item/set-list-item';
 
-
-const O = Observable;
 
 class WorkoutItem extends Component {
     constructor(props, context) {

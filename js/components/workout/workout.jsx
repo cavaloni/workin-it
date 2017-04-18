@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Observable } from 'rxjs';
+import { Observable as O } from 'rxjs';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
@@ -11,8 +11,6 @@ import { connect } from 'react-redux';
 import WorkoutCard from '../workout-card/workout-card';
 import * as actions from '../../actions/index';
 
-
-const O = Observable;
 
 class Workout extends Component {
     constructor(props, context) {

@@ -17,13 +17,11 @@ import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Observable } from 'rxjs/Rx';
+import { Observable as O } from 'rxjs/Rx';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
 
 import * as actions from '../../actions/index';
-
-const O = Observable;
 
 const SelectableList = makeSelectable(List);
 
@@ -34,9 +32,10 @@ const style = {
         overflow: 'auto',
         display: 'inline-block',
         verticalAlign: 'top',
-        margin: '1px 10px 30px 10px',
+        marginBottom: '30px',
     },
     heading: {
+        textAlign: 'left',
         paddingLeft: 10,
         fontFamily: 'Poiret One',
         lineHeight: '80px',
@@ -329,7 +328,7 @@ class Friends extends Component {
                 />);
             });
         return (
-            <div>
+            <div style={{ textAlign: 'center' }}>
                 <Dialog
                   title="Delete Friend"
                   actions={modalActions}

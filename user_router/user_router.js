@@ -1,10 +1,10 @@
-import { Observable } from 'rxjs';
+import { Observable as O } from 'rxjs';
 import { User } from './user_model';
 import ExerciseData from '../exercise_router/ex_model';
 
 const passport = require('passport');
 
-const O = Observable;
+
 const express = require('express');
 const eJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
@@ -20,7 +20,7 @@ router.use(
 
 router.get('/', (req, res) => {
     User
-        .find({})
+        .find()
         .exec()
         .then((users) => {
             const allUsers = users.map(user => ({ user: user.user, fbId: user.fbId }));
@@ -56,9 +56,7 @@ router.get('/init_profile',
                                     userId: req.user.id,
                                     exerciseData: {},
                                 })
-                                .then((profile) => {
-                                    console.log('ExerciseData created: ', profile); // eslint-disable-line
-                                })
+                                .then()
                                 .catch(() => {
                                     res.status(500);
                                 });
@@ -91,7 +89,6 @@ router.get('/profile', (req, res) => {
             res.status(201).json(profile);
         })
         .catch((err) => {
-            console.log(err); // eslint-disable-line
             res.send(500, { err });
         });
 });

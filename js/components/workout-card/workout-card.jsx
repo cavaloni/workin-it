@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { connect } from 'react-redux';
-import { Observable } from 'rxjs';
+import { Observable as O } from 'rxjs';
 import { compose } from 'redux';
 import _ from 'lodash';
 import moment from 'moment';
@@ -21,16 +21,12 @@ import exercisesList from '../exercise-list';
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
 
-import styles from './styles.css';
-
 import backAvatar from '../../../assets/back.png';
 import absAvatar from '../../../assets/abs.png';
 import armsAvatar from '../../../assets/arms.png';
 import chestAvatar from '../../../assets/chest.png';
 import legsAvatar from '../../../assets/legs.png';
 import shouldersAvatar from '../../../assets/shoulders.png';
-
-const O = Observable;
 
 const style = {
     card: {

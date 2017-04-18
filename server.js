@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const express = require('express');
 const Strategy = require('passport-facebook').Strategy;
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 const eJwt = require('express-jwt');
 const shortid = require('shortid');
 const { router: exerciseDataRouter } = require('./exercise_router/ex_router');
@@ -66,8 +65,6 @@ passport.deserializeUser((obj, cb) => {
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(cors());
 
 app.use(passport.initialize());
 
