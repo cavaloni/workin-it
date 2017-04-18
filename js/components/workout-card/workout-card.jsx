@@ -264,6 +264,7 @@ class WorkoutCard extends Component {
             <MuiThemeProvider>
                 <Card className={classes.card}>
                     <WorkoutChooser
+                      exercisesList={this.props.profileData.exercisesList}
                       closer={this.closeChooser}
                       opener={this.state.chooseWorkout}
                       clicker={this.addWorkouts}
@@ -346,6 +347,7 @@ WorkoutCard.propTypes = {
         user: React.PropTypes.string.isRequired,
         profileImage: React.PropTypes.string,
         friends: React.PropTypes.array,
+        exercisesList: React.PropTypes.array,
     }).isRequired,
     // redux dispatch
     dispatch: React.PropTypes.func.isRequired,

@@ -403,6 +403,7 @@ Friends.propTypes = {
         user: React.PropTypes.string.isRequired,
         profileImage: React.PropTypes.string,
         friends: React.PropTypes.array,
+        exercisesList: React.PropTypes.array,
     }).isRequired,
     // error handling prop on bad server fetches
     fetchFailed: React.PropTypes.bool.isRequired, // eslint-disable-line

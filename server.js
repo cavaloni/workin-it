@@ -38,7 +38,7 @@ mongoose.Promise = global.Promise;
 
 const app = express();
 
-const { PORT, DATABASE_URL } = require('./config');
+const { PORT, DATABASE_URL, SECRET1, SECRET2 } = require('./config');
 
 app.use(express.static(`${process.env.PWD}/build`));
 
@@ -49,7 +49,7 @@ passport.use(new Strategy({
     profileFields: ['picture', 'first_name', 'last_name'],
 },
   (accessToken, refreshToken, profile, cb) => {
-      profile.token = jwt.sign(profile, 'funky smell', { // eslint-disable-line
+      profile.token = jwt.sign(profile, SECRET1, { // eslint-disable-line
           expiresIn: 10,
           jwtid: shortid.generate(),
       });
@@ -80,14 +80,14 @@ app.get('/success', (req, res) => {
 });
 
 app.get('/new_token',
-    eJwt({ secret: 'funky smell',
+    eJwt({ secret: SECRET1,
         getToken: function fromQuery(req) { return req.query.initToken; },
         isRevoked: isRevokedCallback,
     }),
     (req, res) => {
         const newToken = jwt.sign(
             { user: req.user.id },
-            'super stank',
+            SECRET2,
             { expiresIn: '7 days' });
         res.json({ newToken });
     });
@@ -101,12 +101,15 @@ app.get('/init_token', (req, res) => {
 });
 
 app.get('/verify_auth',
-    eJwt({ secret: 'super stank',
+    eJwt({ secret: SECRET2,
         getToken: function fromQuery(req) { return req.headers.token; },
         requestProperty: 'auth',
     }),
     (req, res) => {
         res.send(201);
+    },
+    (req, res) => {
+        console.log(req.headers.token);
     });
 
 app.get('*',

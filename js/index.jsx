@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => ReactDOM.render(
             <Route path="/auth/:initToken" component={Auth} />
             <Route path="/app" component={App} onEnter={requireAuth} >
                 <IndexRoute path="/app" component={Home} />
-                <Route path="/app/1" component={Workout} />
-                <Route path="/app/2" props={{ friends: false }}component={Progress} />
-                <Route path="/app/3" component={Friends} />
+                <Route path="/app/workout" component={Workout} />
+                <Route path="/app/progress" props={{ friends: false }}component={Progress} />
+                <Route path="/app/friends" component={Friends} />
             </Route>
         </Router>
     </Provider>, document.getElementById('app')));

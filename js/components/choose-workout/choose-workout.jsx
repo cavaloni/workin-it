@@ -7,8 +7,6 @@ import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
 import { orange500, blue500 } from 'material-ui/styles/colors';
 
-import exercisesList from '../exercise-list';
-
 const styles = {
     radioButton: {
         marginTop: 16,
@@ -35,7 +33,7 @@ export default class ChooseWorkout extends React.Component {
         this.state = {
             selected: undefined,
             open: this.props.opener,
-            worksList: exercisesList[this.type].map(() => false),
+            worksList: this.props.exercisesList[this.type].map(() => false),
             customWorkout: '',
             autoComSelected: '',
             autoComErrTxt: '',
@@ -72,7 +70,7 @@ export default class ChooseWorkout extends React.Component {
         }
         if (this.state.selected === undefined) { return; }
         this.props.clicker(this.state.selected);
-        const newArry = exercisesList[this.type].map(() => false); // reset checked state
+        const newArry = this.props.exercisesList[this.type].map(() => false); // reset checked state
         this.setState({ worksList: newArry, open: false });
         this.props.closer();
     }
@@ -81,7 +79,7 @@ export default class ChooseWorkout extends React.Component {
         if (event !== null) {
             event.preventDefault();
         }
-        const newArry = exercisesList[this.type].map(() => false);
+        const newArry = this.props.exercisesList[this.type].map(() => false);
         newArry[index] = true;
         this.setState({ selected: index, worksList: newArry });
     }
@@ -98,8 +96,8 @@ export default class ChooseWorkout extends React.Component {
         />,
         ];
 
-        const menuItems = exercisesList[this.type].map((exercise) => {
-            const i = exercisesList[this.type].indexOf(exercise);
+        const menuItems = this.props.exercisesList[this.type].map((exercise) => {
+            const i = this.props.exercisesList[this.type].indexOf(exercise);
             return (
                 <MenuItem
                   checked={this.state.worksList[i]}
@@ -127,7 +125,7 @@ export default class ChooseWorkout extends React.Component {
                   errorText={this.state.autoComErrTxt}
                   floatingLabelText="Search Workouts"
                   filter={AutoComplete.fuzzyFilter}
-                  dataSource={exercisesList[this.type]}
+                  dataSource={this.props.exercisesList[this.type]}
                   maxSearchResults={5}
                   onNewRequest={this.handleAutoComSelect}
                 />
@@ -149,6 +147,8 @@ export default class ChooseWorkout extends React.Component {
 }
 
 ChooseWorkout.propTypes = {
+    // list of exercises obtained from server and passed to profileData in parent
+    exercisesList: React.PropTypes.arrayOf([]).isRequired,
     // opens this selector component
     opener: React.PropTypes.bool.isRequired,
     // callback that closes this selector component in the parent

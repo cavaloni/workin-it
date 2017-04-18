@@ -251,6 +251,7 @@ Workout.propTypes = {
         user: React.PropTypes.string.isRequired,
         profileImage: React.PropTypes.string,
         friends: React.PropTypes.array,
+        exercisesList: React.PropTypes.array,
     }).isRequired,
     // redux dispatch
     dispatch: React.PropTypes.func.isRequired,

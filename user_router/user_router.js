@@ -1,10 +1,11 @@
 import { Observable as O } from 'rxjs';
 import { User } from './user_model';
 import ExerciseData from '../exercise_router/ex_model';
+import exercisesList from '../exercises-list';
 
 const passport = require('passport');
 
-
+const { SECRET2 } = require('../config');
 const express = require('express');
 const eJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
@@ -12,7 +13,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.use(
-    eJwt({ secret: 'super stank',
+    eJwt({ secret: SECRET2,
         getToken: function fromQuery(req) { return req.headers.token; },
         requestProperty: 'auth',
     }).unless({ path: ['/user/init_profile'] }),
@@ -78,15 +79,18 @@ router.get('/failed_auth', (req, res) => {
     res.json({ failed: 'failed' });
 });
 
+
+
 router.get('/profile', (req, res) => {
-    const userId = jwt.verify(req.headers.token, 'super stank').user;
+    const userId = jwt.verify(req.headers.token, SECRET2).user;
     User
         .findOne({
             fbId: userId,
         })
         .exec()
         .then((profile) => {
-            res.status(201).json(profile);
+            const prof = profile.toObject();
+            res.status(201).json({ ...prof, exercisesList });
         })
         .catch((err) => {
             res.send(500, { err });

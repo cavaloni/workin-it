@@ -43,9 +43,26 @@ class Menu extends Component {
     menuClose() {
         this.setState({ open: false });
     }
-
+    
     handleRoute(event, menuObj, i) {
         const index = i / 2;
+        let routeName;
+        switch (index) {
+            case 1: {
+                routeName = 'workout';
+                break;
+            }
+            case 2: {
+                routeName = 'progress';
+                break;
+            }
+            case 3: {
+                routeName = 'friends';
+                break;
+            }
+            // no default
+        }
+        console.log(routeName);
         if (index === 4) {
             localStorage.removeItem('wi_id_token');
             browserHistory.push('/');
@@ -53,7 +70,8 @@ class Menu extends Component {
             let route;
             if (index === 0) {
                 route = '';
-            } else (route = index);
+            } else (route = routeName);
+            console.log(route);
             browserHistory.push(`/app/${route}`);
             this.setState({ open: false });
         }

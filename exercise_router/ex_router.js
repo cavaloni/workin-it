@@ -3,6 +3,8 @@ import _ from 'lodash';
 import ExerciseData from './ex_model';
 import { User } from '../user_router/user_model';
 
+
+const { SECRET2 } = require('../config');
 const jsonParser = require('body-parser')
     .json();
 const express = require('express');
@@ -11,7 +13,7 @@ const eJwt = require('express-jwt');
 const router = express.Router();
 
 router.use(jsonParser);
-router.use(eJwt({ secret: 'super stank',
+router.use(eJwt({ secret: SECRET2,
     getToken: function fromQuery(req) { return req.headers.token; },
     requestProperty: 'auth',
 }));

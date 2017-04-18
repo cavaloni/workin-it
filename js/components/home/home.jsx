@@ -64,12 +64,12 @@ class Home extends Component {
 
     workoutRoute(e) { // eslint-disable-line
         e.preventDefault();
-        browserHistory.push('/app/1');
+        browserHistory.push('/app/workout');
     }
 
     progressRoute(e) { // eslint-disable-line
         e.preventDefault();
-        browserHistory.push('/app/2');
+        browserHistory.push('/app/progress');
     }
 
     render() {
@@ -143,6 +143,7 @@ Home.propTypes = {
         user: React.PropTypes.string.isRequired,
         profileImage: React.PropTypes.string,
         friends: React.PropTypes.array,
+        exercisesList: React.PropTypes.array,
     }).isRequired,
     // redux dispatch
     dispatch: React.PropTypes.func.isRequired,
