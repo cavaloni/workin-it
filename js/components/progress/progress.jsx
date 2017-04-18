@@ -14,87 +14,7 @@ import _ from 'lodash';
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
 
-const style = {
-    loader: {
-        '&:after': {
-            background: '#FFCDD2',
-            '-webkit-animation': 'load1 1s infinite ease-in-out',
-            animation: 'load1 1s infinite ease-in-out',
-            width: '1em',
-            height: '4em',
-            position: 'absolute',
-            top: 0,
-            content: '""',
-            left: '1.5em',
-        },
-        '&:before': {
-            background: '#FFCDD2',
-            '-webkit-animation': 'load1 1s infinite ease-in-out',
-            animation: 'load1 1s infinite ease-in-out',
-            width: '1em',
-            height: '4em',
-            position: 'absolute',
-            top: 0,
-            content: '""',
-            left: '-1.5em',
-            '-webkit-animation-delay': '-0.32s',
-            'animation-delay': '-0.32s',
-        },
-        background: '#FFCDD2',
-        '-webkit-animation': 'load1 1s infinite ease-in-out',
-        animation: 'load1 1s infinite ease-in-out',
-        width: '1em',
-        height: '4em',
-        color: '#FFCDD2',
-        'text-indent': '-9999em',
-        margin: '88px auto',
-        position: 'relative',
-        'font-size': '11px',
-        '-webkit-transform': 'translateZ(0)',
-        '-ms-transform': 'translateZ(0)',
-        transform: 'translateZ(0)',
-        '-webkit-animation-delay': '-0.16s',
-        'animation-delay': '-0.16s',
-
-        '@-webkit-keyframes load1': {
-            '0%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '80%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '100%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '40%': {
-                'box-shadow': '0 -2em',
-                height: '5em',
-            },
-        },
-        '@keyframes load1': {
-            '0%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '80%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '100%': {
-                'box-shadow': '0 0',
-                height: '4em',
-            },
-            '40%': {
-                'box-shadow': '0 -2em',
-                height: '5em',
-            },
-        },
-    },
-};
-
+const Loader = require('halogen/PulseLoader');
 
 class Progress extends Component {
     constructor(props) {
@@ -276,7 +196,7 @@ class Progress extends Component {
                 );
             }
             return (
-                <div style={style.loader}>Loading...</div>
+                <Loader color="#FFCDD2" size="16px" margin="4px"/>
             );
         }
 
