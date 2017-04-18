@@ -384,7 +384,6 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
 
 const enhance = compose(
   connect(mapStateToProps),
-  injectSheet(style),
 );
 
 export default enhance(Progress);
