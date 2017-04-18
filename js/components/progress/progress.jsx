@@ -206,7 +206,7 @@ class Progress extends Component {
                 );
             }
             return (
-                <div style={{style.loader}}>
+                <div style={style.loader}>
                     <Loader color="#FFCDD2" size="20px" margin="4px" />
                 </div>
             );
