@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { connect, compose } from 'react-redux';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 import injectSheet from 'react-jss';
 import { Observable as O } from 'rxjs';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
