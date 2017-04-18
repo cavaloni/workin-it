@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import injectSheet from 'react-jss';
 import { Observable as O } from 'rxjs';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Divider from 'material-ui/Divider';
@@ -14,7 +13,18 @@ import _ from 'lodash';
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
 
-const Loader = require('halogen/PulseLoader');
+const Loader = require('halogen/BounceLoader');
+
+const style = {
+    loader: {
+        width: 100,
+        height: 100,
+        textAlign: 'center',
+        position: 'relative',
+        left: 'calc(50% - 50px)',
+        top: 'calc(50% - 50px)',
+    }
+}
 
 class Progress extends Component {
     constructor(props) {
@@ -196,7 +206,9 @@ class Progress extends Component {
                 );
             }
             return (
-                <Loader color="#FFCDD2" size="16px" margin="4px"/>
+                <div style={{style.loader}}>
+                    <Loader color="#FFCDD2" size="20px" margin="4px" />
+                </div>
             );
         }
 
