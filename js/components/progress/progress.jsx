@@ -17,7 +17,7 @@ import * as actions from '../../actions/index';
 const style = {
     loader: {
         '&:after': {
-            background: '#ffffff',
+            background: '#FFCDD2',
             '-webkit-animation': 'load1 1s infinite ease-in-out',
             animation: 'load1 1s infinite ease-in-out',
             width: '1em',
@@ -28,7 +28,7 @@ const style = {
             left: '1.5em',
         },
         '&:before': {
-            background: '#ffffff',
+            background: '#FFCDD2',
             '-webkit-animation': 'load1 1s infinite ease-in-out',
             animation: 'load1 1s infinite ease-in-out',
             width: '1em',
@@ -40,12 +40,12 @@ const style = {
             '-webkit-animation-delay': '-0.32s',
             'animation-delay': '-0.32s',
         },
-        background: '#ffffff',
+        background: '#FFCDD2',
         '-webkit-animation': 'load1 1s infinite ease-in-out',
         animation: 'load1 1s infinite ease-in-out',
         width: '1em',
         height: '4em',
-        color: '#ffffff',
+        color: '#FFCDD2',
         'text-indent': '-9999em',
         margin: '88px auto',
         position: 'relative',
@@ -96,7 +96,6 @@ const style = {
 };
 
 
-
 class Progress extends Component {
     constructor(props) {
         super(props);
@@ -143,6 +142,9 @@ class Progress extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.weekSet(nextProps.exerciseData);
+        if (this.state.waitedForLoad) {
+            this.setState({ waitedForLoad: false });
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -164,9 +166,6 @@ class Progress extends Component {
                 .subscribe(() => {
                     this.setState({ waitedForLoad: true });
                 });
-        }
-        if (this.state.waitedForLoad) {
-            this.setState({ waitedForLoad: false });
         }
     }
 
