@@ -17,6 +17,10 @@ class Workout extends Component {
         super(props, context);
         this.style = {
             weekSelector: {
+                borderRadius: '20px',
+                borderBottom: '1px solid lightgray',
+                marginLeft: 30,
+                marginTop: 20,
                 display: 'block',
                 width: '200px',
             },
@@ -189,7 +193,7 @@ class Workout extends Component {
         } else { dropDownMenu = <div />; }
 
         return (
-            <div>
+            <div style={{ textAlign: 'center' }}>
                 <Dialog
                   key={1}
                   autoScrollBodyContent
