@@ -51,7 +51,7 @@ module.exports = {
         ],
         modules: ['node_modules'],
     },
-    devtool: 'source-map',
+    devtool: 'cheap-module-source-map',
     module: {
         rules: [{
             include: path.resolve(__dirname, 'assets'),
