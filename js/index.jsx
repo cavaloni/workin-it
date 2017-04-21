@@ -1,6 +1,6 @@
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 import { Provider } from 'react-redux';
-import Rx from 'rxjs';
+import Observable from 'rxjs/Observable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
@@ -19,7 +19,7 @@ require('babel-polyfill');
 
 function requireAuth(nextState, replace) {
     const token = localStorage.getItem('wi_id_token');
-    Rx.Observable.ajax({
+    Observable.ajax({
         headers: {
             token,
         },
@@ -34,7 +34,7 @@ function requireAuth(nextState, replace) {
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => ReactDOM.render(
+document.addEventListener('DOMContentLoaded', () => ReactDOM.render( //eslint-disable-line
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path="/" component={Login} />

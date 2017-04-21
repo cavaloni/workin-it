@@ -1,4 +1,4 @@
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import passport from 'passport';
 import express from 'express';
 import expressJwt from 'express-jwt';
@@ -7,6 +7,8 @@ import { User } from './user_model';
 import ExerciseData from '../exercise_router/ex_model';
 import exercisesList from '../exercises-list';
 import { SECRET2 } from '../config';
+
+const O = Observable;
 
 const eJwt = expressJwt;
 const jwt = jsonWebToken;
@@ -79,8 +81,6 @@ router.get('/init_profile',
 router.get('/failed_auth', (req, res) => {
     res.json({ failed: 'failed' });
 });
-
-
 
 router.get('/profile', (req, res) => {
     const userId = jwt.verify(req.headers.token, SECRET2).user;

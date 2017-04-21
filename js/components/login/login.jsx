@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import Paper from 'material-ui/Paper';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as actions from '../../actions/index';
@@ -10,6 +10,8 @@ import prog from '../../../assets/prog.png';
 import track from '../../../assets/track.png';
 import friends from '../../../assets/friends.png';
 import Logo from '../logo/logo';
+
+const O = Observable;
 
 const style = {
     container: {

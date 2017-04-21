@@ -1,7 +1,7 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import { Menu as Menus } from 'material-ui/Menu';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
@@ -137,9 +137,9 @@ export default class ChooseWorkout extends React.Component {
                   floatingLabelStyle={styles.floatingLabelStyle}
                   floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
                 />
-                <Menus onItemTouchTap={this.handleSelect}>
+                <Menu onItemTouchTap={this.handleSelect}>
                     {menuItems}
-                </Menus>
+                </Menu>
             </Dialog>
 
         );

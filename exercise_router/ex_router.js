@@ -1,5 +1,14 @@
 import moment from 'moment';
-import _ from 'lodash';
+import find from 'lodash/find';
+import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
+import setWith from 'lodash/setWith';
+import isEmpty from 'lodash/isEmpty';
+import inRange from 'lodash/inRange';
+import cloneDeep from 'lodash/cloneDeep';
+import camelCase from 'lodash/camelCase';
+import flatten from 'lodash/flatten';
+
 import bodyParser from 'body-parser';
 import express from 'express';
 import expressJwt from 'express-jwt';
@@ -28,7 +37,7 @@ function getExerciseData(req, res) {
         })
         .then((data) => {
             allUserData = data;
-            if (_.isEmpty(allUserData)) {
+            if (isEmpty(allUserData)) {
                 res.status(201)
                     .json({
                         data: 'no data',
@@ -54,7 +63,7 @@ function getExerciseData(req, res) {
 
                 let userRangeData;
 
-                if (_.isEmpty(exerciseData)) {
+                if (isEmpty(exerciseData)) {
                     userRangeData = 'no data';
                 } else {
                     userRangeData = Object.keys(exerciseData)
@@ -66,7 +75,7 @@ function getExerciseData(req, res) {
                             }
                             const weekRangeMax = weekQuery + 1;
                             const weekRangeMin = weekQuery - 4;
-                            return _.inRange(weeks, weekRangeMin, weekRangeMax);
+                            return inRange(weeks, weekRangeMin, weekRangeMax);
                         })
                         .reduce((weekSet, week) => ({
                             ...weekSet,
@@ -102,7 +111,7 @@ router.put('/', (req, res) => {
         })
         .exec()
         .then((prevData) => {
-            let newData = _.cloneDeep(prevData);
+            let newData = cloneDeep(prevData);
             const year = req.body.year;
             const week = req.body.week;
 
@@ -114,25 +123,25 @@ router.put('/', (req, res) => {
                 const exSets = req.body.dataToSave[i].exerciseData;
                 const numSets = req.body.dataToSave[i].sets;
                 const exName = req.body.dataToSave[i].exercise;
-                const camelName = _.camelCase(req.body.dataToSave[i].exercise);
+                const camelName = camelCase(req.body.dataToSave[i].exercise);
                 const exGroup = req.body.dataToSave[i].exerciseGroup;
                 exercisesInDataToSave.push(camelName);
 
-                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets, Object);
-                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, numSets, Object);
-                newData = _.setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName, Object);
+                newData = setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.data`, exSets, Object);
+                newData = setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.sets`, numSets, Object);
+                newData = setWith(newData, `exerciseData.${year}.${week}.${exGroup}.${camelName}.fullName`, exName, Object);
             });
 
             // The following sequence is to eliminate items that are deleted by the user.
             // Since whole exercises are saved only on user selecting save, additions and
             // deletions are done simeltaneously.
 
-            const exercisesInDatabase = _.uniq(
-                _.flatten(Object.keys(newData.exerciseData[year][week])
+            const exercisesInDatabase = uniq(
+                flatten(Object.keys(newData.exerciseData[year][week])
                 .map(exGroup => Object.keys(newData.exerciseData[year][week][exGroup])
                     .map(exercise => exercise),
                 )));
-            const exercisesToDelete = _.difference(exercisesInDatabase, exercisesInDataToSave);
+            const exercisesToDelete = difference(exercisesInDatabase, exercisesInDataToSave);
             Object.keys(newData.exerciseData[year][week])
                 .filter((exGroup) => {
                     const groupsInDataToSave = Object.keys(req.body.dataToSave)
@@ -177,11 +186,11 @@ router.post('/get_friend_data', (req, res) => {
                     fbId: friendFbId,
                 })
                 .then((friendProfile) => {
-                    const userStatusOfFriend = _.find(
+                    const userStatusOfFriend = find(
                         userProfile.friends,
                         friend => friend.fbId === friendFbId,
                     ).status;
-                    const friendStatusOfUser = _.find(
+                    const friendStatusOfUser = find(
                         friendProfile.friends,
                         friend => friend.fbId === user,
                     ).status;

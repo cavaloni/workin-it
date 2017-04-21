@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { connect } from 'react-redux';
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { compose } from 'redux';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import flatten from 'lodash/flatten';
+import remove from 'lodash/remove';
+import capitalize from 'lodash/capitalize';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { Card, CardHeader } from 'material-ui/Card';
+import Card from 'material-ui/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
 import Avatar from 'material-ui/Avatar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -16,7 +20,6 @@ import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
 
-import exercisesList from '../exercise-list';
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
@@ -27,6 +30,8 @@ import armsAvatar from '../../../assets/arms.png';
 import chestAvatar from '../../../assets/chest.png';
 import legsAvatar from '../../../assets/legs.png';
 import shouldersAvatar from '../../../assets/shoulders.png';
+
+const O = Observable;
 
 const style = {
     card: {
@@ -92,7 +97,7 @@ class WorkoutCard extends Component {
     }
 
     componentWillUpdate(nextProps) {
-        if (!_.isEmpty(this.props.weekData) && _.isEmpty(nextProps.weekData)) {
+        if (!isEmpty(this.props.weekData) && isEmpty(nextProps.weekData)) {
             this.setComponentPopulated(nextProps);
         }
         const type = this.props.cardType.toLowerCase();
@@ -118,7 +123,7 @@ class WorkoutCard extends Component {
         let listNotEmpty;
         let isChecked;
         let sameSets = true;
-        if (!_.isEmpty(props.weekData) && props.weekData[type]) {
+        if (!isEmpty(props.weekData) && props.weekData[type]) {
             itemList = Object.keys(props.weekData[type]).map((exercise) => {
                 if (props.weekData[type][exercise].data.length >= 1) {
                     listNotEmpty = true;
@@ -154,7 +159,7 @@ class WorkoutCard extends Component {
         });
         this.tempDataToSave = dataToSaveCopy;
         if (this.tempDataToSave.length === this.state.itemList.length) {
-            const dataToSave = _.flatten(dataToSaveCopy);
+            const dataToSave = flatten(dataToSaveCopy);
             let oneDayInWeek;
             if (this.props.selectedWeek === 'This Week') {
                 oneDayInWeek = moment().format('MMM DD YY');
@@ -186,9 +191,11 @@ class WorkoutCard extends Component {
         let exName;
         if (typeof (value) === 'string') {
             exName = value;
-        } else { exName = exercisesList[this.props.cardType.toLowerCase()][value]; }
+        } else {
+            exName = this.props.profileData.exercisesList[this.props.cardType.toLowerCase()][value];
+        }
         const newArry = Array.from(this.state.itemList);
-        newArry.push(_.capitalize(exName));
+        newArry.push(capitalize(exName));
         this.setState({ itemList: newArry, chooseWorkout: false, listNotEmpty: true });
     }
 
@@ -211,7 +218,7 @@ class WorkoutCard extends Component {
 
     deleteItem(item) {
         const itemList = Array.from(this.state.itemList);
-        _.remove(itemList, items => items === item);
+        remove(itemList, items => items === item);
         this.setState({ itemList });
     }
 

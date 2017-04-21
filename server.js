@@ -107,9 +107,6 @@ app.get('/verify_auth',
     }),
     (req, res) => {
         res.send(201);
-    },
-    (req, res) => {
-        console.log(req.headers.token);
     });
 
 app.get('*',

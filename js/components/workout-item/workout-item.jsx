@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import IconButton from 'material-ui/IconButton';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
-import _ from 'lodash';
+import camelCase from 'lodash/camelCase';
 import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import SetListItem from '../set-list-item/set-list-item';
 
+const O = Observable;
 
 class WorkoutItem extends Component {
     constructor(props, context) {
@@ -159,7 +160,7 @@ class WorkoutItem extends Component {
 
     populateWeek() {
         const weekData = this.props.weekData;
-        const dbWrktName = _.camelCase(this.props.item);
+        const dbWrktName = camelCase(this.props.item);
         const grpName = this.props.exerciseGroup.toLowerCase();
         if (!weekData[grpName]) {
             this.setState({ sets: 0, weight: 0, reps: 0, setsData: [] });

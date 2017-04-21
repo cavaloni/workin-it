@@ -1,7 +1,9 @@
 import moment from 'moment';
 import faker from 'faker';
+import find from 'lodash/find';
 import { User } from '../user_router/user_model';
 import ExerciseData from '../exercise_router/ex_model';
+
 
 const chai = require('chai');
 
@@ -11,7 +13,7 @@ const tester = require('supertest');
 const { app, runServer, closeServer } = require('../server');
 const jwt = require('jsonwebtoken');
 const qs = require('qs');
-const _ = require('lodash');
+
 
 /* eslint-env node, jest */
 
@@ -125,7 +127,7 @@ describe('Workin It API resource', () => {
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.keys('fbId', 'user', 'profileImage', 'friends', '_id', '__v');
                 expect(response.body.friends).to.have.length.of.at.least(1);
-                const friend = _.find(response.body.friends, ['fbId', fakeId]);
+                const friend = find(response.body.friends, ['fbId', fakeId]);
                 expect(friend.status).to.equal('active');
             }),
             );

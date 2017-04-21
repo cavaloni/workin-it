@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import qs from 'qs';
-import _ from 'lodash';
-import { List, ListItem, makeSelectable } from 'material-ui/List';
+// import _ from 'lodash';
+import findIndex from 'lodash/findIndex';
+import some from 'lodash/some';
+import List from 'material-ui/List';
+import ListItem from 'material-ui/List/ListItem';
+import makeSelectable from 'material-ui/List/makeSelectable';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/MenuItem';
 import { grey400 } from 'material-ui/styles/colors';
+// const grey400 = 'white';
 import Paper from 'material-ui/Paper';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
@@ -17,11 +22,12 @@ import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Observable as O } from 'rxjs/Rx';
+import { Observable as O } from 'rxjs/Observable';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
 
 import * as actions from '../../actions/index';
+
 
 const SelectableList = makeSelectable(List);
 
@@ -112,11 +118,11 @@ class Friends extends Component {
             .filter(user => user !== this.props.profileData)
             .map(user => user))
         .subscribe((allUsers) => {
-            const userIndexInAllUsers = _.findIndex(
+            const userIndexInAllUsers = findIndex(
                 allUsers,
                 user => user.fbId === this.props.profileData.fbId);
             const indecesOfAllUsersToFilter = this.props.friends.map(friend =>
-                _.findIndex(allUsers, user => user.fbId === friend.fbId));
+                findIndex(allUsers, user => user.fbId === friend.fbId));
             this.setState({ allUsers, userIndexInAllUsers, indecesOfAllUsersToFilter });
         },
         );
@@ -192,7 +198,7 @@ class Friends extends Component {
                 name: this.state.allUsers[this.state.newFriendSelectedIndex].user,
             };
 
-            if (_.some(this.props.friends, ['fbId', friend.fbId])) {
+            if (some(this.props.friends, ['fbId', friend.fbId])) {
                 this.setState({ autoComErrTxt: 'Check your friends lists' });
                 return;
             }

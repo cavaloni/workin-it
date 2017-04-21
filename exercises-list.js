@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import capitalize from 'lodash/capitalize';
 
 const list = JSON.stringify({
     'ab crunch machine': 'abdominals',
@@ -876,7 +876,7 @@ const list = JSON.stringify({
 const listToJS = JSON.parse(list);
 
 const exercisesList = Object.keys(listToJS).reduce((acc, cur) => {
-    const currentExercise = _.capitalize(cur);
+    const currentExercise = capitalize(cur);
     let type = listToJS[cur];
     switch (type) {
         case 'abdominals':

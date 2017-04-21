@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import _ from 'lodash';
+import flatten from 'lodash/flatten';
+import reverse from 'lodash/reverse';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import WorkoutCard from '../workout-card/workout-card';
 import * as actions from '../../actions/index';
 
+const O = Observable;
 
 class Workout extends Component {
     constructor(props, context) {
@@ -89,13 +91,13 @@ class Workout extends Component {
             const weekRanges = response.response.weekRanges[0];
             const currentWeek = `${moment().startOf('week').format('MMM DD YY')} to ${moment().endOf('week').format('MMM DD YY')}`;
             let key = 0;
-            const weekRangesList = _.flatten(Object.keys(weekRanges).map(year =>
+            const weekRangesList = flatten(Object.keys(weekRanges).map(year =>
                 weekRanges[year].map((week) => {
                     if (week === currentWeek) { return; } // eslint-disable-line
                     key += 1;
                     return <MenuItem value={week} key={key - 1} primaryText={week} />; // eslint-disable-line
                 })));
-            const orderedWeekRangesList = _.reverse(weekRangesList);
+            const orderedWeekRangesList = reverse(weekRangesList);
             orderedWeekRangesList.unshift(<MenuItem value={'This Week'} key={key} primaryText={'This Week'} />);
             this.setState({ weekRanges: weekRangesList });
         });
@@ -116,7 +118,7 @@ class Workout extends Component {
     confirmImport() {
         if (this.state.import) {
             const curWeek = this.props.oneWeekData;
-            const dataToSave = _.flatten(Object.keys(curWeek)
+            const dataToSave = flatten(Object.keys(curWeek)
                 .map(group => Object.keys(curWeek[group])
                     .reduce((acc, cur) => {
                         acc.push({

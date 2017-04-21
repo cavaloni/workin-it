@@ -4,7 +4,7 @@ import Drawer from 'material-ui/Drawer';
 import Divider from 'material-ui/Divider';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import { Menu as Menus } from 'material-ui/Menu';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Home from 'material-ui/svg-icons/action/home';
 import Badge from 'material-ui/Badge';
@@ -20,7 +20,7 @@ const style = {
     },
 };
 
-class Menu extends Component {
+class MainMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -103,7 +103,7 @@ class Menu extends Component {
                   docked={false}
                   onRequestChange={open => this.setState({ open })}
                 >
-                    <Menus onItemTouchTap={this.handleRoute}>
+                    <Menu onItemTouchTap={this.handleRoute}>
                         <MenuItem leftIcon={<Home />}>Home</MenuItem>
                         <Divider />
                         <MenuItem leftIcon={<FitnessCenter />}>Workouts</MenuItem>
@@ -113,19 +113,19 @@ class Menu extends Component {
                         {friends}
                         <Divider />
                         <MenuItem leftIcon={<ExitToApp />}>Logout</MenuItem>
-                    </Menus>
+                    </Menu>
                 </Drawer>
             </div>
         );
     }
 }
 
-Menu.propTypes = {
+MainMenu.propTypes = {
     // list of friends
     friends: React.PropTypes.arrayOf([]),
 };
 
-Menu.defaultProps = {
+MainMenu.defaultProps = {
     friends: [],
 };
 
@@ -133,4 +133,4 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
     friends: state.userData.friends,
 });
 
-export default connect(mapStateToProps)(Menu);
+export default connect(mapStateToProps)(MainMenu);

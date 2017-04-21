@@ -4,11 +4,20 @@ import { compose } from 'redux';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import Divider from 'material-ui/Divider';
 import Menu from 'material-ui/Menu';
-import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
+import Popover from 'material-ui/Popover';
+import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import RaisedButton from 'material-ui/RaisedButton';
 import MenuItem from 'material-ui/MenuItem';
 import moment from 'moment';
-import _ from 'lodash';
+import has from 'lodash/has';
+import capitalize from 'lodash/capitalize';
+import set from 'lodash/set';
+import get from 'lodash/get';
+import flatten from 'lodash/flatten';
+import toNumber from 'lodash/toNumber';
+import isEmpty from 'lodash/isEmpty';
+import findKey from 'lodash/findKey';
+
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
 
@@ -64,8 +73,8 @@ class Progress extends Component {
 
     componentWillMount() {
         if (this.props.friends !== undefined &&
-            (this.props.data === 'no data' || !_.has(this.props.exerciseData, this.state.week) ||
-            (!_.has(this.props.data, this.state.week)))) {
+            (this.props.data === 'no data' || !has(this.props.exerciseData, this.state.week) ||
+            (!has(this.props.data, this.state.week)))) {
             this.loader(this.props);
         }
         if (this.props.friends !== undefined) {
@@ -123,12 +132,12 @@ class Progress extends Component {
                                 const fullName = this.state.data[weekSet][group][exercise].fullName;
                                 const sum = thisData
                                     .reduce((accData, curData) => ({
-                                        weight: _.toNumber(curData.weight) +
-                                            _.toNumber(accData.weight),
-                                        reps: _.toNumber(curData.reps) +
-                                            _.toNumber(accData.reps),
+                                        weight: toNumber(curData.weight) +
+                                            toNumber(accData.weight),
+                                        reps: toNumber(curData.reps) +
+                                            toNumber(accData.reps),
                                     }));
-                                _.set(parsedAvgs, `${group}.${exercise}[${exerciseIndex}]`, {
+                                set(parsedAvgs, `${group}.${exercise}[${exerciseIndex}]`, {
                                     fullName,
                                     week: weekSet,
                                     weight: sum.weight / thisData.length,
@@ -144,8 +153,8 @@ class Progress extends Component {
 
     loader(props) {
         const objectToCheck = !this.props.friends ? props.exerciseData : props.data;
-        if (_.isEmpty(objectToCheck) || objectToCheck === 'no data' ||
-            !_.has(objectToCheck, this.state.week)) {
+        if (isEmpty(objectToCheck) || objectToCheck === 'no data' ||
+            !has(objectToCheck, this.state.week)) {
             this.setState({ noDataThisWeek: true, spinner: false });
         } else {
             this.setState({ spinner: false });
@@ -170,7 +179,7 @@ class Progress extends Component {
 
     exerciseValueChange(e) {
         e.preventDefault();
-        const dbName = _.findKey(this.state.data[this.state.week][this.state.group],
+        const dbName = findKey(this.state.data[this.state.week][this.state.group],
             { fullName: e.target.innerHTML });
         this.trackMenuChanges.exercise = dbName;
         this.setState({ value: dbName, popoverOpen: false, groupRender: false });
@@ -224,7 +233,7 @@ class Progress extends Component {
 
         const parsedAvgs = this.getExerciseAverages();
 
-        const allCharts = _.flatten(Object.keys(parsedAvgs)
+        const allCharts = flatten(Object.keys(parsedAvgs)
                     .map(group => Object.keys(parsedAvgs[group])
                         .map((exercise) => {
                             const name = parsedAvgs[group][exercise].fullName;
@@ -263,7 +272,7 @@ class Progress extends Component {
 
         const exerciseMenuList = Object.keys(this.state.data[week])
                                     .reduce((accObj, curGroup) => {
-                                        const menuItems = Object.keys(_.get(this.state.data, `${week}.${curGroup}`))
+                                        const menuItems = Object.keys(get(this.state.data, `${week}.${curGroup}`))
                                             .map(exercise =>
                                                 <MenuItem
                                                   onTouchTap={this.exerciseValueChange}
@@ -273,7 +282,7 @@ class Progress extends Component {
                                                         .fullName
                                                   }
                                                 />);
-                                        return _.set(accObj, `${curGroup}`, menuItems);
+                                        return set(accObj, `${curGroup}`, menuItems);
                                     }, {});
 
         exerciseMenuList.group = Object.keys(this.state.data[week])
@@ -281,7 +290,7 @@ class Progress extends Component {
                                     <MenuItem
                                       onTouchTap={this.groupSelect}
                                       value={exerciseGroup}
-                                      primaryText={_.capitalize(exerciseGroup)}
+                                      primaryText={capitalize(exerciseGroup)}
                                     />,
                                 );
         exerciseMenuList.group.push(

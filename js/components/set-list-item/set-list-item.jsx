@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
-import { Observable as O } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+
+const O = Observable;
 
 const styles = {
     container: {
