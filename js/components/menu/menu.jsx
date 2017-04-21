@@ -62,7 +62,6 @@ class Menu extends Component {
             }
             // no default
         }
-        console.log(routeName);
         if (index === 4) {
             localStorage.removeItem('wi_id_token');
             browserHistory.push('/');
@@ -71,7 +70,6 @@ class Menu extends Component {
             if (index === 0) {
                 route = '';
             } else (route = routeName);
-            console.log(route);
             browserHistory.push(`/app/${route}`);
             this.setState({ open: false });
         }
