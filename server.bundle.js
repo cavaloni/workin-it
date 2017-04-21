@@ -169,27 +169,35 @@ var _lodash = __webpack_require__(14);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _bodyParser = __webpack_require__(3);
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _express = __webpack_require__(0);
+
+var _express2 = _interopRequireDefault(_express);
+
+var _expressJwt = __webpack_require__(1);
+
+var _expressJwt2 = _interopRequireDefault(_expressJwt);
+
 var _ex_model = __webpack_require__(6);
 
 var _ex_model2 = _interopRequireDefault(_ex_model);
 
 var _user_model = __webpack_require__(7);
 
+var _config = __webpack_require__(8);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var _require = __webpack_require__(8),
-    SECRET2 = _require.SECRET2;
+var eJwt = _expressJwt2.default;
+var router = _express2.default.Router();
 
-var jsonParser = __webpack_require__(3).json();
-var express = __webpack_require__(0);
-var eJwt = __webpack_require__(1);
-
-var router = express.Router();
-
-router.use(jsonParser);
-router.use(eJwt({ secret: SECRET2,
+router.use(_bodyParser2.default.json());
+router.use(eJwt({ secret: _config.SECRET2,
     getToken: function fromQuery(req) {
         return req.headers.token;
     },
@@ -395,6 +403,22 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _rxjs = __webpack_require__(16);
 
+var _passport = __webpack_require__(5);
+
+var _passport2 = _interopRequireDefault(_passport);
+
+var _express = __webpack_require__(0);
+
+var _express2 = _interopRequireDefault(_express);
+
+var _expressJwt = __webpack_require__(1);
+
+var _expressJwt2 = _interopRequireDefault(_expressJwt);
+
+var _jsonwebtoken = __webpack_require__(4);
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
 var _user_model = __webpack_require__(7);
 
 var _ex_model = __webpack_require__(6);
@@ -405,20 +429,16 @@ var _exercisesList = __webpack_require__(18);
 
 var _exercisesList2 = _interopRequireDefault(_exercisesList);
 
+var _config = __webpack_require__(8);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var passport = __webpack_require__(5);
+var eJwt = _expressJwt2.default;
+var jwt = _jsonwebtoken2.default;
 
-var _require = __webpack_require__(8),
-    SECRET2 = _require.SECRET2;
+var router = _express2.default.Router();
 
-var express = __webpack_require__(0);
-var eJwt = __webpack_require__(1);
-var jwt = __webpack_require__(4);
-
-var router = express.Router();
-
-router.use(eJwt({ secret: SECRET2,
+router.use(eJwt({ secret: _config.SECRET2,
     getToken: function fromQuery(req) {
         return req.headers.token;
     },
@@ -436,7 +456,7 @@ router.get('/', function (req, res) {
     });
 });
 
-router.get('/init_profile', passport.authenticate('facebook', {
+router.get('/init_profile', _passport2.default.authenticate('facebook', {
     failureRedirect: '/user/failed_auth'
 }), function (req, res) {
     _user_model.User.findOne({
@@ -471,7 +491,7 @@ router.get('/failed_auth', function (req, res) {
 });
 
 router.get('/profile', function (req, res) {
-    var userId = jwt.verify(req.headers.token, SECRET2).user;
+    var userId = jwt.verify(req.headers.token, _config.SECRET2).user;
     _user_model.User.findOne({
         fbId: userId
     }).exec().then(function (profile) {

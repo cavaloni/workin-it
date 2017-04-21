@@ -1,14 +1,15 @@
 import { Observable as O } from 'rxjs';
+import passport from 'passport';
+import express from 'express';
+import expressJwt from 'express-jwt';
+import jsonWebToken from 'jsonwebtoken';
 import { User } from './user_model';
 import ExerciseData from '../exercise_router/ex_model';
 import exercisesList from '../exercises-list';
+import { SECRET2 } from '../config';
 
-const passport = require('passport');
-
-const { SECRET2 } = require('../config');
-const express = require('express');
-const eJwt = require('express-jwt');
-const jwt = require('jsonwebtoken');
+const eJwt = expressJwt;
+const jwt = jsonWebToken;
 
 const router = express.Router();
 

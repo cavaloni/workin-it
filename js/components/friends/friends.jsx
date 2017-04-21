@@ -375,7 +375,7 @@ class Friends extends Component {
                         {newFriendsList}
                     </SelectableList>
                 </Paper>
-                <Paper>
+                <Paper style={style.paper}>
                     <SelectableList>
                         <Subheader>Sent Friend Requests</Subheader>
                         <Divider />

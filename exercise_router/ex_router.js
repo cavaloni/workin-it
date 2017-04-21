@@ -1,18 +1,16 @@
 import moment from 'moment';
 import _ from 'lodash';
+import bodyParser from 'body-parser';
+import express from 'express';
+import expressJwt from 'express-jwt';
 import ExerciseData from './ex_model';
 import { User } from '../user_router/user_model';
+import { SECRET2 } from '../config';
 
-
-const { SECRET2 } = require('../config');
-const jsonParser = require('body-parser')
-    .json();
-const express = require('express');
-const eJwt = require('express-jwt');
-
+const eJwt = expressJwt;
 const router = express.Router();
 
-router.use(jsonParser);
+router.use(bodyParser.json());
 router.use(eJwt({ secret: SECRET2,
     getToken: function fromQuery(req) { return req.headers.token; },
     requestProperty: 'auth',
