@@ -92,7 +92,7 @@ const style = {
         width: '25%',
         textAlign: 'center',
         padding: 10,
-        mingHieght: '100px',
+        minHieght: '100px',
     },
     images: {
         display: 'block',

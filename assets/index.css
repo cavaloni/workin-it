@@ -3,7 +3,7 @@ body {
 }
 
 #app {
-    background: linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,.75)), url(/ec106c559593a706971f8ef07a18892a.png);
+    background: linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,.75)), url('../assets/weights.png');
     background-size: cover;
     background-position-x: -200px;
 }
