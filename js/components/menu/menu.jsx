@@ -16,7 +16,7 @@ import Logo from '../logo/logo';
 
 const style = {
     appBar: {
-        backgroundColor: '#80CBC4',
+        backgroundColor: '#457898',
     },
 };
 
@@ -43,7 +43,7 @@ class MainMenu extends Component {
     menuClose() {
         this.setState({ open: false });
     }
-    
+
     handleRoute(event, menuObj, i) {
         const index = i / 2;
         let routeName;

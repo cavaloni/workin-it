@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/concatAll';
+import 'rxjs/add/observable/dom/ajax';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
@@ -20,7 +24,7 @@ class Workout extends Component {
         this.style = {
             weekSelector: {
                 borderRadius: '20px',
-                borderBottom: '1px solid lightgray',
+                borderBottom: '1px solid black',
                 marginLeft: 30,
                 marginTop: 20,
                 display: 'block',

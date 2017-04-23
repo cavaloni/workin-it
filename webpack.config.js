@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const context = path.resolve(__dirname, 'js');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; //eslint-disable-line
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; //eslint-disable-line
 
 require('babel-core/register')({
     presets: ['es2015', 'react'],
@@ -30,7 +30,7 @@ module.exports = {
         publicPath: '/',
     },
     plugins: [
-        new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
         new webpack.optimize.UglifyJsPlugin({
             mangle: true,
             comments: false, // remove comments

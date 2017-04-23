@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/concatAll';
+import 'rxjs/add/observable/dom/ajax';
 import Paper from 'material-ui/Paper';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import * as actions from '../../actions/index';
 import facebookImg from '../../../assets/facebook-icon-white.png';
 import prog from '../../../assets/prog.png';
@@ -11,14 +16,30 @@ import track from '../../../assets/track.png';
 import friends from '../../../assets/friends.png';
 import Logo from '../logo/logo';
 
+import weightsImg from '../../../assets/weights.png';
+
 const O = Observable;
+
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: '#983D3D',
+        primary2Color: '#983D3D',
+        primary3Color: '#983D3D',
+        accent1Color: '#457898',
+        accent2Color: '#457898',
+        accent3Color: '#457898',
+    },
+});
 
 const style = {
     container: {
         margin: '-22px',
         textAlign: 'center',
-        background: 'linear-gradient(135deg, #80CBC4, #4DB6AC)',
-        marginBottom: 10,
+        backgroundColor: 'rgb(69, 113, 131)',
+        backgroundImage: `url(${weightsImg})`,
+        backgroundBlendMode: 'soft-light',
+        marginBottom: 0,
+        backgroundSize: 'cover',
     },
     fbImage: {
         width: 40,
@@ -39,15 +60,28 @@ const style = {
         boxShadow: '2px 2px 9px black',
 
     },
+    demoLogin: {
+        paddingBottom: 20,
+        marginBottom: 0,
+    },
+    demoLoginButton: {
+        color: 'antiquewhite',
+        fontFamily: 'Roboto, serif',
+        boxShadow: '1px 2px 5px black',
+        textDecoration: 'none',
+        padding: '5px',
+        borderRadius: '5px',
+        backgroundColor: '#E57373',
+    },
     heading: {
         fontFamily: 'Muli, sans-serif',
         color: '#757574',
-        backgroundColor: '#B2DFDB',
+        backgroundColor: '#E9E88D',
         height: '50px',
         lineHeight: '50px',
     },
     button: {
-        margin: '90px 0 60px',
+        margin: '90px 0 20px',
         display: 'inline-block',
     },
     icons: {
@@ -58,6 +92,7 @@ const style = {
         width: '25%',
         textAlign: 'center',
         padding: 10,
+        mingHieght: '100px',
     },
     images: {
         display: 'block',
@@ -69,7 +104,9 @@ const style = {
         verticalAlign: 'top',
     },
     imageContainer: {
+        background: 'white',
         textAlign: 'center',
+        padding: '20px',
     },
 };
 
@@ -113,7 +150,7 @@ class Login extends Component {
 
     render() {
         return (
-            <MuiThemeProvider>
+            <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <div style={style.container}>
                         <h1 style={style.heading}>Workin It</h1>
@@ -122,6 +159,10 @@ class Login extends Component {
                             <img src={facebookImg} style={style.fbImage} alt="facebook" />
                             <div style={style.login}>Login With Facebook</div>
                         </a>
+                        <p>or</p>
+                        <p style={style.demoLogin}>
+                            <a href="/demo" style={style.demoLoginButton}>Demo User</a>
+                        </p>
                     </div>
                     <div style={style.imageContainer}>
                         <Paper style={style.icons}>

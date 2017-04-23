@@ -1,4 +1,7 @@
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/concatAll';
+import 'rxjs/add/observable/fromPromise';
 import passport from 'passport';
 import express from 'express';
 import expressJwt from 'express-jwt';
@@ -78,12 +81,15 @@ router.get('/init_profile',
     });
 
 
+
 router.get('/failed_auth', (req, res) => {
     res.json({ failed: 'failed' });
 });
 
 router.get('/profile', (req, res) => {
+    console.log(jwt.verify(req.headers.token, SECRET2))
     const userId = jwt.verify(req.headers.token, SECRET2).user;
+    console.log(userId);
     User
         .findOne({
             fbId: userId,

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import { connect } from 'react-redux';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
 import { compose } from 'redux';
 import isEmpty from 'lodash/isEmpty';
 import flatten from 'lodash/flatten';
@@ -10,6 +11,7 @@ import capitalize from 'lodash/capitalize';
 import moment from 'moment';
 import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Card from 'material-ui/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import Avatar from 'material-ui/Avatar';
@@ -32,6 +34,17 @@ import legsAvatar from '../../../assets/legs.png';
 import shouldersAvatar from '../../../assets/shoulders.png';
 
 const O = Observable;
+
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: '#983D3D',
+        primary2Color: '#983D3D',
+        primary3Color: '#983D3D',
+        accent1Color: '#457898',
+        accent2Color: '#457898',
+        accent3Color: '#457898',
+    },
+});
 
 const style = {
     card: {
@@ -268,7 +281,7 @@ class WorkoutCard extends Component {
         }
 
         return (
-            <MuiThemeProvider>
+            <MuiThemeProvider muiTheme={muiTheme}>
                 <Card className={classes.card}>
                     <WorkoutChooser
                       exercisesList={this.props.profileData.exercisesList}
@@ -283,7 +296,8 @@ class WorkoutCard extends Component {
                         backgroundColor={'none'}
                       />}
                       style={{
-                          backgroundColor: '#4FC3F7',
+                          backgroundColor: '#E57373',
+                          borderRadius: '5px',
                       }}
                       title={this.props.cardType}
                       titleStyle={{

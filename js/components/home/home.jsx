@@ -88,7 +88,7 @@ class Home extends Component {
 
         return (
             <div style={{ textAlign: 'center', width: '95%', margin: '0 auto' }}>
-                <Paper style={{ marginBottom: 10, marginTop: 10 }}>
+                <Paper style={{ marginBottom: 10, marginTop: 10, backgroundColor: 'rgba(152, 61, 61, .2)' }}>
                     <List>
                         <ListItem
                           disabled

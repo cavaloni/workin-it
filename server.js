@@ -42,6 +42,18 @@ const { PORT, DATABASE_URL, SECRET1, SECRET2 } = require('./config');
 
 app.use(express.static(`${process.env.PWD}/build`));
 
+app.get('/demo', (req, res) => {
+    const profile = {
+        user: '1001',
+    };
+    const token = jwt.sign(profile, SECRET1, { // eslint-disable-line
+        expiresIn: 10,
+        jwtid: shortid.generate(),
+    });
+    res.redirect(`/auth/${token}`);
+});
+
+
 passport.use(new Strategy({
     clientID: '266134167169182',
     clientSecret: '636f0c825d31af79085033dc03a58a43',
@@ -85,8 +97,12 @@ app.get('/new_token',
         isRevoked: isRevokedCallback,
     }),
     (req, res) => {
+        let user;
+        if (jwt.verify(req.query.initToken, SECRET1).user) {
+            user = jwt.verify(req.query.initToken, SECRET1).user;
+        } else { user = req.user.id; }
         const newToken = jwt.sign(
-            { user: req.user.id },
+            { user },
             SECRET2,
             { expiresIn: '7 days' });
         res.json({ newToken });

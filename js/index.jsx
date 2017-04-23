@@ -1,6 +1,10 @@
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 import { Provider } from 'react-redux';
-import Observable from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/concatAll';
+import 'rxjs/add/observable/dom/ajax';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store';
@@ -33,7 +37,7 @@ function requireAuth(nextState, replace) {
             }
         });
 }
-
+// word
 document.addEventListener('DOMContentLoaded', () => ReactDOM.render( //eslint-disable-line
     <Provider store={store}>
         <Router history={browserHistory}>

@@ -26,8 +26,8 @@ const Loader = require('halogen/BounceLoader');
 const style = {
     loader: {
         marginTop: 200,
-        width: 120,
-        height: 120,
+        width: '100%',
+        height: '100%',
         textAlign: 'center',
         position: 'relative',
         left: 'calc(50% - 60px)',
@@ -214,8 +214,10 @@ class Progress extends Component {
     render() {
         if (this.state.spinner) {
             return (
+                <div style={{ height: '100vh', width: '100%' }}>
                 <div style={style.loader}>
                     <Loader color="#FFCDD2" size="120px" margin="120px" />
+                </div>
                 </div>
             );
         }

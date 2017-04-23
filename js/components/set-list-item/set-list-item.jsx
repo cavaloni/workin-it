@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import { Observable } from 'rxjs/Observable';
+import "rxjs/add/observable/interval";
 
 const O = Observable;
 

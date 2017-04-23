@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/dom/ajax';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';

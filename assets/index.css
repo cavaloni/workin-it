@@ -2,3 +2,12 @@ body {
     margin: 0;
 }
 
+#app {
+    background: linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,.75)), url(/ec106c559593a706971f8ef07a18892a.png);
+    background-size: cover;
+    background-position-x: -200px;
+}
+
+@media only screen and (min-width: 800px) {
+    background-position-x: 0px;
+}

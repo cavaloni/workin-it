@@ -12,7 +12,6 @@ import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/MenuItem';
 import { grey400 } from 'material-ui/styles/colors';
-// const grey400 = 'white';
 import Paper from 'material-ui/Paper';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
@@ -23,6 +22,12 @@ import AutoComplete from 'material-ui/AutoComplete';
 import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Observable as O } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/observable/dom/ajax';
+import 'rxjs/add/observable/interval';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
 
@@ -44,12 +49,13 @@ const style = {
         padding: '20px',
     },
     heading: {
-        textAlign: 'left',
+        textAlign: 'center',
+        background: 'rgba(255, 255, 255, .5)',
         paddingLeft: 10,
         fontFamily: 'Poiret One',
         lineHeight: '80px',
         height: '80px',
-        background: 'linear-gradient(135deg, #FFEBEE, #FFCDD2)',
+        boxShadow: '1px 1px 10px grey',
     },
 };
 
@@ -348,6 +354,8 @@ class Friends extends Component {
                 </Dialog>
                 <h3 style={style.heading}>View Freinds Progress</h3>
                 <Paper style={{ ...style.paper, ...style.friendReq }}>
+                Find your friends
+                <Divider />
                     <AutoComplete
                       errorText={this.state.autoComErrTxt}
                       floatingLabelText="Search Friends Name"
