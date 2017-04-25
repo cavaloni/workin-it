@@ -2,12 +2,37 @@ body {
     margin: 0;
 }
 
-#app {
-    background: linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,.75)), url('../assets/weights.png');
+#background {
+    filter: blur(3px);
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    background: linear-gradient(rgba(255, 255, 255, .75), rgba(255, 255, 255, .75)), url('../assets/weights.png');
     background-size: cover;
     background-position-x: -200px;
 }
 
 @media only screen and (min-width: 800px) {
-    background-position-x: 0px;
+    #background {
+        background-position-x: 0px;
+        background-position-y: -80px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    #background {
+        background-position-x: 0px;
+        background-position-y: -150px;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+    #background {
+        background-position-x: 0px;
+        background-position-y: -200px;
+    }
 }

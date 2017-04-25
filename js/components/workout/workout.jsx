@@ -23,12 +23,13 @@ class Workout extends Component {
         super(props, context);
         this.style = {
             weekSelector: {
-                borderRadius: '20px',
-                borderBottom: '1px solid black',
+                borderRadius: '15px',
                 marginLeft: 30,
                 marginTop: 20,
                 display: 'block',
                 width: '200px',
+                backgroundColor: 'rgba(127, 118, 115, 0.298039)',
+                boxShadow: '2px 2px 5px',
             },
             copy: {
                 marginLeft: 30,

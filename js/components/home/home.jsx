@@ -51,6 +51,12 @@ const style = {
         marginLeft: 'auto',
         marginRight: 'auto',
     },
+    welcome: {
+        marginBottom: 10,
+        marginTop: 10,
+        backgroundColor: 'white',
+        width: '100vw',
+    },
 };
 
 class Home extends Component {
@@ -87,8 +93,8 @@ class Home extends Component {
         } else { newFriends = <div />; }
 
         return (
-            <div style={{ textAlign: 'center', width: '95%', margin: '0 auto' }}>
-                <Paper style={{ marginBottom: 10, marginTop: 10, backgroundColor: 'rgba(152, 61, 61, .2)' }}>
+            <div style={{ textAlign: 'center' }}>
+                <Paper style={style.welcome}>
                     <List>
                         <ListItem
                           disabled

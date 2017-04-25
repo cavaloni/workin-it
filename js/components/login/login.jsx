@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { browserHistory } from 'react-router';
 import { Observable } from 'rxjs/Observable';
+import injectSheet from 'react-jss';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/concatAll';
@@ -40,6 +42,18 @@ const style = {
         backgroundBlendMode: 'soft-light',
         marginBottom: 0,
         backgroundSize: 'cover',
+        '@media only screen and (min-width: 800px)': {
+            backgroundPositionX: '0px',
+            backgroundPositionY: '-80px',
+        },
+        '@media only screen and (min-width: 1200px)': {
+            backgroundPositionX: '0px',
+            backgroundPositionY: '-150px',
+        },
+        '@media only screen and (min-width: 1400px)': {
+            backgroundPositionX: '0px',
+            backgroundPositionY: '-200px',
+        },
     },
     fbImage: {
         width: 40,
@@ -92,7 +106,7 @@ const style = {
         width: '25%',
         textAlign: 'center',
         padding: 10,
-        minHieght: '100px',
+        minHeight: '100px',
     },
     images: {
         display: 'block',
@@ -195,4 +209,9 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
     loginSuccess: state.loginSuccess,
 });
 
-export default connect(mapStateToProps)(Login);
+const enhance = compose(
+  connect(mapStateToProps),
+  injectSheet(style),
+);
+
+export default enhance(Login);
