@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
+import Scroll from 'react-scroll';
 import injectSheet from 'react-jss';
 import moment from 'moment';
 import qs from 'qs';
@@ -33,26 +34,41 @@ import 'rxjs/add/observable/dom/ajax';
 import 'rxjs/add/observable/interval';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
-
-
 import * as actions from '../../actions/index';
 
+const Element = Scroll.Element;
+const scroller = Scroll.scroller;
 
 const SelectableList = makeSelectable(List);
 
 const style = {
-    paper: {
+    friendSearch: {
         width: '90%',
         maxHeight: 500,
         overflow: 'auto',
         display: 'inline-block',
         verticalAlign: 'top',
         marginBottom: '30px',
-        '@media only screen and (min-width: 800px)': {
-            width: '45%',
+    },
+    friendsBoxes: {
+        width: '90%',
+        maxHeight: 500,
+        overflow: 'auto',
+        display: 'inline-block',
+        verticalAlign: 'top',
+        marginBottom: '30px',
+    },
+    '@media (min-width: 700px)': {
+        friendSearch: {
+            width: '41%',
+            marginLeft: '5%',
+        },
+        friendsContainer: {
+            display: 'inline-block',
+            width: '41%',
+            marginLeft: '5%',
         },
     },
-
     friendReq: {
         padding: '20px',
     },
@@ -65,15 +81,6 @@ const style = {
         height: '60px',
         boxShadow: '1px 1px 10px grey',
     },
-    '@media (min-width: 800px)': {
-        paper: {
-            width: '45%',
-        },
-        heading: {
-            background: 'green',
-        },
-    },
-
 };
 
 class Friends extends Component {
@@ -173,6 +180,12 @@ class Friends extends Component {
             });
         },
         () => this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' }));
+        scroller.scrollTo('scrollHere', {
+            duration: 1500,
+            delay: 100,
+            smooth: true,
+            containerId: 'ContainerElementID',
+        });
     }
 
     handleModalClose() {
@@ -239,6 +252,8 @@ class Friends extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         const autocompleteUserNames = this.state.allUsers.map((user) => {
             if (this.state.indecesOfAllUsersToFilter.includes(this.state.allUsers.indexOf(user))) {
                 return undefined;
@@ -393,7 +408,7 @@ class Friends extends Component {
                 Are you sure you want to delete this friend?
                 </Dialog>
                 <h3 style={style.heading}>View Freinds Progress</h3>
-                <Paper style={{ ...style.paper, ...style.friendReq }}>
+                <Paper style={style.friendReq} className={classes.friendSearch} >
                     <Subheader>Find your friends</Subheader>
                     <Divider />
                     <AutoComplete
@@ -414,29 +429,32 @@ class Friends extends Component {
                       onTouchTap={this.sendNewFriendRequest}
                     />
                 </Paper>
-                <Paper style={style.paper}>
-                    <SelectableList
-                      value={this.state.selectedFriend}
-                    >
-                        <Subheader>Friends</Subheader>
-                        <Divider />
-                        {friendsList}
-                    </SelectableList>
-                </Paper>
-                <Paper style={style.paper}>
-                    <SelectableList>
-                        <Subheader>Awaiting Your Approval</Subheader>
-                        <Divider />
-                        {newFriendsList}
-                    </SelectableList>
-                </Paper>
-                <Paper style={style.paper}>
-                    <SelectableList>
-                        <Subheader>Sent Friend Requests</Subheader>
-                        <Divider />
-                        {pendingFriendInvites}
-                    </SelectableList>
-                </Paper>
+                <div className={classes.friendsContainer}>
+                    <Paper className={classes.friendsBoxes}>
+                        <SelectableList
+                          value={this.state.selectedFriend}
+                        >
+                            <Subheader>Friends</Subheader>
+                            <Divider />
+                            {friendsList}
+                        </SelectableList>
+                    </Paper>
+                    <Paper className={classes.friendsBoxes}>
+                        <SelectableList>
+                            <Subheader>Awaiting Your Approval</Subheader>
+                            <Divider />
+                            {newFriendsList}
+                        </SelectableList>
+                    </Paper>
+                    <Paper className={classes.friendsBoxes}>
+                        <SelectableList>
+                            <Subheader>Sent Friend Requests</Subheader>
+                            <Divider />
+                            {pendingFriendInvites}
+                        </SelectableList>
+                    </Paper>
+                </div>
+                <Element name="scrollHere" />
                 {progress}
                 <Snackbar
                   open={this.state.snackBarOpen}
