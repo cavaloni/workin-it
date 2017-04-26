@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { compose } from 'redux';
+import injectSheet from 'react-jss';
 import moment from 'moment';
 import qs from 'qs';
 // import _ from 'lodash';
@@ -10,6 +12,7 @@ import makeSelectable from 'material-ui/List/makeSelectable';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import PersonOutline from 'material-ui/svg-icons/social/person-outline';
 import MenuItem from 'material-ui/MenuItem';
 import { grey400 } from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
@@ -31,6 +34,7 @@ import 'rxjs/add/observable/interval';
 import { connect } from 'react-redux';
 import Progress from '../progress/progress';
 
+
 import * as actions from '../../actions/index';
 
 
@@ -44,19 +48,32 @@ const style = {
         display: 'inline-block',
         verticalAlign: 'top',
         marginBottom: '30px',
+        '@media only screen and (min-width: 800px)': {
+            width: '45%',
+        },
     },
+
     friendReq: {
         padding: '20px',
     },
     heading: {
+        marginTop: 0,
         textAlign: 'center',
         background: 'rgba(255, 255, 255, .5)',
-        paddingLeft: 10,
         fontFamily: 'Poiret One',
-        lineHeight: '80px',
-        height: '80px',
+        lineHeight: '60px',
+        height: '60px',
         boxShadow: '1px 1px 10px grey',
     },
+    '@media (min-width: 800px)': {
+        paper: {
+            width: '45%',
+        },
+        heading: {
+            background: 'green',
+        },
+    },
+
 };
 
 class Friends extends Component {
@@ -267,7 +284,7 @@ class Friends extends Component {
                 />);
         } else { progress = <div />; }
 
-        const friendsList = this.props.friends
+        let friendsList = this.props.friends
             .filter(friend => friend.status === 'active')
             .map((friend) => {
                 const num = this.props.friends.indexOf(friend);
@@ -289,7 +306,14 @@ class Friends extends Component {
                 />);
             });
 
-        const newFriendsList = this.props.friends
+        if (friendsList.length === 0) {
+            friendsList = (<div>
+                <PersonOutline style={{ padding: 10 }} />
+                <div>You have no friends. Search for them above.</div>
+            </div>);
+        }
+
+        let newFriendsList = this.props.friends
             .filter(friend => friend.status === 'pending' && friend.sentByUser === false)
             .map((friend) => {
                 const num = this.props.friends.indexOf(friend);
@@ -319,7 +343,14 @@ class Friends extends Component {
                 />);
             });
 
-        const pendingFriendInvites = this.props.friends
+        if (newFriendsList.length === 0) {
+            newFriendsList = (<div>
+                <PersonOutline style={{ padding: 10 }} />
+                <div>Friends needing approval would appear here</div>
+            </div>);
+        }
+
+        let pendingFriendInvites = this.props.friends
             .filter(friend => friend.status === 'pending' && friend.sentByUser === true)
             .map((friend) => {
                 const num = this.props.friends.indexOf(friend);
@@ -342,6 +373,15 @@ class Friends extends Component {
               }
                 />);
             });
+
+        if (pendingFriendInvites.length === 0) {
+            pendingFriendInvites = (<div>
+                <PersonOutline style={{ padding: 10 }} />
+                <div>Unanswered friend requests would appear here</div>
+            </div>);
+        }
+
+
         return (
             <div style={{ textAlign: 'center' }}>
                 <Dialog
@@ -354,11 +394,12 @@ class Friends extends Component {
                 </Dialog>
                 <h3 style={style.heading}>View Freinds Progress</h3>
                 <Paper style={{ ...style.paper, ...style.friendReq }}>
-                Find your friends
-                <Divider />
+                    <Subheader>Find your friends</Subheader>
+                    <Divider />
                     <AutoComplete
                       errorText={this.state.autoComErrTxt}
                       floatingLabelText="Search Friends Name"
+                      floatingLabelStyle={{ color: '#457898' }}
                       filter={AutoComplete.fuzzyFilter}
                       dataSource={autocompleteUserNames}
                       maxSearchResults={5}
@@ -369,7 +410,7 @@ class Friends extends Component {
                     <RaisedButton
                       primary={highlightButton}
                       label="Send Request"
-                      style={{ margin: 'auto', display: 'block', width: '50%' }}
+                      style={{ margin: 'auto', display: 'block', width: '50%', maxWidth: '200px' }}
                       onTouchTap={this.sendNewFriendRequest}
                     />
                 </Paper>
@@ -438,4 +479,9 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
     friends: state.userData.friends,
 });
 
-export default connect(mapStateToProps)(Friends);
+const enhance = compose(
+  connect(mapStateToProps),
+  injectSheet(style),
+);
+
+export default enhance(Friends);

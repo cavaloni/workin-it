@@ -58,7 +58,7 @@ passport.use(new Strategy({
     clientID: '266134167169182',
     clientSecret: '636f0c825d31af79085033dc03a58a43',
     callbackURL: '/user/init_profile',
-    profileFields: ['picture', 'first_name', 'last_name'],
+    profileFields: ['picture.type(large)', 'first_name', 'last_name'],
 },
   (accessToken, refreshToken, profile, cb) => {
       profile.token = jwt.sign(profile, SECRET1, { // eslint-disable-line

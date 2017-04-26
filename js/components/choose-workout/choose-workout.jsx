@@ -5,17 +5,16 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import AutoComplete from 'material-ui/AutoComplete';
-import { orange500, blue500 } from 'material-ui/styles/colors';
 
 const styles = {
     radioButton: {
         marginTop: 16,
     },
     floatingLabelStyle: {
-        color: orange500,
+        color: '#FF9800',
     },
     floatingLabelFocusStyle: {
-        color: blue500,
+        color: '#2196F3',
     },
 };
 

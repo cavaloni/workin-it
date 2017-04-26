@@ -56,6 +56,14 @@ const style = {
         marginTop: 10,
         backgroundColor: 'white',
         width: '100vw',
+        fontFamily: 'Poppins, sans-serif',
+    },
+    bottomBanner: {
+        position: 'fixed',
+        height: '5%',
+        width: '100%',
+        bottom: '0px',
+        backgroundColor: '#4889B2',
     },
 };
 
@@ -90,7 +98,7 @@ class Home extends Component {
                 You have {pendingFriendsNum} pending friend requests.
                 </ListItem>
             );
-        } else { newFriends = <div />; }
+        } else { newFriends = <p>No new notifications</p>; }
 
         return (
             <div style={{ textAlign: 'center' }}>
@@ -99,13 +107,10 @@ class Home extends Component {
                         <ListItem
                           disabled
                           leftAvatar={
-                              <Avatar src={this.props.profileData.profileImage} />
+                              <Avatar size={70} src={this.props.profileData.profileImage} />
                         }
                         >
                     Hello {this.props.profileData.user}!
-                    <p>Apologies for any delays in usage. You may require to logout
-                    and back in to work properly. Still working out bugs on the way
-                    to version 1.0. Thanks for using!</p>
                         </ListItem>
                         {newFriends}
                     </List>
@@ -139,6 +144,7 @@ class Home extends Component {
                       src={barbellImg}
                     />
                 </Paper>
+                <div style={style.bottomBanner} />
             </div>
         );
     }

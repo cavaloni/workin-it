@@ -42,18 +42,18 @@ const style = {
         backgroundBlendMode: 'soft-light',
         marginBottom: 0,
         backgroundSize: 'cover',
-        '@media only screen and (min-width: 800px)': {
-            backgroundPositionX: '0px',
-            backgroundPositionY: '-80px',
-        },
-        '@media only screen and (min-width: 1200px)': {
-            backgroundPositionX: '0px',
-            backgroundPositionY: '-150px',
-        },
-        '@media only screen and (min-width: 1400px)': {
-            backgroundPositionX: '0px',
-            backgroundPositionY: '-200px',
-        },
+        // '@media only screen and (min-width: 800px)': {
+        //     backgroundPositionX: '0px',
+        //     backgroundPositionY: '-80px',
+        // },
+        // '@media only screen and (min-width: 1200px)': {
+        //     backgroundPositionX: '0px',
+        //     backgroundPositionY: '-150px',
+        // },
+        // '@media only screen and (min-width: 1400px)': {
+        //     backgroundPositionX: '0px',
+        //     backgroundPositionY: '-200px',
+        // },
     },
     fbImage: {
         width: 40,
@@ -106,21 +106,23 @@ const style = {
         width: '25%',
         textAlign: 'center',
         padding: 10,
-        minHeight: '100px',
+        height: '130px',
+        fontWeight: 'bolder',
+        fontFamily: 'Muli, sans-serif',
     },
     images: {
         display: 'block',
         margin: '0 auto',
-        width: '50%',
         height: '50%',
         maxHeight: 100,
         maxWidth: 100,
         verticalAlign: 'top',
+        marginBottom: '10px',
     },
     imageContainer: {
         background: 'white',
         textAlign: 'center',
-        padding: '20px',
+        padding: '40px 20px 20px 20px',
     },
 };
 

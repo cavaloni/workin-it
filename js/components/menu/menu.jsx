@@ -95,8 +95,9 @@ class MainMenu extends Component {
                 <AppBar
                   title="Workin It"
                   onLeftIconButtonTouchTap={this.menuOpen}
+                  onRightIconButtonTouchTap={this.menuOpen}
                   style={style.appBar}
-                  iconElementRight={<Logo size={0.27} />}
+                  iconElementRight={<Logo size={0.27} clickHandler={this.menuOpen} />}
                 />
                 <Drawer
                   open={this.state.open}

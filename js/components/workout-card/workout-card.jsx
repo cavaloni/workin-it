@@ -21,7 +21,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
-
+//word
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
@@ -295,10 +295,7 @@ class WorkoutCard extends Component {
                         src={avatar}
                         backgroundColor={'none'}
                       />}
-                      style={{
-                          backgroundColor: '#E57373',
-                          borderRadius: '5px',
-                      }}
+                      style={{ backgroundColor: '#E57373' }}
                       title={this.props.cardType}
                       titleStyle={{
                           fontSize: '20px',

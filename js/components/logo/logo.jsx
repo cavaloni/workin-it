@@ -6,6 +6,7 @@ const Logo = (props) => {
     const multiplier = props.size;
 
     const style = {
+        cursor: props.clickHandler ? 'pointer' : 'inherit',
         backgroundColor: '#E57373',
         overflow: 'hidden',
         fontFamily: 'Poiret One',
@@ -73,12 +74,14 @@ const Logo = (props) => {
 
     return (
         <div>
-            <Paper style={style} circle zDepth={0}>WI</Paper>
+            <Paper style={style} circle onClick={props.clickHandler} zDepth={0}>WI</Paper>
         </div>
     );
 };
 
 Logo.propTypes = {
+    // onClick callback handler for menu function
+    clickHandler: React.PropTypes.func, // eslint-disable-line
     // to determine the size in percentage to original size on login screen
     size: React.PropTypes.number.isRequired,
 };
