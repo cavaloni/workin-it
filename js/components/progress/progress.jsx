@@ -157,7 +157,7 @@ class Progress extends Component {
             !has(objectToCheck, this.state.week)) {
             this.setState({ noDataThisWeek: true, spinner: false });
         } else {
-            this.setState({ spinner: false });
+            this.setState({ spinner: false, noDataThisWeek: false });
         }
     }
 
@@ -220,6 +220,12 @@ class Progress extends Component {
                 </div>
                 </div>
             );
+        }
+
+        let friendHeading = <div />;
+        console.log(this.props.selectedFriend);
+        if (this.props.selectedFriend) {
+            friendHeading = <h3>{this.props.selectedFriend}s Data</h3>;
         }
 
         if (this.state.noDataThisWeek) {
@@ -309,6 +315,7 @@ class Progress extends Component {
 
         return (
             <div>
+                {friendHeading}
                 <RaisedButton
                   style={{
                       margin: '20px',

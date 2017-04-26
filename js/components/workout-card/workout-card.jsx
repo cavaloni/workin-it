@@ -21,7 +21,6 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import * as actions from '../../actions/index';
-//word
 
 import WorkoutItem from '../workout-item/workout-item';
 import WorkoutChooser from '../choose-workout/choose-workout';
@@ -381,7 +380,7 @@ const mapStateToProps = (state, props) => ({ // eslint-disable-line
 
 const enhance = compose(
   connect(mapStateToProps),
-  injectSheet(style),
+injectSheet(style),
 );
 
 export default enhance(WorkoutCard);

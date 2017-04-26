@@ -6,6 +6,7 @@ import moment from 'moment';
 import qs from 'qs';
 // import _ from 'lodash';
 import findIndex from 'lodash/findIndex';
+import isEmpty from 'lodash/isEmpty';
 import some from 'lodash/some';
 import List from 'material-ui/List';
 import ListItem from 'material-ui/List/ListItem';
@@ -182,7 +183,7 @@ class Friends extends Component {
         () => this.setState({ snackBarOpen: true, snackBarMessage: 'Something went wrong' }));
         scroller.scrollTo('scrollHere', {
             duration: 1500,
-            delay: 100,
+            delay: 75,
             smooth: true,
             containerId: 'ContainerElementID',
         });
@@ -253,7 +254,7 @@ class Friends extends Component {
 
     render() {
         const { classes } = this.props;
-
+       
         const autocompleteUserNames = this.state.allUsers.map((user) => {
             if (this.state.indecesOfAllUsersToFilter.includes(this.state.allUsers.indexOf(user))) {
                 return undefined;
