@@ -17,7 +17,6 @@ import flatten from 'lodash/flatten';
 import toNumber from 'lodash/toNumber';
 import isEmpty from 'lodash/isEmpty';
 import findKey from 'lodash/findKey';
-
 import ExerciseChart from '../chart-card/chart-card';
 import * as actions from '../../actions/index';
 
@@ -72,10 +71,8 @@ class Progress extends Component {
     }
 
     componentWillMount() {
-        if (this.props.friends !== undefined &&
-            (this.props.data === 'no data' || !has(this.props.exerciseData, this.state.week) ||
-            (!has(this.props.data, this.state.week)))) {
-            this.loader(this.props);
+        if (this.props.friends !== undefined) {
+            this.loader(this.props); // the problem is here at loader
         }
         if (this.props.friends !== undefined) {
             return;
@@ -215,17 +212,16 @@ class Progress extends Component {
         if (this.state.spinner) {
             return (
                 <div style={{ height: '100vh', width: '100%' }}>
-                <div style={style.loader}>
-                    <Loader color="#FFCDD2" size="120px" margin="120px" />
-                </div>
+                    <div style={style.loader}>
+                        <Loader color="#FFCDD2" size="120px" margin="120px" />
+                    </div>
                 </div>
             );
         }
 
         let friendHeading = <div />;
-        console.log(this.props.selectedFriend);
         if (this.props.selectedFriend) {
-            friendHeading = <h3>{this.props.selectedFriend}s Data</h3>;
+            friendHeading = <h3>{this.props.selectedFriend}s Workouts</h3>;
         }
 
         if (this.state.noDataThisWeek) {
@@ -322,7 +318,7 @@ class Progress extends Component {
                   }}
                   primary
                   onTouchTap={this.openPopover}
-                  label="Select Workout(s)"
+                  label="Filter Workouts"
                 />
                 <Popover
                   open={this.state.popoverOpen}
@@ -383,6 +379,7 @@ class Progress extends Component {
 }
 
 Progress.propTypes = {
+    selectedFriend: React.PropTypes.string, // eslint-disable-line
     // sets up component to work with friend's data
     friends: React.PropTypes.bool.isRequired,
     // users data in form of week, reps, sets, weight

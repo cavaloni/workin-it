@@ -80,16 +80,12 @@ router.get('/init_profile',
         res.redirect(`/init_token?token=${req.user.token}`);
     });
 
-
-
 router.get('/failed_auth', (req, res) => {
     res.json({ failed: 'failed' });
 });
 
 router.get('/profile', (req, res) => {
-    console.log(jwt.verify(req.headers.token, SECRET2))
     const userId = jwt.verify(req.headers.token, SECRET2).user;
-    console.log(userId);
     User
         .findOne({
             fbId: userId,

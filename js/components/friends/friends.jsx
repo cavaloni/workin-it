@@ -6,7 +6,6 @@ import moment from 'moment';
 import qs from 'qs';
 // import _ from 'lodash';
 import findIndex from 'lodash/findIndex';
-import isEmpty from 'lodash/isEmpty';
 import some from 'lodash/some';
 import List from 'material-ui/List';
 import ListItem from 'material-ui/List/ListItem';
@@ -37,8 +36,9 @@ import { connect } from 'react-redux';
 import Progress from '../progress/progress';
 import * as actions from '../../actions/index';
 
-const Element = Scroll.Element;
-const scroller = Scroll.scroller;
+const { Element } = Scroll;
+const { Events } = Scroll;
+const { scroller } = Scroll;
 
 const SelectableList = makeSelectable(List);
 
@@ -137,6 +137,11 @@ class Friends extends Component {
         if (this.state.allUsers !== prevState.allUsers) {
             this.getExerciseData();
         }
+    }
+
+    componentWillUnmount() {
+        Events.scrollEvent.remove('begin');
+        Events.scrollEvent.remove('end');
     }
 
     getAllUsers() {
@@ -254,7 +259,7 @@ class Friends extends Component {
 
     render() {
         const { classes } = this.props;
-       
+// sweet
         const autocompleteUserNames = this.state.allUsers.map((user) => {
             if (this.state.indecesOfAllUsersToFilter.includes(this.state.allUsers.indexOf(user))) {
                 return undefined;
@@ -469,6 +474,8 @@ class Friends extends Component {
 }
 
 Friends.propTypes = {
+    // class object for JSS injection
+    classes: React.PropTypes.objectOf({}).isRequired,
     // list of friends
     friends: React.PropTypes.arrayOf([]).isRequired,
     // user profile info from redux store

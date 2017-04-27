@@ -5,7 +5,8 @@ const webpack = require('webpack');
 const context = path.resolve(__dirname, 'js');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; //eslint-disable-line
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+// .BundleAnalyzerPlugin; //eslint-disable-line
 
 require('babel-core/register')({
     presets: ['es2015', 'react'],
@@ -30,28 +31,28 @@ module.exports = {
         publicPath: '/',
     },
     plugins: [
-        // new BundleAnalyzerPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            mangle: true,
-            comments: false, // remove comments
-            compress: {
-                unused: true,
-                dead_code: true, // big one--strip code that will never execute
-                warnings: false, // good for prod apps so users can't peek behind curtain
-                drop_debugger: true,
-                conditionals: true,
-                evaluate: true,
-                drop_console: true, // strips console statements
-                sequences: true,
-                booleans: true,
-            },
-            sourceMap: false,
+        // // new BundleAnalyzerPlugin(),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     mangle: true,
+        //     comments: false, // remove comments
+        //     compress: {
+        //         unused: true,
+        //         dead_code: true, // big one--strip code that will never execute
+        //         // warnings: false, // good for prod apps so users can't peek behind curtain
+        //         // drop_debugger: true,
+        //         conditionals: true,
+        //         evaluate: true,
+        //         // drop_console: true, // strips console statements
+        //         sequences: true,
+        //         booleans: true,
+        //     },
+        //     sourceMap: false,
 
-        }),
-        new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
-        new webpack.optimize.AggressiveMergingPlugin(),
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.DedupePlugin(),
+        // }),
+        // new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
+        // new webpack.optimize.AggressiveMergingPlugin(),
+        // new webpack.optimize.OccurrenceOrderPlugin(),
+        // new webpack.optimize.DedupePlugin(),
         new ExtractTextPlugin('index.css'),
         new HtmlWebpackPlugin({
             filename: './index.html',

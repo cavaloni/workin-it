@@ -3351,9 +3351,7 @@ router.get('/failed_auth', function (req, res) {
 });
 
 router.get('/profile', function (req, res) {
-    console.log(jwt.verify(req.headers.token, _config.SECRET2));
     var userId = jwt.verify(req.headers.token, _config.SECRET2).user;
-    console.log(userId);
     _user_model.User.findOne({
         fbId: userId
     }).exec().then(function (profile) {
