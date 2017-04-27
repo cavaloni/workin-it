@@ -41,19 +41,7 @@ const style = {
         backgroundImage: `url(${weightsImg})`,
         backgroundBlendMode: 'soft-light',
         marginBottom: 0,
-        backgroundSize: 'cover',
-        // '@media only screen and (min-width: 800px)': {
-        //     backgroundPositionX: '0px',
-        //     backgroundPositionY: '-80px',
-        // },
-        // '@media only screen and (min-width: 1200px)': {
-        //     backgroundPositionX: '0px',
-        //     backgroundPositionY: '-150px',
-        // },
-        // '@media only screen and (min-width: 1400px)': {
-        //     backgroundPositionX: '0px',
-        //     backgroundPositionY: '-200px',
-        // },
+        backgroundSize: 'contain',
     },
     fbImage: {
         width: 40,
