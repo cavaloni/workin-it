@@ -41,7 +41,7 @@ const style = {
         backgroundImage: `url(${weightsImg})`,
         backgroundBlendMode: 'soft-light',
         marginBottom: 0,
-        backgroundSize: 'contain',
+        backgroundSize: 'cover',
     },
     fbImage: {
         width: 40,
@@ -68,7 +68,7 @@ const style = {
     },
     demoLoginButton: {
         color: 'antiquewhite',
-        fontFamily: 'Roboto, serif',
+        fontFamily: 'Poiret One',
         boxShadow: '1px 2px 5px black',
         textDecoration: 'none',
         padding: '5px',
@@ -76,7 +76,7 @@ const style = {
         backgroundColor: '#E57373',
     },
     heading: {
-        fontFamily: 'Muli, sans-serif',
+        fontFamily: 'Poiret One',
         color: '#757574',
         backgroundColor: '#E9E88D',
         height: '50px',
@@ -87,6 +87,7 @@ const style = {
         display: 'inline-block',
     },
     icons: {
+        fontFamily: 'Poiret One',
         verticalAlign: 'top',
         fontSize: '13px',
         display: 'inline-block',
@@ -96,7 +97,11 @@ const style = {
         padding: 10,
         height: '130px',
         fontWeight: 'bolder',
-        fontFamily: 'Muli, sans-serif',
+    },
+    '@media (min-width: 700px)': {
+        icons: {
+            fontSize: '18px',
+        },
     },
     images: {
         display: 'block',
@@ -108,7 +113,6 @@ const style = {
         marginBottom: '10px',
     },
     imageContainer: {
-        background: 'white',
         textAlign: 'center',
         padding: '40px 20px 20px 20px',
     },
@@ -153,32 +157,34 @@ class Login extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <div style={style.container}>
-                        <h1 style={style.heading}>Workin It</h1>
+                    <div className={classes.container}>
+                        <h1 className={classes.heading}>Workin It</h1>
                         <Logo size={1} />
-                        <a href="/login/facebook" style={style.button}>
-                            <img src={facebookImg} style={style.fbImage} alt="facebook" />
-                            <div style={style.login}>Login With Facebook</div>
+                        <a href="/login/facebook" className={classes.button}>
+                            <img src={facebookImg} className={classes.fbImage} alt="facebook" />
+                            <div className={classes.login}>Login With Facebook</div>
                         </a>
-                        <p>or</p>
-                        <p style={style.demoLogin}>
-                            <a href="/demo" style={style.demoLoginButton}>Demo User</a>
+                        <p style={{ fontFamily: 'Poiret One', fontWeight: 'bolder' }}>or</p>
+                        <p className={classes.demoLogin}>
+                            <a href="/demo" className={classes.demoLoginButton}>Demo User</a>
                         </p>
                     </div>
-                    <div style={style.imageContainer}>
-                        <Paper style={style.icons}>
-                            <img src={track} style={style.images} alt="workouts" />
+                    <div className={classes.imageContainer}>
+                        <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
+                            <img src={track} className={classes.images} alt="workouts" />
                         Record Your Workouts
-                    </Paper>
-                        <Paper style={style.icons}>
-                            <img src={prog} style={style.images} alt="progress" />
+                        </Paper>
+                        <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
+                            <img src={prog} className={classes.images} alt="progress" />
                         Track Your Progress
-                    </Paper>
-                        <Paper style={style.icons}>
-                            <img src={friends} style={style.images} alt="friends" />
+                        </Paper>
+                        <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
+                            <img src={friends} className={classes.images} alt="friends" />
                         Share + Track Friends
                     </Paper>
                     </div>
@@ -189,6 +195,8 @@ class Login extends Component {
 }
 
 Login.propTypes = {
+    // class object for JSS injection
+    classes: React.PropTypes.objectOf({}).isRequired,
     // boolean if login failed
     loginFail: React.PropTypes.bool.isRequired,
      // redux dispatch
