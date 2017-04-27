@@ -61,7 +61,6 @@ class WorkoutItem extends Component {
             triggerSave: props.triggerSave,
             setsData: [],
             modalDeleteOpen: false,
-            buttonColor: 'white',
             errTxtReps: '',
             errTxtWeight: '',
         };
@@ -87,18 +86,9 @@ class WorkoutItem extends Component {
         if (nextProps.populateWeek) {
             this.populateWeek();
         }
-        if (!nextProps.sets && (nextProps.sets !== this.props.sets) &&
-            this.state.buttonColor === 'white') {
-            this.setState({ buttonColor: '#80DEEA' });
-        }
     }
 
     componentDidUpdate() {
-        if (this.state.buttonColor === '#80DEEA') {
-            O.interval(760)
-                .take(1)
-                .subscribe(() => this.setState({ buttonColor: 'white' }));
-        }
         if ((this.state.errTxtReps !== '') || (this.state.errTxtWeight !== '')) {
             O.interval(2000)
                 .take(1)
@@ -236,7 +226,12 @@ class WorkoutItem extends Component {
                 <div>
                     <RaisedButton
                       disabledBackgroundColor={'white'}
-                      backgroundColor={this.state.buttonColor}
+                      backgroundColor={'#457898'}
+                      buttonStyle={{
+                          padding: '5px',
+                          color: this.props.sets ? 'black' : 'white',
+                      }}
+                      labelColor={'white'}
                       style={this.styles.name}
                       disabled={this.props.sets}
                       onClick={this.setsButton}

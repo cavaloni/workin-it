@@ -305,7 +305,7 @@ class WorkoutCard extends Component {
                     <Checkbox
                       onCheck={this.sameSetsCheck}
                       disabled={!this.state.listNotEmpty}
-                      label="Same reps in sets"
+                      label="Same reps every set"
                       labelStyle={{ right: '13%' }}
                       checked={this.state.isChecked}
                       style={{ display: this.state.listNotEmpty ? 'block' : 'none' }}
