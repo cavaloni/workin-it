@@ -98,6 +98,7 @@ class MainMenu extends Component {
                   onRightIconButtonTouchTap={this.menuOpen}
                   style={style.appBar}
                   iconElementRight={<Logo size={0.27} clickHandler={this.menuOpen} />}
+                  iconStyleRight={{ margin: 'auto' }}
                 />
                 <Drawer
                   open={this.state.open}

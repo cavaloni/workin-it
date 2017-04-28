@@ -6,6 +6,8 @@ const Logo = (props) => {
     const multiplier = props.size;
 
     const style = {
+        boxShadow: '1px 1px 10px darkslategrey',
+        border: '1px solid rgb(96, 125, 139)',
         cursor: props.clickHandler ? 'pointer' : 'inherit',
         backgroundColor: '#E57373',
         overflow: 'hidden',

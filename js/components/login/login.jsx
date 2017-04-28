@@ -78,7 +78,7 @@ const style = {
     heading: {
         fontFamily: 'Poiret One',
         color: '#757574',
-        backgroundColor: '#E9E88D',
+        backgroundColor: '#A7D1ED',
         height: '50px',
         lineHeight: '50px',
     },

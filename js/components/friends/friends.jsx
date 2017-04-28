@@ -58,16 +58,19 @@ const style = {
         display: 'inline-block',
         verticalAlign: 'top',
         marginBottom: '30px',
+        paddingBottom: '20px',
     },
     '@media (min-width: 700px)': {
         friendSearch: {
             width: '41%',
-            marginLeft: '5%',
+            marginLeft: '2%',
+            marginRight: '2%',
         },
         friendsContainer: {
             display: 'inline-block',
             width: '41%',
-            marginLeft: '5%',
+            marginLeft: '2%',
+            marginRight: '2%',
         },
     },
     friendReq: {
