@@ -95,10 +95,11 @@ class MainMenu extends Component {
                 <AppBar
                   title="Workin It"
                   onLeftIconButtonTouchTap={this.menuOpen}
-                  onRightIconButtonTouchTap={this.menuOpen}
+                  onRightIconButtonTouchTap={() => this.handleRoute(null, null, 0)}
                   style={style.appBar}
-                  iconElementRight={<Logo size={0.27} clickHandler={this.menuOpen} />}
-                  iconStyleRight={{ margin: 'auto' }}
+                  iconElementRight={<Logo size={0.22} clickHandler={() => this.handleRoute(null, null, 0)} />}
+                  iconStyleRight={{ margin: 'auto auto auto 20px' }}
+                  titleStyle={{ flex: '' }}
                 />
                 <Drawer
                   open={this.state.open}

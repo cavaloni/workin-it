@@ -52,7 +52,6 @@ module.exports = {
         new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
         new webpack.optimize.AggressiveMergingPlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.DedupePlugin(),
         new ExtractTextPlugin('index.css'),
         new HtmlWebpackPlugin({
             filename: './index.html',

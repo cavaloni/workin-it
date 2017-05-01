@@ -83,7 +83,7 @@ const style = {
         lineHeight: '50px',
     },
     button: {
-        margin: '90px 0 20px',
+        margin: '60px 0 20px',
         display: 'inline-block',
     },
     icons: {
