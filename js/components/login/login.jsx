@@ -22,6 +22,8 @@ import weightsImg from '../../../assets/weights.png';
 
 const O = Observable;
 
+
+
 const muiTheme = getMuiTheme({
     palette: {
         primary1Color: '#983D3D',
@@ -77,7 +79,7 @@ const style = {
     },
     heading: {
         fontFamily: 'Poiret One',
-        color: '#757574',
+        color: '#222222',
         backgroundColor: '#A7D1ED',
         height: '50px',
         lineHeight: '50px',
@@ -91,24 +93,35 @@ const style = {
         verticalAlign: 'top',
         fontSize: '13px',
         display: 'inline-block',
-        marginLeft: 20,
-        width: '25%',
         textAlign: 'center',
         padding: 10,
-        height: '130px',
+        maxHeight: '280px',
         fontWeight: 'bolder',
+        marginLeft: 0,
+        width: '80%',
+        marginBottom: '20px',
+    },
+    infoText: {
+        marginTop: '10px',
+        fontSize: '11px',
     },
     '@media (min-width: 700px)': {
         icons: {
             fontSize: '18px',
+            marginLeft: 20,
+            width: '25%',
+            minHeight: '220px',
+        },
+        infoText: {
+            fontSize: '13px',
         },
     },
     images: {
         display: 'block',
         margin: '0 auto',
         height: '50%',
-        maxHeight: 100,
-        maxWidth: 100,
+        maxHeight: 75,
+        maxWidth: 75,
         verticalAlign: 'top',
         marginBottom: '10px',
     },
@@ -178,14 +191,23 @@ class Login extends Component {
                         <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
                             <img src={track} className={classes.images} alt="workouts" />
                         Record Your Workouts
+                        <div className={classes.infoText}>Choose from a our database or make your own.
+                            Then import to this week from previous weeks. No limitations on routines, just build your own!
+                        </div>
                         </Paper>
                         <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
                             <img src={prog} className={classes.images} alt="progress" />
                         Track Your Progress
+                        <div className={classes.infoText}>View your progress over the previous 4 weeks in graphs.
+                            Filter by groups or specific exercises. Challeng yourself to beat your previous week!
+                        </div>
                         </Paper>
                         <Paper className={classes.icons} style={{ fontFamily: 'Poiret One' }}>
                             <img src={friends} className={classes.images} alt="friends" />
                         Share + Track Friends
+                        <div className={classes.infoText}>Make sure you're keeping up with your friends! Challenge each other
+                            and view their progress graphs, and let them view yours.
+                        </div>
                     </Paper>
                     </div>
                 </div>

@@ -409,6 +409,7 @@ class Friends extends Component {
         return (
             <div style={{ textAlign: 'center' }}>
                 <Dialog
+                  titleStyle={{ borderBottom: 'none' }}
                   title="Delete Friend"
                   actions={modalActions}
                   modal

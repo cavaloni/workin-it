@@ -298,6 +298,10 @@ class WorkoutCard extends Component {
                       title={this.props.cardType}
                       titleStyle={{
                           fontSize: '20px',
+                          position: 'relative',
+                          bottom: '-10px',
+                          left: '20px',
+
                       }}
                     />
                     <Divider style={{ margin: 0 }} />
@@ -308,7 +312,10 @@ class WorkoutCard extends Component {
                       label="Same reps every set"
                       labelStyle={{ right: '13%' }}
                       checked={this.state.isChecked}
-                      style={{ display: this.state.listNotEmpty ? 'block' : 'none' }}
+                      style={{
+                          display: this.state.listNotEmpty ? 'block' : 'none',
+                          marginTop: '10px',
+                      }}
                     />
                     <FloatingActionButton
                       style={{

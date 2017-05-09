@@ -32,9 +32,9 @@ class Workout extends Component {
                 boxShadow: '2px 2px 5px',
             },
             copy: {
-                marginLeft: 30,
-                marginTop: 20,
                 margin: '10px',
+                marginTop: 20,
+                marginLeft: 30,
                 display: 'block',
                 width: '190px',
             },
@@ -205,6 +205,7 @@ class Workout extends Component {
         return (
             <div style={{ textAlign: 'center' }}>
                 <Dialog
+                  titleStyle={{ borderBottom: 'none' }}
                   key={1}
                   autoScrollBodyContent
                   title={modalInfo.title}

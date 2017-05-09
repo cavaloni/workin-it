@@ -27,7 +27,7 @@ const style = {
     },
     progress: {
         height: '49%',
-        width: '53%',
+        width: '49%',
         maxWidth: '300px',
         maxHeight: '300px',
         margin: '30',
@@ -98,7 +98,7 @@ class Home extends Component {
                 You have {pendingFriendsNum} pending friend requests.
                 </ListItem>
             );
-        } else { newFriends = <p>No new notifications</p>; }
+        } else { newFriends = <ListItem disabled style={{ marginLeft: '50px' }}>No new notifications</ListItem>; }
 
         return (
             <div style={{ textAlign: 'center' }}>
@@ -112,6 +112,7 @@ class Home extends Component {
                         >
                     Hello {this.props.profileData.user}!
                         </ListItem>
+                        
                         {newFriends}
                     </List>
                 </Paper>

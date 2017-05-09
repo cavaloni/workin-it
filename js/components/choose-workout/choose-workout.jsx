@@ -112,6 +112,8 @@ export default class ChooseWorkout extends React.Component {
         return (
 
             <Dialog
+              repositionOnUpdate={false}
+              titleStyle={{ borderBottom: 'none' }}
               key={1}
               autoScrollBodyContent
               title="Select Workout"

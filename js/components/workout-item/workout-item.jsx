@@ -22,6 +22,8 @@ class WorkoutItem extends Component {
         this.styles = {
             container: {
                 paddingTop: '0px',
+                borderBottom: '1px solid rgb(229, 115, 115)',
+                paddingBottom: '10px',
             },
             name: {
                 margin: '13px',
@@ -38,9 +40,6 @@ class WorkoutItem extends Component {
             checkbox: {
                 marginBottom: 16,
                 width: '100%',
-            },
-            divide: {
-                marginBottom: 5,
             },
             select: {
                 display: 'inline-block',
@@ -218,6 +217,7 @@ class WorkoutItem extends Component {
         return (
             <div style={this.styles.container}>
                 <Dialog
+                  titleStyle={{ borderBottom: 'none' }}
                   key={1}
                   title="Confirm Delete"
                   actions={modalActions}
@@ -274,7 +274,6 @@ class WorkoutItem extends Component {
                     </IconButton>
                 </div>
                 {setList}
-                <Divider style={this.styles.divide} />
             </div>
         );
     }

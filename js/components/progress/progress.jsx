@@ -23,6 +23,10 @@ import * as actions from '../../actions/index';
 const Loader = require('halogen/BounceLoader');
 
 const style = {
+    noData: {
+        fontFamily: 'Roboto, sans-serif',
+        textAlign: 'center',
+    },
     loader: {
         marginTop: 200,
         width: '100%',
@@ -227,7 +231,7 @@ class Progress extends Component {
         if (this.state.noDataThisWeek) {
             return (
                 <div>
-                    <h1>No Data For This Week</h1>
+                    <h1 style={style.noData}>No Data For This Week</h1>
                 </div>
             );
         }
